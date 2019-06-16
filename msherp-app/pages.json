@@ -1,0 +1,76 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/ControlPanel/main/main",
+			"style": {}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {}
+		},
+		{
+			"path": "pages/ControlPanel/index/index",
+			"style": {}
+		},
+		{
+			"path": "pages/ControlPanel/product/productlist",
+			"style": {}
+		},{
+            "path" : "pages/ControlPanel/product/productdetail",
+            "style" : {}
+        },
+		{
+		    "path" : "pages/ControlPanel/my/my",
+		    "style" : {}
+		}
+    ],
+	"globalStyle": {
+		"mp-alipay": {
+			/* 支付宝小程序特有相关 */
+			"transparentTitle": "always",
+			"allowsBounceVertical": "NO"
+		},
+		"navigationBarBackgroundColor": "#0081ff",
+		"navigationBarTitleText": "ColorUi for UniApp",
+		"navigationStyle": "custom",
+		"navigationBarTextStyle": "white"
+	},
+	"tabBar": {
+		"color": "#C0C4CC",
+		"selectedColor": "#fa436a",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/ControlPanel/index/index",
+				"iconPath": "static/img/tab-home.png",
+				"selectedIconPath": "static/img/tab-home-current.png",
+				"text": "工作台"
+			},
+			// {
+			// 	"pagePath": "pages/ControlPanel/product/productlist",
+			// 	"iconPath": "static/img/tab-product.png",
+			// 	"selectedIconPath": "static/img/tab-product-current.png",
+			// 	"text": "商品"
+			// },
+			{
+				"pagePath": "pages/ControlPanel/main/main",
+				"iconPath": "static/img/tab-cate.png",
+				"selectedIconPath": "static/img/tab-cate-current.png",
+				"text": "菜单",
+				"isSpecial": true
+			},
+			// {
+			// 	"pagePath": "pages/ControlPanel/index/index",
+			// 	"iconPath": "static/img/tab-cart.png",
+			// 	"selectedIconPath": "static/img/tab-cart-current.png",
+			// 	"text": "报表"
+			// },
+			{
+				"pagePath": "pages/ControlPanel/my/my",
+				"iconPath": "static/img/tab-my.png",
+				"selectedIconPath": "static/img/tab-my-current.png",
+				"text": "我的"
+			}
+		]
+	}
+}
