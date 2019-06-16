@@ -15,59 +15,60 @@
 			</scroll-view>
 			<scroll-view class="VerticalMain" scroll-y scroll-with-animation style="height:calc(100vh - 200upx)" :scroll-into-view="'main-' + mainCur" @scroll="VerticalMain">
 				<view class="cu-card article no-card" :key="0" :id="'main-0'">
-					<view class="cu-bar solid-bottom bg-white">
-						<view class="action">
-							<text class="cuIcon-title text-green"></text>
-							基础信息
+					<view class="cu-list menu solid-bottom shadow-lg">
+						<view class="bg-gradual-green cu-item arrow" @tap="hideOrShow">
+							<view class="content">
+								<text class="cuIcon-title text-red"></text>
+								<text>商品基础信息</text>
+							</view>
 						</view>
-						<view class="action"><button class="cu-btn bg-green shadow" @tap="hideOrShow" data-target="DrawerModalL">定位</button></view>
-					</view>
-					<view class="cu-list menu-avatar">
-						<view class="cu-form-group">
-							<view class="title">类别：</view>
-							<view class="action">{{ productInfo.V_C1Name }}->{{ productInfo.V_C2Name }}->{{ productInfo.V_C3Name }}</view>
-						</view>
-						<view class="cu-form-group">
-							<view class="title">编号：</view>
-							<input type="text" v-model="productInfo.ProductID" />
-						</view>
-						<view class="cu-form-group">
-							<view class="title">名称：</view>
-							<input type="text" v-model="productInfo.BriefName" />
-						</view>
-						<view class="cu-form-group">
-							<view class="title">拼音码：</view>
-							<input type="text" v-model="productInfo.BriefNameSpellCode" />
-						</view>
-						<view class="cu-form-group">
-							<view class="title">标尾：</view>
-							<input type="text" v-model="productInfo.BriefName" />
-						</view>
-						<view class="cu-form-group">
-							<view class="title">单位：</view>
-							<input type="text" v-model="productInfo.BriefName" />
-						</view>
-						<view class="cu-form-group">
-							<view class="title">条码：</view>
-							<input type="text" v-model="productInfo.BarCode" />
-						</view>
-						<view class="cu-form-group">
-							<view class="title">箱规：</view>
-							<input type="text" v-model="productInfo.BriefName" />
-						</view>
-						<view class="cu-form-group">
-							<view class="title">关键字：</view>
-							<input type="text" v-model="productInfo.BriefName" />
+						<view class="cu-list menu-avatar">
+							<view class="cu-form-group">
+								<view class="title">类别：</view>
+								<view class="action">{{ productInfo.V_C1Name }}->{{ productInfo.V_C2Name }}->{{ productInfo.V_C3Name }}</view>
+							</view>
+							<view class="cu-form-group">
+								<view class="title">编号：</view>
+								<input type="text" v-model="productInfo.ProductID" />
+							</view>
+							<view class="cu-form-group">
+								<view class="title">名称：</view>
+								<input type="text" v-model="productInfo.BriefName" />
+							</view>
+							<view class="cu-form-group">
+								<view class="title">拼音码：</view>
+								<input type="text" v-model="productInfo.BriefNameSpellCode" />
+							</view>
+							<view class="cu-form-group">
+								<view class="title">标尾：</view>
+								<input type="text" v-model="productInfo.BriefName" />
+							</view>
+							<view class="cu-form-group">
+								<view class="title">单位：</view>
+								<input type="text" v-model="productInfo.BriefName" />
+							</view>
+							<view class="cu-form-group">
+								<view class="title">条码：</view>
+								<input type="text" v-model="productInfo.BarCode" />
+							</view>
+							<view class="cu-form-group">
+								<view class="title">箱规：</view>
+								<input type="text" v-model="productInfo.BriefName" />
+							</view>
+							<view class="cu-form-group">
+								<view class="title">关键字：</view>
+								<input type="text" v-model="productInfo.BriefName" />
+							</view>
 						</view>
 					</view>
 				</view>
 				<view class="cu-card article no-card" :key="1" :id="'main-1'">
-					<view class="cu-bar solid-bottom bg-white">
-						<view class="action">
-							<text class="cuIcon-title text-green"></text>
-							商品要货信息
+					<view class="cu-list menu margin-top-sm shadow-lg">
+					<view class="bg-gradual-green cu-item arrow" @tap="hideOrShow">
+						<view class="content">
+							<text class="cuIcon-title text-red"></text>
+							<text>商品要货信息</text>
 						</view>
-						<view class="action"><button class="cu-btn bg-green shadow" @tap="hideOrShow" data-target="DrawerModalL">定位</button></view>
 					</view>
 					<view class="cu-list menu-avatar">
 						<view class="cu-form-group">
@@ -104,6 +105,7 @@
 						</view>
 					</view>
 				</view>
+				</view>
 			</scroll-view>
 		</view>
 	</view>
@@ -113,7 +115,15 @@
 export default {
 	data() {
 		return {
-			list: [{ id: 0, name: '基础' }, { id: 1, name: '要货' }, { id: 2, name: '采购' }, { id: 3, name: '价格' }, { id: 4, name: '门店' }, { id: 5, name: '主子商品' },{id:6,name:'采购蓝'}],
+			list: [
+				{ id: 0, name: '基础' },
+				{ id: 1, name: '要货' },
+				{ id: 2, name: '采购' },
+				{ id: 3, name: '价格' },
+				{ id: 4, name: '门店' },
+				{ id: 5, name: '主子商品' },
+				{ id: 6, name: '采购蓝' }
+			],
 			tabCur: 0,
 			mainCur: 0,
 			verticalNavTop: 0,
