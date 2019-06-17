@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<cu-custom bgColor="bg-gradual-pink" :isBack="true">
+		<cu-custom bgColor="bg-gradual-pink">
 			<block slot="backText"></block>
 			<block slot="content">登录</block>
 		</cu-custom>

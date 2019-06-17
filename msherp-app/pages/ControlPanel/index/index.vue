@@ -1,28 +1,56 @@
 <template>
 	<view>
-		<cu-custom bgColor="bg-gradual-pink" :isBack="true">
+		<cu-custom bgColor="bg-gradual-pink">
 			<block slot="backText"></block>
 			<block slot="content">工作台</block>
 		</cu-custom>
-		<view v-if="hasLogin" class="hello">
-			<view class="title">
-				您好 {{userName}}，您已成功登录。
-			</view>
-			<view class="ul">
-				<view>欢迎使用妙生活ERP小程序。</view>
-				<view>在 “我的” 中点击 “退出” 可以 “注销当前账户”</view>
-			</view>
-			<view>
-				<button type="primary" class="primary" @tap="showtest">验证</button>
+		<view class="cu-list menu-avatar margin-top margin-bottom-sm">
+			<view class="cu-item">
+				<view class="cu-avatar round lg" style="'background-image:url('');'"></view>
+				<view class="content flex-sub">
+					<view class="text-grey">今日门店销售情况</view>
+					<view class="text-gray text-sm flex justify-between">
+						销量第一：江湾店
+					</view>
+				</view>
 			</view>
 		</view>
-		<view v-if="!hasLogin" class="hello">
-			<view class="title">
-				您好。
+		<view class="cu-list menu margin-top margin-bottom-sm">
+			<view class="cu-item arrow">
+				<view class="content">
+					<text class="cuIcon-circlefill text-grey"></text>
+					<text class="text-grey">待处理盘点单</text>
+				</view>
+				<view class="action">
+					<view class="cu-tag round bg-orange light">99</view>
+				</view>
 			</view>
-			<view class="ul">
-				<view>欢迎使用妙生活ERP小程序。</view>
-				<view>请先登录</view>
+			<view class="cu-item arrow">
+				<view class="content">
+					<text class="cuIcon-circlefill text-grey"></text>
+					<text class="text-grey">待处理移库单</text>
+				</view>
+				<view class="action">
+					<view class="cu-tag round bg-orange light">99</view>
+				</view>
+			</view>
+			<view class="cu-item arrow">
+				<view class="content">
+					<text class="cuIcon-circlefill text-grey"></text>
+					<text class="text-grey">未完结损益单</text>
+				</view>
+				<view class="action">
+					<view class="cu-tag round bg-orange light">99</view>
+				</view>
+			</view>
+			<view class="cu-item arrow">
+				<view class="content">
+					<text class="cuIcon-circlefill text-grey"></text>
+					<text class="text-grey">采购篮</text>
+				</view>
+				<view class="action">
+					<view class="cu-tag round bg-orange light">99</view>
+				</view>
 			</view>
 		</view>
 	</view>
