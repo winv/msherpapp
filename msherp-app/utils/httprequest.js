@@ -8,7 +8,8 @@ httprequest.setConfig((config) => { /* 设置全局配置 config 为默认全局
 		'Access-Control-Allow-Credentials': true,
 		'Access-Control-Allow-Headers': 'x-requested-with,content-type',
 		'Token': uni.getStorageSync(mshconfig.mshsessionid),
-		'Set-Cookie':uni.getStorageSync('ASPNETSessionId')
+		'MshUserID':uni.getStorageSync('MshUserID'),
+		// 'Set-Cookie':uni.getStorageSync('ASPNETSessionId')
 	}
 	return config
 })
@@ -24,6 +25,7 @@ httprequest.setConfig((config) => { /* 设置全局配置 config 为默认全局
 // 	// }
 // 	return config;
 // })
+
 /* 请求之后拦截器,对返回错误统一处理,必须return response*/
 httprequest.interceptor.response((res) => { 
 	if (!res) return false;
@@ -32,7 +34,8 @@ httprequest.interceptor.response((res) => {
 	} = res;
 	//401 未登录
 	if (res.statusCode == 401) {
-		uni.removeStorage(this.MshSessionID);
+		// console.log(this.MshSessionID);
+		// uni.removeStorage(this.MshSessionID);
 		uni.showToast({
 			icon: 'none',
 			title: '未登陆或登陆已过期，请重新登陆',

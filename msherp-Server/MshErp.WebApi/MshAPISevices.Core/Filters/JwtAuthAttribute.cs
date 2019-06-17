@@ -52,7 +52,7 @@ namespace MshErp.APIServices.Core.Filters
                 throw new LoginFaildException("登录信息已过期！");
 
             //string userName = dictPayload[Constants.UserName];
-           // var user = IUserManager.GetUserInfoByCode(userName);
+            //var user = IUserManager.GetUserInfoByCode(userName);
 
             ////把toke用户数据放到 HttpContext.Current.User 里
             //if (HttpContext.Current != null)

@@ -112,11 +112,6 @@
 					});
 					return;
 				}
-				/**
-				 * 下面简单模拟下服务端的处理
-				 * 检测用户账号密码是否在已注册的用户列表中
-				 * 实际开发中，使用 uni.request 将账号信息发送至服务端，客户端在回调函数中获取结果信息。
-				 */
 				console.log(this.SERVER_URL);
 				var user = {
 					Token: "",
@@ -134,10 +129,9 @@
 				this.http.post(controll, user).then(res => {
 					console.log(res);
 					if (res.data.Status) {
-						console.log(res.header["Set-Cookie"])
-						uni.removeStorageSync('ASPNETSessionId');
+						// console.log(res.header["Set-Cookie"])
+						uni.setStorageSync("MshUserID",this.account)
 						uni.setStorageSync(this.MshSessionID, res.data.Data.Token);
-						uni.setStorageSync('ASPNETSessionId', res.header["Set-Cookie"]);
 						uni.setStorageSync(this.mshconfig.mshdata_expirationName, this.mshconfig.mshdata_expirationTime)
 						this.toMain(this.account);
 					}
@@ -153,12 +147,6 @@
 							provider: value,
 							success: (infoRes) => {
 								console.log(infoRes);
-								/**
-								 * 实际开发中，获取用户信息后，需要将信息上报至服务端。
-								 * 服务端可以用 userInfo.openId 作为用户的唯一标识新增或绑定用户信息。
-								 */
-								//this.toMain(infoRes.userInfo.nickName);
-								//this.wxlogin(infoRes);
 							}
 						});
 					},
