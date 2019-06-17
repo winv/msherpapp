@@ -40,12 +40,12 @@
 								<input type="text" v-model="productInfo.BriefNameSpellCode" />
 							</view>
 							<view class="cu-form-group">
-								<view class="title">标尾：</view>
-								<input type="text" v-model="productInfo.BriefName" />
+								<view class="title">包装规格：</view>
+								<input type="text" v-model="productInfo.packspec" />
 							</view>
 							<view class="cu-form-group">
 								<view class="title">单位：</view>
-								<input type="text" v-model="productInfo.BriefName" />
+								<input type="text" v-model="productInfo.DenominatedUnit" />
 							</view>
 							<view class="cu-form-group">
 								<view class="title">条码：</view>
@@ -53,11 +53,11 @@
 							</view>
 							<view class="cu-form-group">
 								<view class="title">箱规：</view>
-								<input type="text" v-model="productInfo.BriefName" />
+								<input type="text" v-model="productInfo.CartonMeasurement" />
 							</view>
 							<view class="cu-form-group">
 								<view class="title">关键字：</view>
-								<input type="text" v-model="productInfo.BriefName" />
+								<input type="text" v-model="productInfo.SearchKey" />
 							</view>
 						</view>
 					</view>
@@ -73,26 +73,26 @@
 					<view class="cu-list menu-avatar">
 						<view class="cu-form-group">
 							<view class="title">分货单位：</view>
-							<input type="text" v-model="productInfo.BriefName" />
+							<input type="text" v-model="productInfo.DivisionUnit" />
 						</view>
 						<view class="cu-form-group">
 							<view class="title">周转天数：</view>
+							<input type="text" v-model="productInfo.TurnOverDays" />
+						</view>
+						<view class="cu-form-group">
+							<view class="title">采购周期：</view>
+							<input type="text" v-model="productInfo.PurchasePeriodWeek" />
+						</view>
+						<view class="cu-form-group">
+							<view class="title">截单时间：</view>
+							<input type="text" v-model="productInfo.StopOrderTime" />
+						</view>
+						<view class="cu-form-group">
+							<view class="title">配送方式：</view>
 							<input type="text" v-model="productInfo.BriefName" />
 						</view>
 						<view class="cu-form-group">
-							<view class="title">拼音码：</view>
-							<input type="text" v-model="productInfo.BriefName" />
-						</view>
-						<view class="cu-form-group">
-							<view class="title">标尾：</view>
-							<input type="text" v-model="productInfo.BriefName" />
-						</view>
-						<view class="cu-form-group">
-							<view class="title">单位：</view>
-							<input type="text" v-model="productInfo.BriefName" />
-						</view>
-						<view class="cu-form-group">
-							<view class="title">条码：</view>
+							<view class="title">保存方式：</view>
 							<input type="text" v-model="productInfo.BarCode" />
 						</view>
 						<view class="cu-form-group">
