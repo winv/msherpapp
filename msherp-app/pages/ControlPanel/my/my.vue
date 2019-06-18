@@ -8,8 +8,8 @@
 			<view class="cu-item">
 				<view class="cu-avatar round lg" :style="'background-image:url(' + userInfo.avatarUrl + ');'"></view>
 				<view class="content flex-sub">
-					<view class="text-grey">{{ userInfo.nickName }}</view>
-					<view class="text-gray text-sm flex justify-between">{{ userInfo.country }}</view>
+					<view class="">{{ userInfo.nickName }}</view>
+					<view class="text-sm flex justify-between">{{ userInfo.country }}</view>
 				</view>
 			</view>
 		</view>
@@ -17,13 +17,13 @@
 			<view class="cu-item arrow" @tap="bindWeiXin">
 				<view class="content">
 					<text class="cuIcon-circlefill text-grey"></text>
-					<text class="text-grey">绑定微信登录</text>
+					<text class="">绑定微信登录</text>
 				</view>
 			</view>
 			<view class="cu-item arrow">
 				<view class="content">
 					<text class="cuIcon-circlefill text-grey"></text>
-					<text class="text-grey">设置</text>
+					<text class="">设置</text>
 				</view>
 			</view>
 		</view>
@@ -61,6 +61,50 @@ export default {
 		bindWeiXin() {
 			console.log('bind weixin clicked');
 			this.binding = true;
+			var self = this;
+			var controll = this.SERVER_URL + 'UserManage/BindWeiXinOpenId';
+			var userinfo=uni.getStorageSync("MshUserSession");
+			console.log(userinfo);
+			
+			uni.login({
+				provider: 'weixin',
+				success: (res) => {
+					console.log(res);
+					var controll2 = this.SERVER_URL + 'WeiXin/GetOpenId/?json_code=' + res.code;
+					this.http.get(controll2, '').then(res2 => {
+						//根据获取的OPENid 检测ERP侧是否绑定
+						var obj = res2.data;
+						console.log(obj);
+						var userDto = {
+							Token: "",
+							TimeSpan: 0,
+							WeiXinOpenID:res2.data.Data.openid,
+							ReqBody: {
+								"SysNo": userinfo.User._sysno,
+							}
+						};
+						this.http.post(controll, userDto).then(res => {
+							this.binding=false;
+							if(res.data.Status){
+								uni.showToast({
+									icon: 'none',
+									title: '绑定成功'
+								});
+							}
+							else{
+								uni.showToast({
+									icon: 'none',
+									title: '绑定失败'
+								});
+							}
+						});
+					});
+				},
+				fail: (err) => {
+					console.error('授权登录失败：' + JSON.stringify(err));
+				}
+			});
+			
 		}
 	}
 };

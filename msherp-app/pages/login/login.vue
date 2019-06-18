@@ -16,7 +16,7 @@
 		</form>
 		<view class="btn-row">
 			<button type="primary" class="primary" @tap="bindLogin">登录</button>
-			<button v-if="false" type="primary" class="primary" @tap="showtest">验证</button>
+			<button v-if="true" type="primary" class="primary" @tap="showtest">验证</button>
 		</view>
 		<view class="flex solid-bottom padding justify-end">
 			<view class="padding-sm margin-xs radius">
@@ -130,7 +130,7 @@
 					console.log(res);
 					if (res.data.Status) {
 						// console.log(res.header["Set-Cookie"])
-						uni.setStorageSync("MshUserID",this.account)
+						uni.setStorageSync("MshUserSession",res.data.Data.oSession)
 						uni.setStorageSync(this.MshSessionID, res.data.Data.Token);
 						uni.setStorageSync(this.mshconfig.mshdata_expirationName, this.mshconfig.mshdata_expirationTime)
 						this.toMain(this.account);
@@ -181,7 +181,6 @@
 				this.http.get(controll, '').then(res => {
 					//根据获取的OPENid 检测ERP侧是否绑定
 					var obj = res.Data;
-
 					console.log(obj);
 					var user = {
 						Token: "",

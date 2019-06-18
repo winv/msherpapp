@@ -8,6 +8,9 @@ using System.Text;
 using System.Web.Http;
 using Eson.Objects;
 using Eson.Objects.Basic;
+using System.Web;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace MshErp.APIServices.Core.ApiControllers
 {
@@ -22,7 +25,7 @@ namespace MshErp.APIServices.Core.ApiControllers
             StringBuilder sb = new StringBuilder();
             bool issuccess = true;
             var Token = "";
-            var sessionid = "";
+            SessionInfo oSession = new SessionInfo();
             try
             {
                 var oUser = _userManager.CheckUser(userDto);
@@ -48,14 +51,12 @@ namespace MshErp.APIServices.Core.ApiControllers
                            && oUser.DepartmentSysNo != (int)AppEnum.DepartmentID.Mall
                            && oUser.DepartmentSysNo != (int)AppEnum.DepartmentID.Vendor)
                         {
-                            SessionInfo oSession = new SessionInfo();
+                            
                             oSession.User = MapUserInfo(oUser);
                             //oSession.IpAddress = Request.UserHostAddress;
                             //oSession.PrivilegeAL = SysManager.GetInstance().GetPrivilegeALByUser(oUser.SysNo);
                             //oSession.CopyUserAL = SysManager.GetInstance().GetUserFigureCopyList(oUser.SysNo, true);
                             //oSession.CopyPrivilegeAL = SysManager.GetInstance().GetPrivilegeALByUserCopy(oUser.SysNo);
-                            System.Web.HttpContext.Current.Session["SessionInfo"] = oSession;
-                            sessionid = System.Web.HttpContext.Current.Session.SessionID;
                         }
                     }
                 }
@@ -68,7 +69,7 @@ namespace MshErp.APIServices.Core.ApiControllers
             var res = new
             {
                 Token,
-                sessionid,
+                oSession,
                 msg = sb.ToString()
             };
 
@@ -124,6 +125,12 @@ namespace MshErp.APIServices.Core.ApiControllers
         public string ShowTest([FromBody] string value)
         {
             object o = System.Web.HttpContext.Current.Session["SessionInfo"];
+            CookieHeaderValue cookie = Request.Headers.GetCookies("session-id").FirstOrDefault();
+            var sessionId = "";
+            if (cookie != null)
+            {
+                sessionId = cookie["session-id"].Value;
+            }
             return "hello jwt";
         }
 

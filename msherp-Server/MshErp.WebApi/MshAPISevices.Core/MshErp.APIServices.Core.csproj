@@ -148,6 +148,7 @@
     <Compile Include="ApiControllers\BaseApiControlle.cs" />
     <Compile Include="ApiControllers\LoginController.cs" />
     <Compile Include="ApiControllers\ProductController.cs" />
+    <Compile Include="ApiControllers\UserManageController.cs" />
     <Compile Include="ApiControllers\WeiXinController.cs" />
     <Compile Include="App_Start\AutofacConfig.cs" />
     <Compile Include="App_Start\HttpControllerHandler.cs" />
