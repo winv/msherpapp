@@ -18,6 +18,9 @@
 		},{
             "path" : "pages/ControlPanel/product/productdetail",
             "style" : {}
+        },{
+            "path" : "pages/ControlPanel/product/pobasket",
+            "style" : {}
         },
 		{
 		    "path" : "pages/ControlPanel/my/my",

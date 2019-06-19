@@ -49,40 +49,47 @@
 						urls: '/pages/ControlPanel/product/productlist'
 					},
 					{
-						title: '报表',
-						name: 'Report',
-						color: 'purple',
-						cuIcon: 'font',
-						urls: '/pages/ControlPanel/product/productlist'
+						title: '采购篮',
+						name: 'Login',
+						color: 'orange',
+						cuIcon: 'icloading',
+						urls: '/pages/ControlPanel/product/pobasket'
 					},
+					// {
+					// 	title: '报表',
+					// 	name: 'Report',
+					// 	color: 'purple',
+					// 	cuIcon: 'font',
+					// 	urls: '/pages/ControlPanel/product/productlist'
+					// },
+					// {
+					// 	title: '订单 ',
+					// 	name: 'Order',
+					// 	color: 'mauve',
+					// 	cuIcon: 'cuIcon',
+					// 	urls: '/pages/ControlPanel/product/productlist'
+					// },
+					// {
+					// 	title: '库存',
+					// 	name: 'Inventory',
+					// 	color: 'pink',
+					// 	cuIcon: 'btn',
+					// 	urls: '/pages/ControlPanel/'
+					// },
 					{
-						title: '订单 ',
-						name: 'Order',
-						color: 'mauve',
-						cuIcon: 'cuIcon',
-						urls: '/pages/ControlPanel/product/productlist'
-					},
-					{
-						title: '库存',
-						name: 'Inventory',
-						color: 'pink',
-						cuIcon: 'btn',
-						urls: '/pages/ControlPanel/'
-					},
-					{
-						title: '采购',
+						title: '采购单',
 						name: 'Purchase',
 						color: 'brown',
 						cuIcon: 'tagfill',
 						urls: '/pages/ControlPanel/product/productlist'
 					},
-					{
-						title: '财务',
-						name: 'Finance',
-						color: 'red',
-						cuIcon: 'myfill',
-						urls: '/pages/ControlPanel/product/productlist'
-					},
+					// {
+					// 	title: '财务',
+					// 	name: 'Finance',
+					// 	color: 'red',
+					// 	cuIcon: 'myfill',
+					// 	urls: '/pages/ControlPanel/product/productlist'
+					// },
 					{
 						title: '登陆',
 						name: 'Login',

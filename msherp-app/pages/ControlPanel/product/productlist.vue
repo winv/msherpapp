@@ -30,7 +30,7 @@
 						</navigator>
 					</view>
 					<view class="padding-sm margin-xs radius">
-						<fa-icon v-if="true" type="cart-arrow-down" size="22" color="#666" @tap="showCart(item)" data-target="DialogCartModal"></fa-icon>
+						<text v-if="true" class="lg text-red" :class="'cuIcon-cartfill'" @tap="showCart(item)" data-target="DialogCartModal"></text>
 					</view>
 				</view>
 				<view class="cu-card article no-card">
@@ -94,7 +94,6 @@
 			</view>
 			<view class="cu-load bg-blue" @tap="loadMoreData" v-if="loadMore.isShowMore" :class="loadMore.loadClass">{{ loadMore.loadText }}</view>
 		</scroll-view>
-
 		<view class="cu-modal" :class="modalName == 'DialogModal2' ? 'show' : ''">
 			<view class="cu-dialog">
 				<view class="cu-bar bg-white justify-end">
@@ -169,6 +168,13 @@
 		<view class="cu-load load-modal" v-if="loadModal">
 			<image src="/static/logo.png" mode="aspectFit"></image>
 			<view class="gray-text">查询中...</view>
+		</view>
+		<view class="menu_box" v-if="showCartInfo.showIcon">
+			<navigator navigateTo :url="'/pages/ControlPanel/product/pobasket'">
+				<view class='cu-avatar sm radius' style="background-image:url(/static/img/tab-cart-current.png)">
+					<view class='cu-tag badge'>{{showCartInfo.count}}</view>
+				</view>
+			</navigator>
 		</view>
 	</view>
 </template>
@@ -280,13 +286,15 @@
 						SearchStatus: [0, 1]
 					}
 				},
-				userInfo: {}
+				userInfo: {},
+				showCartInfo:{showIcon:false,count:0},
 			};
 		},
 		onLoad() {
 			this.userInfo = uni.getStorageSync("MshUserSession");
 			console.log(this.userInfo);
 		},
+		
 		methods: {
 			handleSubmit() {
 				this.loadModal = true;
@@ -297,6 +305,7 @@
 				this.loadMore.isaddData = false;
 				this.loadMore.isShowMore = true;
 				this.fetchData();
+				this.loadPobasketData();
 			},
 			loadMoreData() {
 				console.log(this.searchResultData);
@@ -330,41 +339,65 @@
 				console.log(obj);
 				this.ProductInfo = obj;
 				this.PoBasketDto.ReqBody.ProductSysNo = obj.ProductSysNo;
+				this.PoBasketDto.ReqBody.CreateUserSysNo = this.userInfo.User.SysNo;
 				this.PoBasketDto.ReqBodyModel.ProductSysNo = obj.ProductSysNo;
 				this.PoBasketDto.ReqBodyModel.CreateUserSysNo = this.userInfo.User.SysNo
-				this.PoBasketDto.ReqBody.CreateUserSysNo = this.userInfo.User.SysNo
+				
 				console.log('cart clicked');
 				var controll = this.SERVER_URL + 'Purchase/QueryPoBaksetDetail';
 				this.http.post(controll, this.PoBasketDto).then(res => {
 					console.log(res);
 					if (res.data.Data.ReqBody[0] !== null) {
-						var dataObj=res.data.Data.ReqBody[0];
+						var dataObj = res.data.Data.ReqBody[0];
 						this.PoBasketDto.ReqBodyModel.Quantity = dataObj.Quantity;
 						this.PoBasketDto.ReqBodyModel.OrderPrice = dataObj.OrderPrice;
-					}
-					else
-					{
+					} else {
 						this.PoBasketDto.ReqBodyModel.Quantity = '';
 						this.PoBasketDto.ReqBodyModel.OrderPrice = '';
 					}
 				});
 			},
 			addToPoBasket(e) {
+				var self = this;
+				var lastCost = this.ProductInfo.BuyUniCost;
+				var currCost = this.PoBasketDto.ReqBodyModel.OrderPrice;
+				var costmsg = "";
+				var duration = 500;
+				if (currCost > lastCost) {
+					costmsg = "当前采购成本：" + currCost + " 大于最后一次采购成本:" + lastCost + "，请确认采购价格！";
+					duration = 4000
+				}
 				var controll = this.SERVER_URL + 'Purchase/InsertPoBasket';
 				this.http.post(controll, this.PoBasketDto).then(res => {
 					console.log(res);
 					if (res.data.Status) {
 						uni.showToast({
 							icon: 'none',
-							title: '采购篮添加成功'
+							title: '采购篮添加成功!' + costmsg,
+							duration: duration
 						});
 						this.modalName = '';
-						
 					} else {
 						uni.showToast({
 							icon: 'none',
-							title: res.data.Message
+							title: res.data.Message,
+							duration: 3000
 						});
+					}
+				});
+				this.loadPobasketData();
+			},
+			loadPobasketData(){
+				var self=this;
+				this.PoBasketDto.ReqBody.CreateUserSysNo = this.userInfo.User.SysNo;
+				var controll = this.SERVER_URL + 'Purchase/QueryPoBaksetCount';
+				this.http.post(controll, this.PoBasketDto).then(res => {
+					console.log(res);
+					if (res.data.Status&&res.data.Data>0) {
+						self.showCartInfo.showIcon=true;
+						self.showCartInfo.count=res.data.Data;
+					} else {
+						self.showCartInfo.showIcon=false;
 					}
 				});
 			},
@@ -454,5 +487,13 @@
 
 	.switch-music::before {
 		content: '\e6db';
+	}
+
+	.menu_box {
+		position: fixed;
+		bottom: 150rpx;
+		right: 30rpx;
+		/* background-color: red; */
+		text-align: center;
 	}
 </style>

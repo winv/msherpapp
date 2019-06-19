@@ -1,10 +1,12 @@
 ﻿using Eson.BLL.Purchase;
 using Eson.Objects.Purchase;
+using Eson.Utils;
 using MshErp.BLL.Interface;
 using MshErp.Model.DTO;
 using RobotMapper;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,6 +15,7 @@ namespace MshErp.BLL
 {
     public class PurchaseInfoManager : IPurchaseInfoManager
     {
+        
         public PurchaseBasketResponseBody GetPoBasketInfo(PurchaseBasketRequstDTO request)
         {
             var result = PurchaseManager.GetInstance().LoadBasket(int.Parse(request.ReqBody.ProductSysNo), int.Parse(request.ReqBody.CreateUserSysNo), int.Parse(request.ReqBody.StockSysNo));
@@ -32,6 +35,20 @@ namespace MshErp.BLL
                 return respbody;
             }
             return null;
+        }
+
+        public List<PurchaseBasketResponseBody> GetPoBasketList(PurchaseBasketRequstDTO request)
+        {
+            var result = PurchaseManager.GetInstance().GetPOBasketDsApi(int.Parse(request.ReqBody.CreateUserSysNo), int.Parse(request.ReqBody.StockSysNo));
+            //var list = result.RobotMap<DataSet, List<PurchaseBasketResponseBody>>();
+            //var list = AutoMapper.Mapper.Map<List<PurchaseBasketResponseBody>>(result);
+            var list = ExtensiveHelper.Map<DataTable, PurchaseBasketResponseBody>(result.Tables[0]);
+            return list;
+        }
+        public int GetPoBasketCount(PurchaseBasketRequstDTO request)
+        {
+            var result = PurchaseManager.GetInstance().GetPOBasketDsApi(int.Parse(request.ReqBody.CreateUserSysNo), int.Parse(request.ReqBody.StockSysNo));
+            return result.Tables[0].Rows.Count;
         }
 
         public PurchaseBasketResponseBody InsertPoBasketInfo(PurchaseBasketRequstDTO request)

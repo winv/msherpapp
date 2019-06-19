@@ -32,14 +32,25 @@ namespace MshErp.APIServices.Core.ApiControllers
         [HttpPost]
         public AjaxResponseInfo QueryPoBaksetList([FromBody] PurchaseBasketRequstDTO request)
         {
-            var respbody = IPurchaseInfoManager.GetPoBasketInfo(request);
-            var body = new List<PurchaseBasketResponseBody>();
-            body.Add(respbody);
-
+            var respbody = IPurchaseInfoManager.GetPoBasketList(request);
+            var dto = new PurchaseBasketResponseDTO
+            {
+                ReqBody = respbody
+            };
             return new AjaxResponseInfo
             {
                 Status = true,
-                Data = new PurchaseBasketResponseDTO { ReqBody = body }
+                Data = dto
+            };
+        }
+        public AjaxResponseInfo QueryPoBaksetCount([FromBody] PurchaseBasketRequstDTO request)
+        {
+            var count = IPurchaseInfoManager.GetPoBasketCount(request);
+            
+            return new AjaxResponseInfo
+            {
+                Status = true,
+                Data = count
             };
         }
         public AjaxResponseInfo InsertPoBasket([FromBody] PurchaseBasketRequstDTO request)

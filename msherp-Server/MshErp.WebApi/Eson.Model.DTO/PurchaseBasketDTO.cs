@@ -95,6 +95,17 @@ namespace MshErp.Model.DTO
         /// StockSysNo
         /// </summary>		
         public int StockSysNo { get; set; }
+
+
+        #endregion
+
+        #region 虚拟字段
+        public string V_ProductName { get; set; }
+        public string V_ProductID { get; set; }
+        public string V_UserName { get; set; }
+        public string V_VendorName { get; set; }
+        public string V_StockName { get; set; }
+        public int V_LastVendorSysNo { get; set; }
         #endregion
     }
 }
