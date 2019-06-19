@@ -25,7 +25,7 @@ namespace MshErp.APIServices.Core.ApiControllers
             StringBuilder sb = new StringBuilder();
             bool issuccess = true;
             var Token = "";
-            SessionInfo oSession = new SessionInfo();
+            UserSessionDTO oSession = new UserSessionDTO();
             try
             {
                 var oUser = _userManager.CheckUser(userDto);
@@ -134,9 +134,9 @@ namespace MshErp.APIServices.Core.ApiControllers
             return "hello jwt";
         }
 
-        private UserInfo MapUserInfo(UserResponseBody oUser)
+        private UserBasic MapUserInfo(UserResponseBody oUser)
         {
-            UserInfo oParam = new UserInfo
+            UserBasic oParam = new UserBasic
             {
                 SysNo = oUser.SysNo,
                 UserID = oUser.UserID,

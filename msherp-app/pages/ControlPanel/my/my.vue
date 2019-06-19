@@ -80,7 +80,7 @@ export default {
 							TimeSpan: 0,
 							WeiXinOpenID:res2.data.Data.openid,
 							ReqBody: {
-								"SysNo": userinfo.User._sysno,
+								"SysNo": userinfo.User.SysNo,
 							}
 						};
 						this.http.post(controll, userDto).then(res => {

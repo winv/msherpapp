@@ -9,22 +9,25 @@ httprequest.setConfig((config) => { /* 设置全局配置 config 为默认全局
 		'Access-Control-Allow-Headers': 'x-requested-with,content-type',
 		'Token': uni.getStorageSync(mshconfig.mshsessionid),
 		'MshUserID':uni.getStorageSync('MshUserID'),
-		// 'Set-Cookie':uni.getStorageSync('ASPNETSessionId')
 	}
 	return config
 })
 
-// 拦截器
-// httprequest.interceptor.request((config, cancel) => { /* 请求之前拦截器，cancel 为函数，如果调用会取消本次请求。需要注意：调用cancel,本次请求的catch仍会执行。必须return config */
-// 	config.header = {
-// 		a: 1,
-// 		...config.header
-// 	}
-// 	// if (!token) { /* 如果token不存在，调用cancel 会取消本次请求，但是该函数的catch() 仍会执行*/
-// 	// 	cancel('token 不存在') // 接收一个参数，会传给catch((err) => {}) err.errMsg === 'token 不存在'
-// 	// }
-// 	return config;
-// })
+//拦截器
+httprequest.interceptor.request((config, cancel) => { /* 请求之前拦截器，cancel 为函数，如果调用会取消本次请求。需要注意：调用cancel,本次请求的catch仍会执行。必须return config */
+	config.header = {
+		'Content-Type': 'application/json;charset=UTF-8',
+		'Access-Control-Allow-Origin': 'http://localhost/',
+		'Access-Control-Allow-Credentials': true,
+		'Access-Control-Allow-Headers': 'x-requested-with,content-type',
+		'Token': uni.getStorageSync(mshconfig.mshsessionid),
+		'MshUserID':uni.getStorageSync('MshUserID'),
+	}
+	// if (!token) { /* 如果token不存在，调用cancel 会取消本次请求，但是该函数的catch() 仍会执行*/
+	// 	cancel('token 不存在') // 接收一个参数，会传给catch((err) => {}) err.errMsg === 'token 不存在'
+	// }
+	return config;
+})
 
 /* 请求之后拦截器,对返回错误统一处理,必须return response*/
 httprequest.interceptor.response((res) => { 

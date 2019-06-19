@@ -1,5 +1,4 @@
-﻿using Microsoft.Analytics.Interfaces;
-using Microsoft.Analytics.Types.Sql;
+﻿using MshErp.Model.DTO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +7,10 @@ using System.Text;
 
 namespace MshErp.BLL.Interface
 {
-    public class IPurchaseInfoManager : IDependency
+    public interface IPurchaseInfoManager : IDependency
     {
+        PurchaseBasketResponseBody GetPoBasketInfo(PurchaseBasketRequstDTO request);
+
+        PurchaseBasketResponseBody InsertPoBasketInfo(PurchaseBasketRequstDTO request);
     }
 }

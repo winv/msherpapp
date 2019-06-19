@@ -282,4 +282,21 @@ namespace MshErp.Model.DTO
         public List<BizSysRoleInfo> V_RoleList { get; set; }
         #endregion
     }
+    public class UserBasic
+    {
+        public int Location { get; set; }
+        public int WageFormSysNo { get; set; }
+        public int BranchSysNo { get; set; }
+        public int DepartmentSysNo { get; set; }
+        public int Status { get; set; }
+        public string Note { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
+        public string Pwd { get; set; }
+        public string UserName { get; set; }
+        public string UserID { get; set; }
+        public int SysNo { get; set; }
+        public int BossSysNo { get; set; }
+        public string ExtPhone { get; set; }
+    }
 }

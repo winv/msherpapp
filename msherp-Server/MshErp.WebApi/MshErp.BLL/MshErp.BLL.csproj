@@ -50,6 +50,7 @@
     <Reference Include="Eson.BLL">
       <HintPath>..\Erp.Dll\Eson.BLL.dll</HintPath>
     </Reference>
+    <Reference Include="Eson.Objects, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Eson.Utils">
       <HintPath>..\Erp.Dll\Eson.Utils.dll</HintPath>
     </Reference>

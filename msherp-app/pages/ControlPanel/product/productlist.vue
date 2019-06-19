@@ -14,9 +14,13 @@
 				<button class="cu-btn bg-gradual-red shadow-blur round" @tap="handleSubmitAdv" data-target="DialogModal2">选项</button>
 			</view>
 		</view>
-		<view class="cu-bar bg-white solid-bottom margin-top"><view class="action"></view></view>
+		<view class="cu-bar bg-white solid-bottom margin-top">
+			<view class="action"></view>
+		</view>
 		<scroll-view :scroll-y="modalName == null" class="page" :class="modalName != null ? 'show' : ''" :style="[{ top: CustomBar + 'px' }]">
-			<view class="cu-bar bg-white solid-bottom margin-top" v-if="!loadMore.isfetchData"><view class="action">请输入条件查询数据！</view></view>
+			<view class="cu-bar bg-white solid-bottom margin-top" v-if="!loadMore.isfetchData">
+				<view class="action">请输入条件查询数据！</view>
+			</view>
 			<view v-for="(item, index) in productList" :key="index">
 				<view class="cu-bar bg-white solid-bottom margin-top">
 					<view class="action">
@@ -137,28 +141,28 @@
 			</view>
 		</view>
 		<view class="cu-modal" :class="modalName == 'DialogCartModal' ? 'show' : ''">
-			<view class="cu-dialog">
+			<view class="cu-dialog pull-left">
 				<view class="cu-bar bg-white justify-end">
 					<view class="content">采购篮</view>
 					<view class="action" @tap="hideModal"><text class="cuIcon-close text-red"></text></view>
 				</view>
-				<view class="padding-xl">
-					<view class="cu-form-group margin-top">
-						<view class="title">商品名称</view>
-						<view>{{ ProductInfo.ProductName }}</view>
+				<view class="cu-list menu-avatar padding-sm no-card">
+					<view class="cu-form-group margin-top-sm">
+						<view class="title">商品名称：</view>
+						<view class="action pull-left">{{ ProductInfo.ProductSysNo }}-{{ ProductInfo.ProductName }}-{{ ProductInfo.ProductID }}</view>
 					</view>
-					<view class="cu-form-group margin-top">
+					<view class="cu-form-group">
 						<view class="title">采购数量：</view>
-						<input type="text" v-model="PoBasketDto.ReqBody.qty" />
+						<input class="action" type="text" v-model="PoBasketDto.ReqBodyModel.Quantity" />
 					</view>
-					<view class="cu-form-group margin-top">
+					<view class="cu-form-group">
 						<view class="title">采购单价：</view>
-						<input type="text" v-model="PoBasketDto.ReqBody.cost" />
+						<input type="text" v-model="PoBasketDto.ReqBodyModel.OrderPrice" />
 					</view>
 				</view>
 				<view class="cu-bar bg-white">
 					<view class="action margin-0 flex-sub text-green solid-left" @tap="hideModal">取消</view>
-					<view class="action margin-0 flex-sub  solid-left" @tap="hideModal">加入购物篮</view>
+					<view class="action margin-0 flex-sub  solid-left" @tap="addToPoBasket">加入购物篮</view>
 				</view>
 			</view>
 		</view>
@@ -170,235 +174,285 @@
 </template>
 
 <script>
-export default {
-	data() {
-		return {
-			StatusBar: this.StatusBar,
-			CustomBar: this.CustomBar,
-			loadModal: false,
-			loadMore: {
-				isShowMore: false,
-				loadClassList: ['', 'loading', 'over'],
-				loadClass: '',
-				loadText: '加载更多',
-				isfetchData: false,
-				isaddData: false
+	export default {
+		data() {
+			return {
+				StatusBar: this.StatusBar,
+				CustomBar: this.CustomBar,
+				loadModal: false,
+				loadMore: {
+					isShowMore: false,
+					loadClassList: ['', 'loading', 'over'],
+					loadClass: '',
+					loadText: '加载更多',
+					isfetchData: false,
+					isaddData: false
+				},
+				productList: [],
+				searchResultData: {
+					currentIndex: 1,
+					totalCount: 100,
+					PageSize: 10
+				},
+				modalName: null,
+				gridCol: 3,
+				gridBorder: false,
+				menuBorder: false,
+				menuArrow: false,
+				menuCard: false,
+				skin: false,
+				listTouchStart: 0,
+				listTouchDirection: null,
+				ProductStatusList: [{
+						name: '全部',
+						value: ''
+					},
+					{
+						name: '在售',
+						value: '1'
+					},
+					{
+						name: '未上架',
+						value: '0'
+					},
+					{
+						name: '下架',
+						value: '-1'
+					},
+					{
+						name: '冻结',
+						value: '0'
+					}
+				],
+				ProductMasterList: [{
+						name: '全部',
+						value: ''
+					},
+					{
+						name: '主商品',
+						value: 'true'
+					},
+					{
+						name: '子商品',
+						value: 'false'
+					}
+				],
+				ProductDemandList: [{
+						name: '全部',
+						value: ''
+					},
+					{
+						name: '可以要货',
+						value: '1'
+					},
+					{
+						name: '不能要货',
+						value: '0'
+					}
+				],
+				pickindex: 0,
+				pickdemandindex: 0,
+				pickmasterindex: 0,
+				PoBasketDto: {
+					Token: uni.getStorageSync(this.MshSessionID),
+					TimeSpan: uni.getStorageSync(this.mshconfig.mshdata_expirationName),
+					ReqBody: {
+						StockSysNo: 6,
+						ProductSysNo: 0,
+						CreateUserSysNo: 0
+					},
+					ReqBodyModel: {
+						StockSysNo: 6,
+						ProductSysNo: 0,
+						CreateUserSysNo: 0,
+						Quantity: '',
+						OrderPrice: '',
+					},
+				},
+				ProductInfo: {},
+				searchDataDto: {
+					Token: uni.getStorageSync(this.MshSessionID),
+					TimeSpan: uni.getStorageSync(this.mshconfig.mshdata_expirationName),
+					ReqBody: {
+						IsPaging: true,
+						PageSize: 10,
+						PageIndex: 1,
+						SearchStatus: [0, 1]
+					}
+				},
+				userInfo: {}
+			};
+		},
+		onLoad() {
+			this.userInfo = uni.getStorageSync("MshUserSession");
+			console.log(this.userInfo);
+		},
+		methods: {
+			handleSubmit() {
+				this.loadModal = true;
+				console.log('handleSubmit clicked');
+				console.log(this.searchDataDto);
+				this.searchDataDto.ReqBody.PageIndex = 1;
+				this.loadMore.isfetchData = true;
+				this.loadMore.isaddData = false;
+				this.loadMore.isShowMore = true;
+				this.fetchData();
 			},
-			productList: [],
-			searchResultData: {
-				currentIndex: 1,
-				totalCount: 100,
-				PageSize: 10
+			loadMoreData() {
+				console.log(this.searchResultData);
+				this.searchDataDto.ReqBody.PageIndex++;
+				this.loadMore.loadClass = this.loadMore.loadClassList[1];
+				this.loadMore.loadText = '';
+				this.loadMore.fetchData = true;
+				this.loadMore.isaddData = true;
+				this.fetchData();
 			},
-			modalName: null,
-			gridCol: 3,
-			gridBorder: false,
-			menuBorder: false,
-			menuArrow: false,
-			menuCard: false,
-			skin: false,
-			listTouchStart: 0,
-			listTouchDirection: null,
-			ProductStatusList: [
-				{
-					name: '全部',
-					value: ''
-				},
-				{
-					name: '在售',
-					value: '1'
-				},
-				{
-					name: '未上架',
-					value: '0'
-				},
-				{
-					name: '下架',
-					value: '-1'
-				},
-				{
-					name: '冻结',
-					value: '0'
-				}
-			],
-			ProductMasterList: [
-				{
-					name: '全部',
-					value: ''
-				},
-				{
-					name: '主商品',
-					value: 'true'
-				},
-				{
-					name: '子商品',
-					value: 'false'
-				}
-			],
-			ProductDemandList: [
-				{
-					name: '全部',
-					value: ''
-				},
-				{
-					name: '可以要货',
-					value: '1'
-				},
-				{
-					name: '不能要货',
-					value: '0'
-				}
-			],
-			pickindex: 0,
-			pickdemandindex: 0,
-			pickmasterindex: 0,
-			PoBasketDto: {
-				Token: uni.getStorageSync(this.MshSessionID),
-				TimeSpan: uni.getStorageSync(this.mshconfig.mshdata_expirationName),
-				ReqBody: {}
+			fetchData() {
+				var self = this;
+				var controll = this.SERVER_URL + 'Product/QueryProductList';
+				this.http.post(controll, this.searchDataDto).then(res => {
+					console.log(res);
+					self.loadMore.loadClass = self.loadMore.loadClassList[0];
+					if (res.data.Data.ReqBody.length == 0) {
+						self.loadMore.loadClass = self.loadMore.loadClassList[2];
+						self.loadMore.loadText = '';
+					}
+					if (self.loadMore.isaddData) {
+						self.productList.concat(res.data.Data.ReqBody);
+					} else {
+						self.productList = res.data.Data.ReqBody;
+					}
+					self.loadModal = false;
+				});
 			},
-			ProductInfo: {},
-			searchDataDto: {
-				Token: uni.getStorageSync(this.MshSessionID),
-				TimeSpan: uni.getStorageSync(this.mshconfig.mshdata_expirationName),
-				ReqBody: {
-					IsPaging: true,
-					PageSize: 10,
-					PageIndex: 1,
-					SearchStatus: [0, 1]
-				}
-			}
-		};
-	},
-	methods: {
-		showModal(e) {
-			this.modalName = e.currentTarget.dataset.target;
-		},
-		hideModal(e) {
-			this.modalName = null;
-		},
-		Gridchange(e) {
-			this.gridCol = e.detail.value;
-		},
-		Gridswitch(e) {
-			this.gridBorder = e.detail.value;
-		},
-		MenuBorder(e) {
-			this.menuBorder = e.detail.value;
-		},
-		MenuArrow(e) {
-			this.menuArrow = e.detail.value;
-		},
-		MenuCard(e) {
-			this.menuCard = e.detail.value;
-		},
-		SwitchSex(e) {
-			this.skin = e.detail.value;
-		},
-		// ListTouch触摸开始
-		ListTouchStart(e) {
-			console.log(e);
-			this.listTouchStart = e.touches[0].pageX;
-		},
-		// ListTouch计算方向
-		ListTouchMove(e) {
-			this.listTouchDirection = e.touches[0].pageX - this.listTouchStart > 0 ? 'right' : 'left';
-		},
-		// ListTouch计算滚动
-		ListTouchEnd(e) {
-			if (this.listTouchDirection == 'left') {
+			showCart(obj) {
+				this.modalName = 'DialogCartModal';
+				console.log(obj);
+				this.ProductInfo = obj;
+				this.PoBasketDto.ReqBody.ProductSysNo = obj.ProductSysNo;
+				this.PoBasketDto.ReqBodyModel.ProductSysNo = obj.ProductSysNo;
+				this.PoBasketDto.ReqBodyModel.CreateUserSysNo = this.userInfo.User.SysNo
+				this.PoBasketDto.ReqBody.CreateUserSysNo = this.userInfo.User.SysNo
+				console.log('cart clicked');
+				var controll = this.SERVER_URL + 'Purchase/QueryPoBaksetDetail';
+				this.http.post(controll, this.PoBasketDto).then(res => {
+					console.log(res);
+					if (res.data.Data.ReqBody[0] !== null) {
+						var dataObj=res.data.Data.ReqBody[0];
+						this.PoBasketDto.ReqBodyModel.Quantity = dataObj.Quantity;
+						this.PoBasketDto.ReqBodyModel.OrderPrice = dataObj.OrderPrice;
+					}
+					else
+					{
+						this.PoBasketDto.ReqBodyModel.Quantity = '';
+						this.PoBasketDto.ReqBodyModel.OrderPrice = '';
+					}
+				});
+			},
+			addToPoBasket(e) {
+				var controll = this.SERVER_URL + 'Purchase/InsertPoBasket';
+				this.http.post(controll, this.PoBasketDto).then(res => {
+					console.log(res);
+					if (res.data.Status) {
+						uni.showToast({
+							icon: 'none',
+							title: '采购篮添加成功'
+						});
+						this.modalName = '';
+						
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: res.data.Message
+						});
+					}
+				});
+			},
+			showModal(e) {
 				this.modalName = e.currentTarget.dataset.target;
-			} else {
+			},
+			hideModal(e) {
 				this.modalName = null;
-			}
-			this.listTouchDirection = null;
-		},
-		showCart(obj) {
-			this.modalName = 'DialogCartModal';
-			console.log(obj);
-			this.ProductInfo = obj;
-			console.log('cart clicked');
-		},
-		handleSubmit() {
-			this.loadModal = true;
-			console.log('handleSubmit clicked');
-			console.log(this.searchDataDto);
-			this.searchDataDto.ReqBody.PageIndex = 1;
-			this.loadMore.isfetchData = true;
-			this.loadMore.isaddData = false;
-			this.loadMore.isShowMore = true;
-			this.fetchData();
-		},
-		loadMoreData() {
-			console.log(this.searchResultData);
-			this.searchDataDto.ReqBody.PageIndex++;
-			this.loadMore.loadClass = this.loadMore.loadClassList[1];
-			this.loadMore.loadText = '';
-			this.loadMore.fetchData = true;
-			this.loadMore.isaddData = true;
-			this.fetchData();
-		},
-		fetchData() {
-			var self = this;
-			var controll = this.SERVER_URL + 'Product/QueryProductList';
-			this.http.post(controll, this.searchDataDto).then(res => {
-				console.log(res);
-				self.loadMore.loadClass = self.loadMore.loadClassList[0];
-				if (res.data.Data.ReqBody.length == 0) {
-					self.loadMore.loadClass = self.loadMore.loadClassList[2];
-					self.loadMore.loadText = '';
-				}
-				if (self.loadMore.isaddData) {
-					self.productList.concat(res.data.Data.ReqBody);
+			},
+			Gridchange(e) {
+				this.gridCol = e.detail.value;
+			},
+			Gridswitch(e) {
+				this.gridBorder = e.detail.value;
+			},
+			MenuBorder(e) {
+				this.menuBorder = e.detail.value;
+			},
+			MenuArrow(e) {
+				this.menuArrow = e.detail.value;
+			},
+			MenuCard(e) {
+				this.menuCard = e.detail.value;
+			},
+			SwitchSex(e) {
+				this.skin = e.detail.value;
+			},
+			// ListTouch触摸开始
+			ListTouchStart(e) {
+				console.log(e);
+				this.listTouchStart = e.touches[0].pageX;
+			},
+			// ListTouch计算方向
+			ListTouchMove(e) {
+				this.listTouchDirection = e.touches[0].pageX - this.listTouchStart > 0 ? 'right' : 'left';
+			},
+			// ListTouch计算滚动
+			ListTouchEnd(e) {
+				if (this.listTouchDirection == 'left') {
+					this.modalName = e.currentTarget.dataset.target;
 				} else {
-					self.productList = res.data.Data.ReqBody;
+					this.modalName = null;
 				}
-				self.loadModal = false;
-			});
-		},
-		handleSubmitAdv(e) {
-			console.log('handleSubmitAdv clicked');
-			this.showModal(e);
-		},
-		PickerChange(e) {
-			this.pickindex = e.detail.value;
-			this.searchDataDto.ReqBody.SearchStatus = [this.ProductStatusList[this.pickindex].value];
-		},
-		PickerChangeDemand(e) {
-			this.pickdemandindex = e.detail.value;
-			this.searchDataDto.ReqBody.IsProductDemand = this.ProductDemandList[this.pickdemandindex].value;
-		},
-		PickerChangeMaster(e) {
-			this.pickmasterindex = e.detail.value;
-			this.searchDataDto.ReqBody.IsMasterProductSysNo = this.ProductDemandList[this.pickmasterindex].value;
+				this.listTouchDirection = null;
+			},
+			handleSubmitAdv(e) {
+				console.log('handleSubmitAdv clicked');
+				this.showModal(e);
+			},
+			PickerChange(e) {
+				this.pickindex = e.detail.value;
+				this.searchDataDto.ReqBody.SearchStatus = [this.ProductStatusList[this.pickindex].value];
+			},
+			PickerChangeDemand(e) {
+				this.pickdemandindex = e.detail.value;
+				this.searchDataDto.ReqBody.IsProductDemand = this.ProductDemandList[this.pickdemandindex].value;
+			},
+			PickerChangeMaster(e) {
+				this.pickmasterindex = e.detail.value;
+				this.searchDataDto.ReqBody.IsMasterProductSysNo = this.ProductDemandList[this.pickmasterindex].value;
+			}
 		}
-	}
-};
+	};
 </script>
 
 <style>
-.page {
-	height: 100vh;
-	width: 100vw;
-}
+	.page {
+		height: 100vh;
+		width: 100vw;
+	}
 
-.page.show {
-	overflow: hidden;
-}
+	.page.show {
+		overflow: hidden;
+	}
 
-.switch-sex::after {
-	content: '\e716';
-}
+	.switch-sex::after {
+		content: '\e716';
+	}
 
-.switch-sex::before {
-	content: '\e7a9';
-}
+	.switch-sex::before {
+		content: '\e7a9';
+	}
 
-.switch-music::after {
-	content: '\e66a';
-}
+	.switch-music::after {
+		content: '\e66a';
+	}
 
-.switch-music::before {
-	content: '\e6db';
-}
+	.switch-music::before {
+		content: '\e6db';
+	}
 </style>
