@@ -25,7 +25,7 @@
 				<view class="cu-bar bg-white solid-bottom margin-top">
 					<view class="action">
 						<text class="cuIcon-titles text-orange" v-if="false"></text>
-						<checkbox class="cb" v-model="item.SysNo" :checked="item.checked" @tap="itemCheckd"></checkbox>
+						<checkbox class="cb" v-model="item.SysNo" :checked="item.itemCheckd" @tap="itemCheckd" :data-target="index"></checkbox>
 						<view @tap="showCart(item)" data-target="DialogCartModal">{{ item.ProductSysNo }}-{{ item.V_ProductName }}-{{ item.V_ProductID }}</view>
 					</view>
 					<view class="padding-sm margin-xs radius">
@@ -58,8 +58,8 @@
 		</scroll-view>
 		<view class="cu-bar bg-white tabbar border shop menu_box">
 			<view class="btn-group">
-				<button class="cu-btn bg-orange round shadow-blur" @tap="selectAll">全选</button>
-				<button class="cu-btn bg-red round shadow-blur">生成采购单</button>
+				<button class="cu-btn bg-orange round shadow-blur" @tap="selectAll">全{{isnotext}}选</button>
+				<button class="cu-btn bg-red round shadow-blur" @tap="CreatePoMaster">生成采购单</button>
 			</view>
 		</view>
 
@@ -71,23 +71,12 @@
 				</view>
 				<view class="padding-xl">
 					<view class="cu-form-group margin-top">
-						<view class="title">商品状态</view>
-						<picker @change="PickerChange" :value="pickindex" :range="ProductStatusList" :range-key="'name'">
-							<view class="picker">{{ ProductStatusList[pickindex].name }}</view>
+						<view class="title">门店</view>
+						<picker @change="PickerChange" :value="pickindex" :range="StockList" :range-key="'name'">
+							<view class="picker">{{ StockList[pickindex].name }}</view>
 						</picker>
 					</view>
-					<view class="cu-form-group margin-top">
-						<view class="title">可否要货</view>
-						<picker @change="PickerChangeDemand" :value="pickdemandindex" :range="ProductDemandList" :range-key="'name'">
-							<view class="picker">{{ ProductDemandList[pickdemandindex].name }}</view>
-						</picker>
-					</view>
-					<view class="cu-form-group margin-top">
-						<view class="title">主子商品</view>
-						<picker @change="PickerChangeMaster" :value="pickmasterindex" :range="ProductMasterList" :range-key="'name'">
-							<view class="picker">{{ ProductMasterList[pickmasterindex].name }}</view>
-						</picker>
-					</view>
+					
 					<!-- <view class="cu-form-group margin-top">
 						<view class="title">商品管理人：</view>
 						<picker @change="PickerChange" :value="pickindex" :range="ProductStatusList" v-model="searchData.Status"
@@ -170,52 +159,11 @@
 				skin: false,
 				listTouchStart: 0,
 				listTouchDirection: null,
-				ProductStatusList: [{
-						name: '全部',
-						value: ''
-					},
+				StockList: [
 					{
-						name: '在售',
-						value: '1'
+						name: '上海总仓',
+						value: '6'
 					},
-					{
-						name: '未上架',
-						value: '0'
-					},
-					{
-						name: '下架',
-						value: '-1'
-					},
-					{
-						name: '冻结',
-						value: '0'
-					}
-				],
-				ProductMasterList: [{
-						name: '全部',
-						value: ''
-					},
-					{
-						name: '主商品',
-						value: 'true'
-					},
-					{
-						name: '子商品',
-						value: 'false'
-					}
-				],
-				ProductDemandList: [{
-						name: '全部',
-						value: ''
-					},
-					{
-						name: '可以要货',
-						value: '1'
-					},
-					{
-						name: '不能要货',
-						value: '0'
-					}
 				],
 				pickindex: 0,
 				pickdemandindex: 0,
@@ -239,6 +187,8 @@
 				ProductInfo: {},
 				userInfo: {},
 				isfetchData: false,
+				isSelectAll: false,
+				isnotext: '',
 			};
 		},
 		onLoad() {
@@ -266,13 +216,30 @@
 					self.loadModal = false;
 				});
 			},
-			itemCheckd(e){
-				console.log(e);
-				
+			itemCheckd(e) {
+				console.log(e.target.dataset.target);
+				var index = e.target.dataset.target;
+				var info = this.productList[index];
+				console.log(info)
+				if (info.itemCheckd === undefined) {
+					info.itemCheckd = false;
+				}
+				info.itemCheckd = !info.itemCheckd;
+				this.productList[index] = info;
 			},
-			selectAll(item){
-				console.log(item)
-				console.log(this.productList);
+			selectAll() {
+				this.isSelectAll = !this.isSelectAll
+				if (this.isSelectAll) {
+					this.isnotext = "不 "
+				} else {
+					this.isnotext = "";
+				}
+				for (let i = 0; i < this.productList.length; i++) {
+					var info = this.productList[i]
+					info.itemCheckd = this.isSelectAll;
+					this.productList[i] = info;
+				}
+				console.log(this.productList)
 			},
 			showCart(obj) {
 				this.modalName = 'DialogCartModal';
@@ -317,6 +284,15 @@
 			},
 			showDelete() {
 				this.modalName = "DialogDeleteCartModal";
+			},
+			CreatePoMaster(){
+				var selectList=[];
+				for (let i = 0; i < this.productList.length; i++) {
+					var info = this.productList[i]
+					if(info.itemCheckd)
+						selectList.push(info);
+				}
+				console.log(selectList);
 			},
 			showModal(e) {
 				this.modalName = e.currentTarget.dataset.target;
