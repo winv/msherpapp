@@ -226,7 +226,6 @@
     <Content Include="libman.json" />
     <Content Include="ConnectionStrings.config" />
     <None Include="packages.config" />
-    <Content Include="Spec.config" />
     <Content Include="appsetting.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
