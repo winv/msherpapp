@@ -66,5 +66,15 @@ namespace MshErp.APIServices.Core.ApiControllers
                 Data = new PurchaseBasketResponseDTO { ReqBody = body }
             };
         }
+        [HttpDelete]
+        public AjaxResponseInfo DeletePoBasketInfo([FromBody] PurchaseBasketRequstDTO request)
+        {
+            var result = IPurchaseInfoManager.DeletePoBasketInfo(request);
+            return new AjaxResponseInfo
+            {
+                Status = result,
+                Data = new PurchaseBasketResponseDTO { ReqBody = null }
+            };
+        }
     }
 }

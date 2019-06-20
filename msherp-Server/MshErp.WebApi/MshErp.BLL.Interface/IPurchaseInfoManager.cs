@@ -16,5 +16,7 @@ namespace MshErp.BLL.Interface
         int GetPoBasketCount(PurchaseBasketRequstDTO request);
 
         PurchaseBasketResponseBody InsertPoBasketInfo(PurchaseBasketRequstDTO request);
+
+        bool DeletePoBasketInfo(PurchaseBasketRequstDTO request);
     }
 }

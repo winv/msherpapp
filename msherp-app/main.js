@@ -2,10 +2,12 @@ import Vue from 'vue'
 import App from './App'
 import store from './store'
 import mshconfig from './config/mshconfig.js'
-import httprequest from './utils/httprequest.js'
+import httprequest from './libs/httprequest.js'
 import md5 from './libs/md5.js'
 import cuCustom from './colorui/components/cu-custom.vue'
 import faIcon from './components/kilvn-fa-icon/fa-icon.vue'
+import wxsystem from './libs/wxsystem.js'
+
 Vue.component('cu-custom',cuCustom)
 Vue.component('fa-icon',faIcon)
 

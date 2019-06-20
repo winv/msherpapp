@@ -34,9 +34,15 @@ namespace MshErp.BLL
             return false;
         }
         
-        public bool GetUserWithOpenid(string wxopenid)
+        public UserResponseBody GetUserWithOpenid(string wxopenid)
         {
-            throw new NotImplementedException();
+            var search = new BizSysUserSearchInfo
+            {
+                Status = ((int)EnumCls.ValidEnum.Valid).ToString(),
+                wxopenid = wxopenid
+            };
+            var result = (new SysUserBo()).GetPageList(search).FirstOrDefault();
+            return result.RobotMap<BizSysUserInfo, UserResponseBody>();
         }
     }
 }

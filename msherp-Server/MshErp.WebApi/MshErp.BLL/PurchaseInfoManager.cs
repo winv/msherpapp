@@ -74,5 +74,19 @@ namespace MshErp.BLL
             }
             return result;
         }
+
+        public bool DeletePoBasketInfo(PurchaseBasketRequstDTO request)
+        {
+            try
+            {
+                PurchaseManager.GetInstance().DeletePOBasket(int.Parse(request.ReqBody.SysNo), int.Parse(request.ReqBody.CreateUserSysNo));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString(), ex);
+            }
+            
+        }
     }
 }

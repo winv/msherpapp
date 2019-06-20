@@ -13,6 +13,6 @@ namespace MshErp.BLL.Interface
 
         bool BindUserWxOpenid(UserRequestDTO requestDTO);
 
-        bool GetUserWithOpenid(string wxopenid);
+        UserResponseBody GetUserWithOpenid(string wxopenid);
     }
 }

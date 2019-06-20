@@ -1,0 +1,10 @@
+.fixedbottom {
+		position: fixed;
+		bottom: 0rpx;
+		width: 100%;
+		/* background-color: red; */
+		text-align: center;
+	}
+.floatleft{
+	
+}

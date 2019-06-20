@@ -25,6 +25,17 @@
 		{
 		    "path" : "pages/ControlPanel/my/my",
 		    "style" : {}
+		},{
+		    "path" : "pages/ControlPanel/purchase/createpo",
+		    "style" : {}
+		},
+		{
+		    "path" : "pages/ControlPanel/purchase/polist",
+		    "style" : {}
+		},
+		{
+		    "path" : "pages/ControlPanel/vendor/vendorindexlist",
+		    "style" : {}
 		}
     ],
 	"globalStyle": {

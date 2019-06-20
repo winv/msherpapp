@@ -29,7 +29,7 @@
 						<view @tap="showCart(item)" data-target="DialogCartModal">{{ item.ProductSysNo }}-{{ item.V_ProductName }}-{{ item.V_ProductID }}</view>
 					</view>
 					<view class="padding-sm margin-xs radius">
-						<text class="lg text-gray" :class="'cuIcon-deletefill'" @tap="showDelete(item)" data-target="DialogDeleteCartModal"></text>
+						<text class="lg text-gray" :class="'cuIcon-deletefill'" @tap="deletePoBasketInfo(item)"></text>
 					</view>
 				</view>
 				<view class="cu-card article no-card">
@@ -38,17 +38,17 @@
 							<view class="padding-sm flex flex-wrap">
 								<view class="padding-xs">
 									<view class="cu-capsule radius">
-										<view class="cu-tag bg-brown sm">采购价格</view>
-										<view class="cu-tag line-brown sm">{{ item.Quantity }}</view>
+										<view class="cu-tag bg-brown xl">采购价格</view>
+										<view class="cu-tag line-brown xl">{{ item.OrderPrice }}</view>
 									</view>
 									<view class="cu-capsule radius">
-										<view class="cu-tag bg-brown sm">数量</view>
-										<view class="cu-tag line-brown sm">{{ item.OrderPrice }}</view>
+										<view class="cu-tag bg-brown xl">数量</view>
+										<view class="cu-tag line-brown xl">{{ item.Quantity }}</view>
 									</view>
 								</view>
 								<view class="padding-xs">
-									<view class="cu-tag bg-red light sm radius">{{ item.V_StockName }}</view>
-									<view class="cu-tag bg-green light sm radius" v-if="item.V_VendorName !== ''">{{ item.V_VendorName }}</view>
+									<view class="cu-tag bg-red light xl radius">{{ item.V_StockName }}</view>
+									<view class="cu-tag bg-green light xl radius" v-if="item.V_VendorName !== ''">{{ item.V_VendorName }}</view>
 								</view>
 							</view>
 						</view>
@@ -58,8 +58,9 @@
 		</scroll-view>
 		<view class="cu-bar bg-white tabbar border shop menu_box">
 			<view class="btn-group">
-				<button class="cu-btn bg-orange round shadow-blur" @tap="selectAll">全{{isnotext}}选</button>
+				<button class="cu-btn bg-orange round shadow-blur" @tap="selectAll">{{isnotext}}</button>
 				<button class="cu-btn bg-red round shadow-blur" @tap="CreatePoMaster">生成采购单</button>
+				<button class="cu-btn bg-gray round shadow-blur" @tap="deletePoBasketList">批量删除</button>
 			</view>
 		</view>
 
@@ -76,7 +77,6 @@
 							<view class="picker">{{ StockList[pickindex].name }}</view>
 						</picker>
 					</view>
-					
 					<!-- <view class="cu-form-group margin-top">
 						<view class="title">商品管理人：</view>
 						<picker @change="PickerChange" :value="pickindex" :range="ProductStatusList" v-model="searchData.Status"
@@ -106,7 +106,7 @@
 				<view class="cu-list menu-avatar padding-sm no-card">
 					<view class="cu-form-group margin-top-sm">
 						<view class="title">商品名称：</view>
-						<view class="action pull-left">{{ ProductInfo.ProductSysNo }}-{{ ProductInfo.ProductName }}-{{ ProductInfo.ProductID }}</view>
+						<view class="action pull-left">{{ ProductInfo.ProductSysNo }}-{{ ProductInfo.V_ProductName }}-{{ ProductInfo.V_ProductID }}</view>
 					</view>
 					<view class="cu-form-group">
 						<view class="title">采购数量：</view>
@@ -120,18 +120,6 @@
 				<view class="cu-bar bg-white">
 					<view class="action margin-0 flex-sub text-green solid-left" @tap="hideModal">取消</view>
 					<view class="action margin-0 flex-sub  solid-left" @tap="addToPoBasket">加入购物篮</view>
-				</view>
-			</view>
-		</view>
-		<view class="cu-modal sm" :class="modalName == 'DialogDeleteCartModal' ? 'show' : ''">
-			<view class="cu-dialog ">
-				<view class="padding-xl bg-white">
-					<view class="lg text-yellow" :class="'cuIcon-goodsfill'"></view>
-					<view class="title">确定删除该商品吗？</view>
-				</view>
-				<view class="cu-bar">
-					<view class="action margin-0 flex-sub text-green solid-left" @tap="hideModal">取消</view>
-					<view class="action margin-0 flex-sub  solid-left" @tap="addToPoBasket">确定</view>
 				</view>
 			</view>
 		</view>
@@ -159,12 +147,10 @@
 				skin: false,
 				listTouchStart: 0,
 				listTouchDirection: null,
-				StockList: [
-					{
-						name: '上海总仓',
-						value: '6'
-					},
-				],
+				StockList: [{
+					name: '上海总仓',
+					value: '6'
+				}, ],
 				pickindex: 0,
 				pickdemandindex: 0,
 				pickmasterindex: 0,
@@ -188,12 +174,12 @@
 				userInfo: {},
 				isfetchData: false,
 				isSelectAll: false,
-				isnotext: '',
+				isnotext: '全选',
 			};
 		},
 		onLoad() {
 			this.userInfo = uni.getStorageSync("MshUserSession");
-			console.log(this.userInfo);
+			console.log(uni.getStorageSync(this.mshconfig.mshsessionid));
 		},
 		methods: {
 			handleSubmit() {
@@ -210,6 +196,8 @@
 				var self = this;
 				var controll = this.SERVER_URL + 'Purchase/QueryPoBaksetList';
 				this.isfetchData = true;
+				this.isSelectAll=false;
+				this.isnotext = "全选";
 				this.http.post(controll, this.PoBasketDto).then(res => {
 					console.log(res);
 					self.productList = res.data.Data.ReqBody;
@@ -230,9 +218,9 @@
 			selectAll() {
 				this.isSelectAll = !this.isSelectAll
 				if (this.isSelectAll) {
-					this.isnotext = "不 "
+					this.isnotext = "取消 "
 				} else {
-					this.isnotext = "";
+					this.isnotext = "全选";
 				}
 				for (let i = 0; i < this.productList.length; i++) {
 					var info = this.productList[i]
@@ -282,15 +270,69 @@
 					}
 				});
 			},
-			showDelete() {
-				this.modalName = "DialogDeleteCartModal";
+			deletePoBasketInfo(item) {
+				var self=this;
+				uni.showModal({
+					title: '提示',
+					content: '确认删除该商品吗？',
+					success: function(res) {
+						if (res.confirm) {
+							console.log('confirmed')
+							self.execDelete([item])
+						} else if (res.cancel) {
+							console.log('canceld')
+						}
+					}
+				})
 			},
-			CreatePoMaster(){
-				var selectList=[];
+			deletePoBasketList() {
+				uni.showModal({
+					title: '提示',
+					content: '确认批量删除已选商品吗？',
+					success: function(res) {
+						if (res.confirm) {
+							console.log('confirmed')
+							var selectList = [];
+							for (let i = 0; i < this.productList.length; i++) {
+								var info = this.productList[i]
+								if (info.itemCheckd) {
+									selectList.push(info);
+								}
+							}
+							console.log(selectList);
+							this.execDelete(selectList);
+						} else if (res.cancel) {
+							console.log('canceld')
+						}
+					}
+				})
+			},
+			execDelete(itemList){
+				var requestDto=this.PoBasketDto;
+				requestDto.ReqBody.SysNo=itemList[0].SysNo
+				var controll = this.SERVER_URL + 'Purchase/DeletePoBasketInfo';
+				this.http.$delete(controll, requestDto).then(res => {
+					console.log(res);
+					this.handleSubmit();
+				});
+			},
+			CreatePoMaster() {
+				var selectList = [];
 				for (let i = 0; i < this.productList.length; i++) {
 					var info = this.productList[i]
-					if(info.itemCheckd)
-						selectList.push(info);
+					if (info.itemCheckd)
+						selectList.push(info.SysNo);
+				}
+				if(selectList.length>0){
+					uni.redirectTo ({
+						url:'/pages/ControlPanel/purchase/createpo?data='+JSON.stringify(selectList),
+					});
+				}
+				else{
+					uni.showToast({
+						icon: 'none',
+						title: '未选择任何商品'
+					});
 				}
 				console.log(selectList);
 			},
@@ -382,14 +424,14 @@
 		content: '\e6db';
 	}
 
-	.menu_box {
+	
+.menu_box {
 		position: fixed;
 		bottom: 0rpx;
 		width: 100%;
 		/* background-color: red; */
 		text-align: center;
 	}
-
 	.cb {
 		transform: scale(0.6, 0.6);
 	}

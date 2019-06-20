@@ -44,6 +44,7 @@
 
 	import mInput from '../../components/m-input.vue'
 	import mCheckBox from '../../components/m-check-box.vue'
+	import permisson from '../../service/permisson.service.js'
 
 	export default {
 		components: {
@@ -138,21 +139,8 @@
 				});
 			},
 			oauth(value) {
-				uni.login({
-					provider: value,
-					success: (res) => {
-						console.log(res);
-						this.wxlogin(res);
-						uni.getUserInfo({
-							provider: value,
-							success: (infoRes) => {
-								console.log(infoRes);
-							}
-						});
-					},
-					fail: (err) => {
-						console.error('授权登录失败：' + JSON.stringify(err));
-					}
+				permisson.autologin(true).then(res=>{
+					console.log(res);
 				});
 			},
 			toMain(userName) {

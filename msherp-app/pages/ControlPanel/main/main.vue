@@ -34,25 +34,26 @@
 						text: '圣诞树'
 					}
 				],
-				elements: [{
-						title: '控制台',
-						name: 'Control',
-						color: 'cyan',
-						cuIcon: 'newsfill',
-						urls: '/pages/ControlPanel/index/index'
-					},
+				elements: [
 					{
 						title: '商品',
 						name: 'Product',
 						color: 'blue',
-						cuIcon: 'colorlens',
+						cuIcon: 'apps',
 						urls: '/pages/ControlPanel/product/productlist'
 					},
 					{
+						title: '采购单',
+						name: 'Purchase',
+						color: 'brown',
+						cuIcon: 'shop',
+						urls: '/pages/ControlPanel/purchase/polist'
+					},
+					{
 						title: '采购篮',
-						name: 'Login',
+						name: 'PoBasket',
 						color: 'orange',
-						cuIcon: 'icloading',
+						cuIcon: 'goodsfill',
 						urls: '/pages/ControlPanel/product/pobasket'
 					},
 					// {
@@ -76,12 +77,13 @@
 					// 	cuIcon: 'btn',
 					// 	urls: '/pages/ControlPanel/'
 					// },
+					
 					{
-						title: '采购单',
-						name: 'Purchase',
+						title: '新建采购单',
+						name: 'Create',
 						color: 'brown',
-						cuIcon: 'tagfill',
-						urls: '/pages/ControlPanel/product/productlist'
+						cuIcon: 'roundaddfill',
+						urls: '/pages/ControlPanel/purchase/createpo'
 					},
 					// {
 					// 	title: '财务',

@@ -86,10 +86,11 @@ namespace MshErp.APIServices.Core.ApiControllers
             StringBuilder sb = new StringBuilder();
             bool issuccess = true;
             var Token = "";
+            UserSessionDTO oSession = new UserSessionDTO();
             try
             {
-                var isbind = _userManager.GetUserWithOpenid(userDto.WeiXinOpenID);
-                if (!isbind)
+                var oUser = _userManager.GetUserWithOpenid(userDto.WeiXinOpenID);
+                if (oUser==null)
                 {
                     issuccess = false;
                     sb.AppendFormat("您尚未绑定微信登录,请先登录erp，绑定微信后再登录");
@@ -100,6 +101,17 @@ namespace MshErp.APIServices.Core.ApiControllers
                     {
                         { "token", userDto }
                     });
+                    if (oUser.Status == (int)AppEnum.BiStatus.Valid
+                           && oUser.DepartmentSysNo != (int)AppEnum.DepartmentID.Mall
+                           && oUser.DepartmentSysNo != (int)AppEnum.DepartmentID.Vendor)
+                    {
+
+                        oSession.User = MapUserInfo(oUser);
+                        //oSession.IpAddress = Request.UserHostAddress;
+                        //oSession.PrivilegeAL = SysManager.GetInstance().GetPrivilegeALByUser(oUser.SysNo);
+                        //oSession.CopyUserAL = SysManager.GetInstance().GetUserFigureCopyList(oUser.SysNo, true);
+                        //oSession.CopyPrivilegeAL = SysManager.GetInstance().GetPrivilegeALByUserCopy(oUser.SysNo);
+                    }
                 }
             }
             catch (Exception ex)
@@ -110,6 +122,7 @@ namespace MshErp.APIServices.Core.ApiControllers
             var res = new
             {
                 Token,
+                oSession,
                 msg = sb.ToString()
             };
 
