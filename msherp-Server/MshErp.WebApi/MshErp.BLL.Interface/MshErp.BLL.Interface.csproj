@@ -44,7 +44,9 @@
     <Compile Include="IDependency.cs" />
     <Compile Include="IProductInfoManager.cs" />
     <Compile Include="IPurchaseInfoManager.cs" />
+    <Compile Include="IStockInfoManager.cs" />
     <Compile Include="IUserInfoManager.cs" />
+    <Compile Include="IVendorInfoManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

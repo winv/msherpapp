@@ -16,7 +16,7 @@ let permisson = {};
 permisson.autologin = function(tomain) {
 	var istomain=tomain||false
 	return new Promise(function(resolve, reject) {
-		var result=getlogincode(istomain);
+		var result=getlogincode(istomain).then;
 		resolve(result);
 	})
 }

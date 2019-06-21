@@ -62,6 +62,7 @@
     <Compile Include="ConfigHelper.cs" />
     <Compile Include="Configuration\Constants.cs" />
     <Compile Include="Configuration\PlatformConfig.cs" />
+    <Compile Include="Helper.cs" />
     <Compile Include="JwtTokenHelper.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

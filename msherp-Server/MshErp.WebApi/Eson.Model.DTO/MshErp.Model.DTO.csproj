@@ -51,6 +51,7 @@
     <Compile Include="ProductDTO.cs" />
     <Compile Include="AjaxResponseInfo.cs" />
     <Compile Include="PurchaseBasketDTO.cs" />
+    <Compile Include="PurchasePoMasterDTO.cs" />
     <Compile Include="UserDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserSessionDTO.cs" />

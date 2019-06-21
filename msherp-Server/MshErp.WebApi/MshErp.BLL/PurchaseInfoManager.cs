@@ -2,9 +2,11 @@
 using Eson.Objects.Purchase;
 using Eson.Utils;
 using MshErp.BLL.Interface;
+using MshErp.Infrastructure;
 using MshErp.Model.DTO;
 using RobotMapper;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -87,6 +89,32 @@ namespace MshErp.BLL
                 throw new Exception(ex.ToString(), ex);
             }
             
+        }
+
+        public List<PoItemBody> QueryPoItemListWithBaskt(PurchaseBasketRequstDTO request)
+        {
+            var reqbody = request.ReqBody;
+            var ds = PurchaseManager.GetInstance().GetPoItemWithBasket(reqbody.SysNo, reqbody.ProductSysNo);
+            var list = ExtensiveHelper.Map<DataTable, PoItemBody>(ds.Tables[0]);
+            return list;
+        }
+
+        public PoMasterBody InsertPoMaster(PurchasePoMasterRquestDTO request)
+        {
+            var poinfo = Helper.MapNoProperty<POInfo, PoMasterBody>(request.ReqBodyDTO);
+            var itemlist = Helper.MapNoProperty<POItemInfo, PoItemBody>(request.ReqBodyDTO.poItems);
+            Hashtable ht = new Hashtable(10);
+            foreach (var item in itemlist)
+            {
+                ht.Add(item.ProductSysNo, item);
+            }
+            poinfo.itemHash = ht;
+            poinfo.TotalAmt = poinfo.GetTotalAmt();
+            poinfo.CreateTime = DateTime.Now;
+
+            PurchaseManager.GetInstance().CreatePO(poinfo);
+            var resbody = Helper.MapNoProperty<PoMasterBody, POInfo>(poinfo);
+            return resbody;
         }
     }
 }

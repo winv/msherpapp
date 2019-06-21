@@ -78,6 +78,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="StockInfoManager.cs" />
+    <Compile Include="VendorInfoManager.cs" />
     <Compile Include="ProductInfoManager.cs" />
     <Compile Include="PurchaseInfoManager.cs" />
     <Compile Include="UserInfoManager.cs" />
@@ -91,6 +93,10 @@
     <ProjectReference Include="..\MshErp.BLL.Interface\MshErp.BLL.Interface.csproj">
       <Project>{5B67298A-EB3F-4AA3-95D9-5E753D6F2415}</Project>
       <Name>MshErp.BLL.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MshErp.Infrastructure\MshErp.Infrastructure.csproj">
+      <Project>{847BA6A4-A3A9-46C6-9AE6-71D05C10CC88}</Project>
+      <Name>MshErp.Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

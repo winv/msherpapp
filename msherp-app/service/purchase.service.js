@@ -9,9 +9,33 @@ let purchase = {};
 purchase.getPoItem = function(param) {
     return new Promise(function(resolve, reject) {
         http.post(urls.getFullERPUrl('/SaleStatistics/GetSalesRankings'), param).then(res => {
-            resolve(res)
+            resolve(res.data)
+        })
+    })
+}
+/**
+ * 获取采购篮商品 列表
+ * @param {*} param
+ * author lee
+ */
+purchase.getPoBasketItem = function(param) {
+    return new Promise(function(resolve, reject) {
+        http.post(urls.getFullERPUrl('Purchase/QueryPoItemListWithBaskt'), param).then(res => {
+            resolve(res.data)
         })
     })
 }
 
+/**
+ * 写入采购单主表及子表
+ * @param {*} param
+ * author lee
+ */
+purchase.CreateToPoMaster = function(param) {
+    return new Promise(function(resolve, reject) {
+        http.$put(urls.getFullERPUrl('Purchase/InsertPoMaster'), param).then(res => {
+            resolve(res.data)
+        })
+    })
+}
 export default purchase

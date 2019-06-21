@@ -18,5 +18,9 @@ namespace MshErp.BLL.Interface
         PurchaseBasketResponseBody InsertPoBasketInfo(PurchaseBasketRequstDTO request);
 
         bool DeletePoBasketInfo(PurchaseBasketRequstDTO request);
+
+        List<PoItemBody> QueryPoItemListWithBaskt(PurchaseBasketRequstDTO request);
+
+        PoMasterBody InsertPoMaster(PurchasePoMasterRquestDTO request);
     }
 }

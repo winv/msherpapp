@@ -76,5 +76,27 @@ namespace MshErp.APIServices.Core.ApiControllers
                 Data = new PurchaseBasketResponseDTO { ReqBody = null }
             };
         }
+
+        public AjaxResponseInfo QueryPoItemListWithBaskt([FromBody] PurchaseBasketRequstDTO request)
+        {
+            var result = IPurchaseInfoManager.QueryPoItemListWithBaskt(request);
+            return new AjaxResponseInfo
+            {
+                Status = true,
+                Data =new PurchasePoMasterResponseDTO { ResBody= result }
+            };
+        }
+
+        [HttpPut]
+        public AjaxResponseInfo InsertPoMaster([FromBody] PurchasePoMasterRquestDTO request)
+        {
+            IPurchaseInfoManager.InsertPoMaster(request);
+            
+            return new AjaxResponseInfo
+            {
+                Status = true,
+                Data = null
+            };
+        }
     }
 }

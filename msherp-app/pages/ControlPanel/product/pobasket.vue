@@ -320,8 +320,12 @@
 				var selectList = [];
 				for (let i = 0; i < this.productList.length; i++) {
 					var info = this.productList[i]
-					if (info.itemCheckd)
-						selectList.push(info.SysNo);
+					if (info.itemCheckd){
+						var pushitem={};
+						pushitem.ProductSysNo=info.ProductSysNo;
+						pushitem.SysNo=info.SysNo;
+						selectList.push(pushitem);
+					}
 				}
 				if(selectList.length>0){
 					uni.redirectTo ({
