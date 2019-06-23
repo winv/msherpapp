@@ -1,3 +1,4 @@
+import mshconfig from '../config/mshconfig.js'
 export default class Request {
 	config = {
 		baseUrl: '',
@@ -87,7 +88,9 @@ export default class Request {
 		options.url = url
 		options.data = data
 		options.method = 'GET'
-		console.log(`请求地址：${url}，请求参数：${JSON.stringify(data)}`)
+		if(mshconfig.env!=="production"){
+			console.log(`请求地址：${url}，请求参数：${JSON.stringify(data)}`)
+		}
 		return this.request(options)
 	}
 
@@ -95,7 +98,9 @@ export default class Request {
 		options.url = url
 		options.data = data
 		options.method = 'POST'
-		console.log(`请求地址：${url}，请求参数：${JSON.stringify(data)}`)
+		if(mshconfig.env!=="production"){
+			console.log(`请求地址：${url}，请求参数：${JSON.stringify(data)}`)
+		}
 		return this.request(options)
 	}
 	
@@ -103,7 +108,9 @@ export default class Request {
 		options.url = url
 		options.data = data
 		options.method = 'DELETE'
-		console.log(`请求地址：${url}，请求参数：${JSON.stringify(data)}`)
+		if(mshconfig.env!=="production"){
+			console.log(`请求地址：${url}，请求参数：${JSON.stringify(data)}`)
+		}
 		return this.request(options)
 	}
 	
@@ -111,7 +118,9 @@ export default class Request {
 		options.url = url
 		options.data = data
 		options.method = 'PUT'
-		console.log(`请求地址：${url}，请求参数：${JSON.stringify(data)}`)
+		if(mshconfig.env!=="production"){
+			console.log(`请求地址：${url}，请求参数：${JSON.stringify(data)}`)
+		}
 		return this.request(options)
 	}
 }

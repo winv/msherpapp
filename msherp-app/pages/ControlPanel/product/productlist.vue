@@ -180,6 +180,8 @@
 </template>
 
 <script>
+	import purchase from '../../../service/purchase.service.js'
+	import vueCommonData from '../../../config/VueCommonConstData.js';
 	export default {
 		data() {
 			return {
@@ -294,7 +296,7 @@
 			this.userInfo = uni.getStorageSync("MshUserSession");
 			console.log(this.userInfo);
 		},
-		
+		mixins:[vueCommonData],
 		methods: {
 			handleSubmit() {
 				this.loadModal = true;
@@ -390,8 +392,7 @@
 			loadPobasketData(){
 				var self=this;
 				this.PoBasketDto.ReqBody.CreateUserSysNo = this.userInfo.User.SysNo;
-				var controll = this.SERVER_URL + 'Purchase/QueryPoBaksetCount';
-				this.http.post(controll, this.PoBasketDto).then(res => {
+				purchase.GetPobasketCount(this.PoBasketDto).then(res=>{
 					console.log(res);
 					if (res.data.Status&&res.data.Data>0) {
 						self.showCartInfo.showIcon=true;
@@ -399,7 +400,7 @@
 					} else {
 						self.showCartInfo.showIcon=false;
 					}
-				});
+				})
 			},
 			showModal(e) {
 				this.modalName = e.currentTarget.dataset.target;

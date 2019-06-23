@@ -38,4 +38,17 @@ purchase.CreateToPoMaster = function(param) {
         })
     })
 }
+
+/**
+ * 写入采购单主表及子表
+ * @param {*} param
+ * author lee
+ */
+purchase.GetPobasketCount = function(param) {
+    return new Promise(function(resolve, reject) {
+        http.post(urls.getFullERPUrl('Purchase/QueryPoBaksetCount'), param).then(res => {
+            resolve(res.data)
+        })
+    })
+}
 export default purchase

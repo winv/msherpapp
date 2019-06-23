@@ -8,5 +8,6 @@ namespace MshErp.BLL.Interface
 {
     public interface IVendorInfoManager:IDependency
     {
+        void QueryVendorList();
     }
 }

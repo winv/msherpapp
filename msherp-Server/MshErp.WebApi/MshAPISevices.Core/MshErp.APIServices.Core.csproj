@@ -152,6 +152,7 @@
     <Compile Include="ApiControllers\UserManageController.cs" />
     <Compile Include="ApiControllers\V2\BaseApiController.cs" />
     <Compile Include="ApiControllers\V2\HelloController.cs" />
+    <Compile Include="ApiControllers\VendorController.cs" />
     <Compile Include="ApiControllers\WeiXinController.cs" />
     <Compile Include="App_Start\AutofacConfig.cs" />
     <Compile Include="App_Start\HttpControllerHandler.cs" />

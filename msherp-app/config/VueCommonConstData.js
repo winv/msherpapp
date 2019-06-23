@@ -41,11 +41,13 @@ let VueCommonConstData = {
 				TimeSpan: uni.getStorageSync(this.mshconfig.mshdata_expirationName),
 				ReqBody:{},
 				ReqBodyDTO:{}
-			}
+			},
+			pobasketcount:0,
+			userSession:{}
 		}
 	},
 	created: function() {
-
+		this.userSession=uni.getStorageSync("MshUserSession")
 	},
 	methods: {
 		showAbout: function() {
