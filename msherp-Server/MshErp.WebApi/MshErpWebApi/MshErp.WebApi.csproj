@@ -228,6 +228,10 @@
     <Content Include="appsetting.lock.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="appsetting.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ConnectionStrings.config" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">
