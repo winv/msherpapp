@@ -358,3 +358,5 @@ MigrationBackup/
 appsetting.config
 
 # End of https://www.gitignore.io/api/vuejs,visualstudio
+/publishsite
+*.rar

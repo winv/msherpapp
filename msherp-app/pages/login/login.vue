@@ -33,6 +33,10 @@
 				<image :src="provider.image" @tap="oauth(provider.value)"></image>
 			</view>
 		</view>
+		<view class="cu-load load-modal" v-if="logining">
+			<image src="/static/logo.png" mode="aspectFit"></image>
+			<view class="gray-text">登录中...</view>
+		</view>
 	</view>
 </template>
 
@@ -59,7 +63,8 @@
 				password: '000000',
 				positionTop: 0,
 				isShowOther: false,
-				remeberme: true
+				remeberme: true,
+				logining:false
 			}
 		},
 		computed: mapState(['forcedLogin']),
@@ -122,24 +127,25 @@
 						"Pwd": this.Md5(this.password) //注意密码经过MD5加密，服务端不需要再次加密
 					}
 				};
+				this.logining=true;
 				var validUser = false;
 				//console.log(user);
 				var controll = this.SERVER_URL + 'login/check/';
-				console.log(this.http);
 				var msg = "";
 				this.http.post(controll, user).then(res => {
 					console.log(res);
 					if (res.data.Status) {
 						// console.log(res.header["Set-Cookie"])
-						uni.setStorageSync("MshUserSession",res.data.Data.oSession)
+						uni.setStorageSync("MshUserSession", res.data.Data.oSession)
 						uni.setStorageSync(this.MshSessionID, res.data.Data.Token);
 						uni.setStorageSync(this.mshconfig.mshdata_expirationName, this.mshconfig.mshdata_expirationTime)
 						this.toMain(this.account);
+						this.logining=false;
 					}
 				});
 			},
 			oauth(value) {
-				permisson.autologin(true).then(res=>{
+				permisson.autologin(true).then(res => {
 					console.log(res);
 				});
 			},
@@ -158,10 +164,9 @@
 				}
 			},
 			showtest() {
-				var controll = this.SERVER_URL + 'login/ShowTest/';
-				this.http.post(controll, '').then(res => {
-
-				});
+				Promise.showtest().then(res => {
+					console.log(res);
+				})
 			},
 			wxlogin(objvalue) {
 				//获取与用户登录状态后改用服务端获取用户OPENID 以保证秘钥安全

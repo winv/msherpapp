@@ -21,6 +21,14 @@ permisson.autologin = function(tomain) {
 	})
 }
 
+permisson.ShowTest = function() {
+	return new Promise(function(resolve, reject) {
+		http.post(urls.getFullERPUrl('login/ShowTest/'), param).then(res => {
+		    resolve(res.data)
+		})
+	})
+}
+
 let getlogincode = function(istomain) {
 	uni.login({
 		provider: 'weixin',
