@@ -2,9 +2,10 @@
 *env配置：
 *development：开发环境
 *production：生成环境
-*/
+* // devUrl: 'http://localhost/MshErp.WebApi/api/',
+*/ 
 const mshconfig = {
-	devUrl: 'http://localhost/MshErp.WebApi/api/',
+	devUrl:'http://testwxservice.mmsshh.com/api/',
 	productionUrl: 'http://localhost:809/api/',
 	env: 'development',
 	mshsessionid: "MSH_ERP_APP_TOKEN",

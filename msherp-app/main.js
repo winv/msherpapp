@@ -9,6 +9,7 @@ import cuCustom from './colorui/components/cu-custom.vue'
 import faIcon from './components/kilvn-fa-icon/fa-icon.vue'
 import wxsystem from './libs/wxsystem.js'
 import veeconf from './config/validate.js'
+require("linq")
 
 Vue.component('cu-custom',cuCustom)
 Vue.component('fa-icon',faIcon)

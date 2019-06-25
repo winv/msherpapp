@@ -128,7 +128,8 @@
 		},
 		onShow() {
 			var vinfo = uni.getStorageSync('vendorinfo');
-			this.PoMasterInfo.VendorTextInfo = vinfo.name;
+			this.PoMasterInfo.VendorTextInfo = vinfo.SysNo+'-'+vinfo.VendorName;
+			this.PoMasterInfo.VendorSysNo = vinfo.SysNo;
 			console.log(uni.getStorageSync('vendorinfo'));
 			uni.removeStorageSync('vendorinfo');
 		},

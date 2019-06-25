@@ -34,7 +34,6 @@ httprequest.interceptor.request((config, cancel) => { /* 请求之前拦截器�
 
 /* 请求之后拦截器,对返回错误统一处理,必须return response*/
 httprequest.interceptor.response((res) => { 
-	if (!res) return false;
 	let {
 		data
 	} = res;
@@ -81,7 +80,7 @@ httprequest.interceptor.response((res) => {
 				icon: 'none',
 				title: data.Data.msg,
 			});
-			return false;
+			return res;
 		}
 		return res;
 	}

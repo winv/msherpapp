@@ -19,12 +19,11 @@
 				<view :class="'indexItem-' + item.name" :id="'indexes-' + item.name" :data-index="item.name">
 					<view class="padding">{{item.name}}</view>
 					<view class="cu-list menu-avatar no-padding">
-						<view class="cu-item" v-for="(items,sub) in 2" :key="sub">
-							<view class="cu-avatar round lg">{{item.name}}</view>
+						<view class="cu-item" v-for="(items,sub) in item.childitem" :key="sub">
+							<view class="cu-avatar round lg">{{items.V_VendorFirstLetter}}</view>
 							<view class="content">
-								<view class="text-grey" @tap="selectToBack(item)">{{item.name}}<text class="text-abc">{{list[sub].name}}</text>君</view>
-								<view class="text-gray text-sm">
-									有{{sub+2}}个主子需要伺候
+								<view class="text-grey" @tap="selectToBack(items)">
+									<text class="text-abc">({{items.SysNo}}){{items.VendorName}}</text>
 								</view>
 							</view>
 						</view>
@@ -34,7 +33,8 @@
 		</scroll-view>
 		<view class="indexBar" :style="[{height:'calc(100vh - ' + CustomBar + 'px - 50px)'}]">
 			<view class="indexBar-box" @touchstart="tStart" @touchend="tEnd" @touchmove.stop="tMove">
-				<view class="indexBar-item" v-for="(item,index) in list" :key="index" :id="index" @touchstart="getCur" @touchend="setCur"> {{item.name}}</view>
+				<view class="indexBar-item" v-for="(item,index) in list" :key="index" :id="index" @touchstart="getCur" @touchend="setCur">
+					{{item.name}}</view>
 			</view>
 		</view>
 		<!--选择显示-->
@@ -45,6 +45,10 @@
 </template>
 
 <script>
+	import vendor from '../../../service/vendor.service.js'
+	import vueCommonData from '../../../config/VueCommonConstData.js';
+	var Enumerable = require('linq');
+	
 	export default {
 		data() {
 			return {
@@ -53,17 +57,19 @@
 				hidden: true,
 				listCurID: '',
 				list: [],
+				vendorList: [],
 				listCur: '',
+				verdorInfo: {
+					Status: 0
+				}
 			};
 		},
+		mixins: [vueCommonData],
 		onLoad() {
-			let list = [{}];
-			for (let i = 0; i < 26; i++) {
-				list[i] = {};
-				list[i].name = String.fromCharCode(65 + i);
-			}
-			this.list = list;
-			this.listCur = list[0];
+			//console.log(Mtils.utils.makePy('你',true))
+		},
+		created() {
+			this.initData();
 		},
 		onReady() {
 			let that = this;
@@ -75,11 +81,37 @@
 			}).exec()
 		},
 		methods: {
-			selectToBack(item){
+			initData() {
+				this.baseRequestDto.ReqBodyDTO = this.verdorInfo;
+				var self = this;
+				vendor.GetVendorIndexList(this.baseRequestDto).then(res => {
+					console.log(res)
+					self.vendorList = res.Data.ResBody
+					this.initIndexs();
+				})
+			},
+			initIndexs(){
+				let list = [{}];
+				for (let i = 0; i < 26; i++) {
+					var char=String.fromCharCode(65 + i);
+					var childlist=Enumerable.from(this.vendorList).where(function(t){
+						return t.V_VendorFirstLetter===char
+					}).toArray()
+					list[i] = {};
+					list[i].name = String.fromCharCode(65 + i);
+					list[i].childitem=childlist;
+					if(childlist.length>0){
+						this.list.push(list[i])
+					}
+				}
+				this.listCur = list[0];
+				console.log(this.list)
+			},
+			selectToBack(item) {
 				console.log(item);
-				uni.setStorageSync('vendorinfo',item)
+				uni.setStorageSync('vendorinfo', item)
 				uni.navigateBack({
-					delta:1
+					delta: 1
 				})
 			},
 			//获取文字信息

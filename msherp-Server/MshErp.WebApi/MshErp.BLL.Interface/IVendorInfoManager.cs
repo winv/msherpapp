@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MshErp.Model.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace MshErp.BLL.Interface
 {
     public interface IVendorInfoManager:IDependency
     {
-        void QueryVendorList();
+        List<VendorResponseBody> QueryVendorList(VendorRquestDTO request);
     }
 }

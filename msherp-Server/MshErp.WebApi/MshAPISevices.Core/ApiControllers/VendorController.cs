@@ -5,19 +5,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Http;
 
 namespace MshErp.APIServices.Core.ApiControllers
 {
     public class VendorController : BaseApiController
     {
         public IVendorInfoManager IVendorInfoManager { get; set; }
-        public AjaxResponseInfo QueryVendorList()
+        public AjaxResponseInfo QueryVendorList([FromBody] VendorRquestDTO request)
         {
-            //IVendorInfoManager
+            var list = IVendorInfoManager.QueryVendorList(request);
             return new AjaxResponseInfo
             {
-                Status = false,
-                Data = null
+                Status = true,
+                Data = new VendorResponseDTO() { ResBody = list }
             };
         }
     }
