@@ -3,12 +3,15 @@
  * 混入后可以直接调用
  * @Author：lee
  * */
+import {
+	mapState
+} from 'vuex'
 let VueCommonConstData = {
 	data() {
 		return {
 			/*采购单模块*/
 			CurrencyList: [],
-			invoiceIndex:0,
+			invoiceIndex: 0,
 			POInvoiceTypeList: [{
 				name: '--All--',
 				value: -999999
@@ -22,36 +25,44 @@ let VueCommonConstData = {
 				name: '带普票',
 				value: 3
 			}],
-			pickPayIndex:0,
-			PayDateTypeList:[
-				{
-					name: '正常支付',
-					value: 0
-				},{
-					name: '预付',
-					value: 1
-				},{
-					name: '低于帐期支付',
-					value: 2
-				},
-			],
+			pickPayIndex: 0,
+			PayDateTypeList: [{
+				name: '正常支付',
+				value: 0
+			}, {
+				name: '预付',
+				value: 1
+			}, {
+				name: '低于帐期支付',
+				value: 2
+			}, ],
 			/*基础请求DTO Body内容根据业务构造传入*/
-			baseRequestDto:{
+			baseRequestDto: {
 				Token: uni.getStorageSync(this.MshSessionID),
 				TimeSpan: uni.getStorageSync(this.mshconfig.mshdata_expirationName),
-				ReqBody:{},
-				ReqBodyDTO:{}
+				ReqBody: {},
+				ReqBodyDTO: {}
 			},
-			pobasketcount:0,
-			userSession:{}
+			pobasketcount: 0,
+			userSession: {},
+			modalName: null
 		}
 	},
+	computed: mapState(['forcedLogin', 'hasLogin', 'userName']),
 	created: function() {
-		this.userSession=uni.getStorageSync("MshUserSession")
+		this.userSession = uni.getStorageSync("MshUserSession")
 	},
 	methods: {
 		showAbout: function() {
 			console.log("这是一个混入，可以测试调用是否正确");
+		},
+		hideModal(e) {
+			this.modalName = null;
+		},
+	},
+	mounted: function() {
+		if (!this.hasLogin) {
+			console.log('未登录')
 		}
 	}
 }

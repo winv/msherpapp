@@ -36,78 +36,55 @@
 </template>
 
 <script>
-export default {
-	data() {
-		return {
-			userInfo: {},
-			binding:false,
-		};
-	},
-	onLoad() {
-		this.getUserInfo();
-	},
-	methods: {
-		getUserInfo() {
-			var self = this;
-			uni.getUserInfo({
-				provider: 'weixin',
-				success: infoRes => {
-					self.userInfo = infoRes.userInfo;
-					console.log(infoRes);
-				}
-			});
+	import permisson from '../../../service/permisson.service.js'
+	export default {
+		data() {
+			return {
+				userInfo: {},
+				binding: false,
+			};
 		},
-		exitLogin() {},
-		bindWeiXin() {
-			console.log('bind weixin clicked');
-			this.binding = true;
-			var self = this;
-			var controll = this.SERVER_URL + 'UserManage/BindWeiXinOpenId';
-			var userinfo=uni.getStorageSync("MshUserSession");
-			console.log(userinfo);
-			
-			uni.login({
-				provider: 'weixin',
-				success: (res) => {
+		onLoad() {
+			this.getUserInfo();
+		},
+		methods: {
+			getUserInfo() {
+				var self = this;
+				uni.getUserInfo({
+					provider: 'weixin',
+					success: infoRes => {
+						self.userInfo = infoRes.userInfo;
+						console.log(infoRes);
+					}
+				});
+			},
+			exitLogin() {
+				console.log('logout clicked')
+				permisson.logout()
+			},
+			bindWeiXin() {
+				console.log('bind weixin clicked');
+				var self = this;
+				self.binding = true;
+				var userinfo = uni.getStorageSync("MshUserSession");
+				permisson.bindweixin(userinfo).then(res => {
 					console.log(res);
-					var controll2 = this.SERVER_URL + 'WeiXin/GetOpenId/?json_code=' + res.code;
-					this.http.get(controll2, '').then(res2 => {
-						//根据获取的OPENid 检测ERP侧是否绑定
-						var obj = res2.data;
-						console.log(obj);
-						var userDto = {
-							Token: "",
-							TimeSpan: 0,
-							WeiXinOpenID:res2.data.Data.openid,
-							ReqBody: {
-								"SysNo": userinfo.User.SysNo,
-							}
-						};
-						this.http.post(controll, userDto).then(res => {
-							this.binding=false;
-							if(res.data.Status){
-								uni.showToast({
-									icon: 'none',
-									title: '绑定成功'
-								});
-							}
-							else{
-								uni.showToast({
-									icon: 'none',
-									title: '绑定失败'
-								});
-							}
+					self.binding = false;
+					if (res.Status) {
+						uni.showToast({
+							icon: 'none',
+							title: '绑定成功'
 						});
-					});
-				},
-				fail: (err) => {
-					console.error('授权登录失败：' + JSON.stringify(err));
-				}
-			});
-			
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: '绑定失败'
+						});
+					}
+				})
+			}
 		}
-	}
-};
+	};
 </script>
 
 <style></style>

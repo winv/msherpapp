@@ -55,11 +55,44 @@
 				</picker>
 			</view>
 		</view>
-		<view class="table">
-			<z-table :tableData="basePoItemList" :columns="basePoItemColumns"></z-table>
+		<view :class="showView?'bright789_view_show':'bright789_view_hide'">
+			<view class="table">
+				<z-table :tableData="basePoItemList" :columns="basePoItemColumns"></z-table>
+			</view>
 		</view>
+		<view class="cu-list card-menu menu-avatar sm" :class="!showView?'bright789_view_show':'bright789_view_hide'">
+			<view v-for="(item, index) in basePoItemList" :key="index">
+				<view class="cu-bar bg-white solid-bottom margin-top">
+					<view class="action">
+						<text class="cuIcon-titles text-orange" v-if="false"></text>
+						<view @tap="showCart(item)" data-target="DialogCartModal">{{ item.ProductSysNo }}-{{ item.ProductName }}</view>
+					</view>
+					<view class="padding-sm margin-xs radius">
+						<text class="lg text-gray" :class="'cuIcon-deletefill'" ></text>
+					</view>
+				</view>
+				<view class="cu-card article no-card">
+					<view class="cu-item shadow">
+						<view class="content">
+							<view class="padding-sm flex flex-wrap">
+								<view class="padding-xs">
+									<view class="cu-capsule radius">
+										<view class="cu-tag bg-brown xl radius">价格</view>
+										<view class="cu-tag line-brown basis-xs radius"><input type="text" :value="item.Quantity" /></view>
+										<view class="basis-xs"></view>
+										<view class="cu-tag bg-brown xl radius">数量</view>
+										<view class="cu-tag line-brown basis-xs radius"><input type="text" :value="item.OrderPrice" /></view>
+									</view>
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
+		<view class="basis-xs"></view>
 		<view class="cu-bar bg-white tabbar border shop fixedbottom">
-			<view class="action">
+			<view class="action" @tap="">
 				<view class="cuIcon-cart">
 					<view class="cu-tag badge">{{ pobasketcount }}</view>
 				</view>
@@ -67,7 +100,34 @@
 			</view>
 			<view class="btn-group">
 				<button class="cu-btn bg-orange round shadow-blur" @tap="CreateToPoMaster">创建采购单</button>
-				<button class="cu-btn bg-red round shadow-blur">添加商品</button>
+				<button class="cu-btn bg-red round shadow-blur" @tap="addProduct">添加商品</button>
+				<button class="cu-btn bg-red round shadow-blur" @tap="editProduct">编辑</button>
+			</view>
+		</view>
+		<view class="cu-modal" :class="modalName == 'DialogCartModal' ? 'show' : ''">
+			<view class="cu-dialog pull-left">
+				<view class="cu-bar bg-white justify-end">
+					<view class="content">采购篮</view>
+					<view class="action" @tap="hideModal"><text class="cuIcon-close text-red"></text></view>
+				</view>
+				<view class="cu-list menu-avatar padding-sm no-card">
+					<view class="cu-form-group margin-top-sm">
+						<view class="title">商品名称：</view>
+						<view class="action pull-left">{{ ProductInfo.ProductSysNo }}-{{ ProductInfo.ProductName }}-{{ ProductInfo.ProductID }}</view>
+					</view>
+					<view class="cu-form-group">
+						<view class="title">采购数量：</view>
+						<input class="action" type="text" v-model="PoBasketDto.ReqBodyModel.Quantity" />
+					</view>
+					<view class="cu-form-group">
+						<view class="title">采购单价：</view>
+						<input type="text" v-model="PoBasketDto.ReqBodyModel.OrderPrice" />
+					</view>
+				</view>
+				<view class="cu-bar bg-white">
+					<view class="action margin-0 flex-sub text-green solid-left" @tap="hideModal">取消</view>
+					<view class="action margin-0 flex-sub  solid-left" @tap="addToPoBasket">加入购物篮</view>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -78,7 +138,6 @@
 	import dateFormat from '../../../libs/dateformat.js';
 	import columns from '../../../config/columns.js';
 	import vueCommonData from '../../../config/VueCommonConstData.js';
-
 	export default {
 		components: {
 			zTable
@@ -118,7 +177,9 @@
 				pickindex: 0,
 				basePoItemList: [],
 				basePoItemColumns: [],
-				baseHtml: '<z-table :tableData="baseTableData" :columns="baseColumns"></z-table>'
+				baseHtml: '<z-table :tableData="baseTableData" :columns="baseColumns"></z-table>',
+				editPoItem: false,
+				showView: true
 			};
 		},
 		mixins: [vueCommonData],
@@ -128,10 +189,11 @@
 		},
 		onShow() {
 			var vinfo = uni.getStorageSync('vendorinfo');
-			this.PoMasterInfo.VendorTextInfo = vinfo.SysNo+'-'+vinfo.VendorName;
-			this.PoMasterInfo.VendorSysNo = vinfo.SysNo;
-			console.log(uni.getStorageSync('vendorinfo'));
-			uni.removeStorageSync('vendorinfo');
+			if (vinfo !== '') {
+				this.PoMasterInfo.VendorTextInfo = vinfo.SysNo + '-' + vinfo.VendorName;
+				this.PoMasterInfo.VendorSysNo = vinfo.SysNo;
+				uni.removeStorageSync('vendorinfo');
+			}
 		},
 		mounted() {
 			if (this.basketItemList.length > 0) {
@@ -165,7 +227,6 @@
 					self.PoMasterInfo.poItems = self.basePoItemList;
 					console.log(self.basePoItemList);
 				});
-
 			},
 			initData() {
 				var reqdto = this.baseRequestDto;
@@ -176,6 +237,41 @@
 					this.pobasketcount = res.Data;
 				});
 			},
+			addProduct() {
+				this.modalName = 'DialogCartModal';
+			},
+			editProduct() {
+				this.showView = !this.showView;
+			},
+			addToPoBasket(e) {
+				var self = this;
+				var lastCost = this.ProductInfo.BuyUniCost;
+				var currCost = this.PoBasketDto.ReqBodyModel.OrderPrice;
+				var costmsg = "";
+				var duration = 500;
+				if (currCost > lastCost) {
+					costmsg = "当前采购成本：" + currCost + " 大于最后一次采购成本:" + lastCost + "，请确认采购价格！";
+					duration = 4000
+				}
+				purchase.InsertPoBasket(this.PoBasketDto).then(res => {
+					console.log(res);
+					if (res.Status) {
+						uni.showToast({
+							icon: 'none',
+							title: '采购篮添加成功!' + costmsg,
+							duration: duration
+						});
+						this.modalName = '';
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: res.data.Message,
+							duration: 3000
+						});
+					}
+				});
+				this.loadPobasketData();
+			},
 			CreateToPoMaster() {
 				this.baseRequestDto.ReqBodyDTO = this.PoMasterInfo;
 				console.log(this.baseRequestDto);
@@ -185,7 +281,7 @@
 					});
 				} else {
 					uni.showToast({
-						icon:'none',
+						icon: 'none',
 						title: '非生产环境，为避免数据污染，不执行新建操作',
 						duration: 1500
 					})
@@ -217,4 +313,12 @@
 		}
 	};
 </script>
-<style></style>
+<style>
+	.bright789_view_hide {
+		display: none;
+	}
+
+	.bright789_view_show {
+		display: block;
+	}
+</style>

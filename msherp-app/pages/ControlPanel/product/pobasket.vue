@@ -131,6 +131,7 @@
 </template>
 
 <script>
+	import purchase from '../../../service/purchase.service.js'
 	export default {
 		data() {
 			return {
@@ -183,7 +184,6 @@
 		},
 		methods: {
 			handleSubmit() {
-				this.loadModal = true;
 				console.log('handleSubmit clicked');
 				this.PoBasketDto.ReqBody.CreateUserSysNo = this.userInfo.User.SysNo
 				this.fetchData();
@@ -194,15 +194,18 @@
 			},
 			fetchData() {
 				var self = this;
-				var controll = this.SERVER_URL + 'Purchase/QueryPoBaksetList';
 				this.isfetchData = true;
+				uni.showLoading({
+					mask:true,
+					title: '加载中',
+				})
 				this.isSelectAll=false;
 				this.isnotext = "全选";
-				this.http.post(controll, this.PoBasketDto).then(res => {
+				purchase.QueryPoBaksetList( this.PoBasketDto).then(res => {
 					console.log(res);
-					self.productList = res.data.Data.ReqBody;
-					self.loadModal = false;
-				});
+					self.productList = res.Data.ReqBody;
+					uni.hideLoading()
+				})
 			},
 			itemCheckd(e) {
 				console.log(e.target.dataset.target);

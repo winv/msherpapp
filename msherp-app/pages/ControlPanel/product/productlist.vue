@@ -180,8 +180,10 @@
 </template>
 
 <script>
-	import purchase from '../../../service/purchase.service.js'
 	import vueCommonData from '../../../config/VueCommonConstData.js';
+	import product from '../../../service/product.service.js'
+	import purchase from '../../../service/purchase.service.js'
+	
 	export default {
 		data() {
 			return {
@@ -320,18 +322,17 @@
 			},
 			fetchData() {
 				var self = this;
-				var controll = this.SERVER_URL + 'Product/QueryProductList';
-				this.http.post(controll, this.searchDataDto).then(res => {
+				product.QueryProductList(this.searchDataDto).then(res => {
 					console.log(res);
 					self.loadMore.loadClass = self.loadMore.loadClassList[0];
-					if (res.data.Data.ReqBody.length == 0) {
+					if (res.Data.ReqBody.length == 0) {
 						self.loadMore.loadClass = self.loadMore.loadClassList[2];
 						self.loadMore.loadText = '';
 					}
 					if (self.loadMore.isaddData) {
-						self.productList.concat(res.data.Data.ReqBody);
+						self.productList.concat(res.Data.ReqBody);
 					} else {
-						self.productList = res.data.Data.ReqBody;
+						self.productList = res.Data.ReqBody;
 					}
 					self.loadModal = false;
 				});
@@ -344,13 +345,11 @@
 				this.PoBasketDto.ReqBody.CreateUserSysNo = this.userInfo.User.SysNo;
 				this.PoBasketDto.ReqBodyModel.ProductSysNo = obj.ProductSysNo;
 				this.PoBasketDto.ReqBodyModel.CreateUserSysNo = this.userInfo.User.SysNo
-				
 				console.log('cart clicked');
-				var controll = this.SERVER_URL + 'Purchase/QueryPoBaksetDetail';
-				this.http.post(controll, this.PoBasketDto).then(res => {
+				purchase.QueryPoBaksetDetail(this.PoBasketDto).then(res => {
 					console.log(res);
-					if (res.data.Data.ReqBody[0] !== null) {
-						var dataObj = res.data.Data.ReqBody[0];
+					if (res.Data.ReqBody[0] !== null) {
+						var dataObj = res.Data.ReqBody[0];
 						this.PoBasketDto.ReqBodyModel.Quantity = dataObj.Quantity;
 						this.PoBasketDto.ReqBodyModel.OrderPrice = dataObj.OrderPrice;
 					} else {
@@ -369,10 +368,9 @@
 					costmsg = "当前采购成本：" + currCost + " 大于最后一次采购成本:" + lastCost + "，请确认采购价格！";
 					duration = 4000
 				}
-				var controll = this.SERVER_URL + 'Purchase/InsertPoBasket';
-				this.http.post(controll, this.PoBasketDto).then(res => {
+				purchase.InsertPoBasket(this.PoBasketDto).then(res => {
 					console.log(res);
-					if (res.data.Status) {
+					if (res.Status) {
 						uni.showToast({
 							icon: 'none',
 							title: '采购篮添加成功!' + costmsg,
@@ -394,9 +392,9 @@
 				this.PoBasketDto.ReqBody.CreateUserSysNo = this.userInfo.User.SysNo;
 				purchase.GetPobasketCount(this.PoBasketDto).then(res=>{
 					console.log(res);
-					if (res.data.Status&&res.data.Data>0) {
+					if (res.Status&&res.Data>0) {
 						self.showCartInfo.showIcon=true;
-						self.showCartInfo.count=res.data.Data;
+						self.showCartInfo.count=res.Data;
 					} else {
 						self.showCartInfo.showIcon=false;
 					}

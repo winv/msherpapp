@@ -26,7 +26,7 @@ httprequest.interceptor.request((config, cancel) => { /* 请求之前拦截器�
 	}
 	/* 如果token不存在，调用cancel 会取消本次请求，但是该函数的catch() 仍会执行*/
 	if (uni.getStorageSync(mshconfig.mshsessionid)==='') { 
-		cancel('token 存在 自动登录中...') // 接收一个参数，会传给catch((err) => {}) err.errMsg === 'token 不存在'
+		console.log('token不存在 自动登录中...') // 接收一个参数，会传给catch((err) => {}) err.errMsg === 'token 不存在'
 		permisson.autologin();
 	}
 	return config;
@@ -44,34 +44,49 @@ httprequest.interceptor.response((res) => {
 		uni.showToast({
 			icon: 'none',
 			title: '未登陆或登陆已过期，请重新登陆',
+			duration:1500
 		});
 		uni.reLaunch({
 			url: '../../login/login',
 		});
-		return false;
+		return res;
 	}
 	if (res.statusCode == 404) {
 		uni.showToast({
 			icon: 'none',
 			title: data.Message,
+			duration:1500
 		});
-		return false;
+		return res;
 	}
 	//501 自定义的错误
 	if (res.statusCode == 501) {
 		uni.showToast({
 			icon: 'none',
 			title: data.Message,
+			duration:1500
 		});
-		return false;
+		return res;
+	}
+	//503 503服务器不可用错误
+	if (res.statusCode == 503) {
+		uni.showToast({
+			icon: 'none',
+			title: data.Message,
+			duration:1500
+		});
+		console.log('503 error')
+		console.log(res)
+		return res;
 	}
 	//非200 其他错误
 	if (res.statusCode != 200) {
 		uni.showToast({
 			icon: 'none',
 			title: data.Message,
+			duration:1500
 		});
-		return false;
+		return res;
 	}
 	//请求正常但是状态不对
 	if (res.statusCode == 200) {
@@ -79,12 +94,12 @@ httprequest.interceptor.response((res) => {
 			uni.showToast({
 				icon: 'none',
 				title: data.Data.msg,
+				duration:1500
 			});
 			return res;
 		}
 		return res;
 	}
 	return res;
-
 })
 export default httprequest;

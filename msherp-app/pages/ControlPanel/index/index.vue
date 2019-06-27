@@ -57,37 +57,12 @@
 </template>
 
 <script>
-	import {
-		mapState
-	} from 'vuex'
-	export default {
-		computed: mapState(['forcedLogin', 'hasLogin', 'userName']),
-		methods: {
-			showtest() {
-				var controll = this.SERVER_URL + 'login/ShowTest/';
-				this.http.post(controll, '').then(res => {
 
-				});
-			},
-		},
+	import VueCommonConstData from '../../../config/VueCommonConstData.js'
+	export default {
+		methods: {},
+		mixins:[VueCommonConstData],
 		onLoad() {
-			if (uni.getStorageSync(this.MshSessionID) === '') {
-				//this.tologin();
-			} else {
-				var timestamp = Date.parse(new Date());
-				var expiration = timestamp + 1800000; //缓存30分钟
-				var data_expiration = uni.getStorageSync(this.mshconfig.mshdata_expirationName);
-				console.log(data_expiration)
-				console.log(timestamp)
-				if (data_expiration) {
-					if (timestamp > data_expiration) {
-						uni.clearStorageSync();
-					}
-				} else {
-					this.hasLogin = true;
-					uni.setStorageSync(this.mshconfig.mshdata_expirationName, this.mshconfig.mshdata_expirationTime)
-				}
-			}
 		}
 	}
 </script>
