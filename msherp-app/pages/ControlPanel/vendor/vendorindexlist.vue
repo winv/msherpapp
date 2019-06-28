@@ -7,10 +7,10 @@
 		<view class="cu-bar bg-white search fixed" :style="[{top:CustomBar + 'px'}]">
 			<view class="search-form round">
 				<text class="cuIcon-search"></text>
-				<input type="text" placeholder="输入搜索的关键词" confirm-type="search"></input>
+				<input type="text" v-model='keyword' placeholder="输入搜索的关键词" confirm-type="search"></input>
 			</view>
 			<view class="action">
-				<button class="cu-btn bg-gradual-green shadow-blur round">搜索</button>
+				<button class="cu-btn bg-gradual-green shadow-blur round" @tap='searchVendor'>搜索</button>
 			</view>
 		</view>
 		<scroll-view scroll-y class="indexes" :scroll-into-view="'indexes-'+ listCurID" :style="[{height:'calc(100vh - '+ CustomBar + 'px - 50px)'}]"
@@ -48,7 +48,7 @@
 	import vendor from '../../../service/vendor.service.js'
 	import vueCommonData from '../../../config/VueCommonConstData.js';
 	var Enumerable = require('linq');
-	
+
 	export default {
 		data() {
 			return {
@@ -57,18 +57,24 @@
 				hidden: true,
 				listCurID: '',
 				list: [],
+				vendorListSource: [],
 				vendorList: [],
 				listCur: '',
 				verdorInfo: {
 					Status: 0
-				}
+				},
+				keyword: ''
 			};
 		},
 		mixins: [vueCommonData],
 		onLoad() {
 			//console.log(Mtils.utils.makePy('你',true))
+
 		},
 		created() {
+
+		},
+		mounted() {
 			this.initData();
 		},
 		onReady() {
@@ -79,33 +85,79 @@
 			uni.createSelectorQuery().select('.indexes').boundingClientRect(function(res) {
 				that.barTop = res.top
 			}).exec()
+
 		},
 		methods: {
 			initData() {
 				this.baseRequestDto.ReqBodyDTO = this.verdorInfo;
 				var self = this;
+				uni.showLoading({
+					title: '加载中',
+					mask: true
+				})
 				vendor.GetVendorIndexList(this.baseRequestDto).then(res => {
 					console.log(res)
 					self.vendorList = res.Data.ResBody
 					this.initIndexs();
+					uni.hideLoading()
 				})
+				// setTimeout(function() {
+				// 	uni.showToast({
+				// 		title: '请求超时，请重新查询！',
+				// 		duration: 1000
+				// 	})
+				// 	uni.hideLoading()
+				// }, 3000)
 			},
-			initIndexs(){
+			initIndexs() {
 				let list = [{}];
+				let list2 = []
 				for (let i = 0; i < 26; i++) {
-					var char=String.fromCharCode(65 + i);
-					var childlist=Enumerable.from(this.vendorList).where(function(t){
-						return t.V_VendorFirstLetter===char
+					var char = String.fromCharCode(65 + i);
+					var childlist = Enumerable.from(this.vendorList).where(function(t) {
+						return t.V_VendorFirstLetter === char
 					}).toArray()
 					list[i] = {};
 					list[i].name = String.fromCharCode(65 + i);
-					list[i].childitem=childlist;
-					if(childlist.length>0){
-						this.list.push(list[i])
+					list[i].childitem = childlist;
+					if (childlist.length > 0) {
+						list2.push(list[i])
 					}
 				}
+				this.list = list2
 				this.listCur = list[0];
-				console.log(this.list)
+			},
+			searchVendor() {
+				var sz = /^[0-9]*$/;
+				var key = this.keyword;
+				var reg = new RegExp(key);
+				if (this.keyword === '') {
+					uni.showToast({
+						title:'关键字为空'
+					})
+					return;
+				} else {
+					var searchlist = [];
+					if (this.vendorListSource.length == 0) {
+						this.vendorListSource = this.vendorList
+						if (this.vendorListSource.length === 0) {
+							this.initData()
+							return;
+						}
+					}
+					if (sz.test(key)) {
+						var childlist = Enumerable.from(this.vendorListSource).where(function(t) {
+							return t.SysNo === Number(key)
+						}).toArray()
+						this.vendorList = childlist
+					} else {
+						var childlist = Enumerable.from(this.vendorListSource).where(function(t) {
+							return reg.test(t.VendorName) == true
+						}).toArray()
+						this.vendorList = childlist
+					}
+				}
+				this.initIndexs()
 			},
 			selectToBack(item) {
 				console.log(item);

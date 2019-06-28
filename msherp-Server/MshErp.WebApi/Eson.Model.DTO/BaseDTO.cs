@@ -16,10 +16,11 @@ namespace MshErp.Model.DTO
         /// 时间戳
         /// </summary>
         public int TimeSpan { get; set; }
-               
+
         /// <summary>
         /// 微信OpenId
         /// </summary>
         public string WeiXinOpenID { get; set; }
+        public string RetrunMsg { get; set; }
     }
 }

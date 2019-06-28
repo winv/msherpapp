@@ -1,4 +1,6 @@
 ﻿using Eson.BLL.Basic;
+using Eson.Objects;
+using Eson.Objects.Basic;
 using Eson.Utils;
 using MshErp.Model.DTO;
 using System;
@@ -33,6 +35,27 @@ namespace MshErp.BLL.Interface
             var list = ExtensiveHelper.Map<DataTable, VendorResponseBody>(ds.Tables[0]).OrderBy(x=>x.V_VendorFirstLetter).ToList();
             
             return list;
+        }
+
+        public string VerifyVendor(int VendorSysNo)
+        {
+            VendorInfo vInfo = VendorManager.GetInstance().Load(VendorSysNo);
+            if (vInfo.Status != (int)AppEnum.BiStatus.Valid)
+            {
+                string msg= "无效状态的供应商，不能创建采购单！ ";
+                return msg;
+            }
+            if (vInfo == null || vInfo.APType == AppConst.IntNull)
+            {
+                string msg = "请完成更新供应商的帐期类型！ ";
+                return msg;
+            }
+            if (vInfo.CateManuHash.Count == 0)
+            {
+                string msg = "请完成供应商的供应品类！";
+                return msg;
+            }
+            return "";
         }
     }
 }

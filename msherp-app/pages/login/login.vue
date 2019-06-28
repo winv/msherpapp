@@ -1,41 +1,23 @@
 <template>
-	<view>
-		<cu-custom bgColor="bg-gradual-pink">
+
+	<view class="body">
+			<cu-custom bgColor="bg-gradual-pink" :isBack="true">
 			<block slot="backText"></block>
 			<block slot="content">登录</block>
 		</cu-custom>
-		<form>
-			<view class="cu-form-group">
-				<view class="title">帐号</view>
-				<input type="text" clearable focus v-model="account" placeholder="请输入账号"></input>
-			</view>
-			<view class="cu-form-group">
-				<view class="title">密码</view>
-				<input type="password" displayable v-model="password" placeholder="请输入密码"></input>
-			</view>
-		</form>
-		<view class="btn-row">
-			<button type="primary" class="primary" @tap="accountLogin">登录</button>
-			<button v-if="false" type="primary" class="primary" @tap="showtest">验证</button>
-		</view>
-		<view class="flex solid-bottom padding justify-end">
-			<view class="padding-sm margin-xs radius">
-				<checkbox v-model="remeberme" checked="true"></checkbox>记住我
-			</view>
-		</view>
-		<view class="action-row" v-if="isShowOther">
-			<navigator url="../reg/reg">注册账号</navigator>
-			<text>|</text>
-			<navigator url="../pwd/pwd">忘记密码</navigator>
-		</view>
-		<view class="oauth-row" v-if="hasProvider" v-bind:style="{top: positionTop + 'px'}">
-			<view class="oauth-image" v-for="provider in providerList" :key="provider.value">
-				<image :src="provider.image" @tap="oauth(provider.value)"></image>
-			</view>
-		</view>
-		<view class="cu-load load-modal" v-if="logining">
-			<image src="/static/logo.png" mode="aspectFit"></image>
-			<view class="gray-text">登录中...</view>
+		<image class="background-img" style="width:{{systemWidth}}px;height:{{systemHeight}}px;" src="../../static/msh-login-pic.png" mode="scaleToFill" />
+		<image class="title-img" src="../../static/login-title-icon.png" mode="scaleToFill" />
+		<view class="form-view">
+		  <view style="position: relative;">
+		    <input class="inner-input1"  confirm-type="next" type="text" v-model="account" placeholder="请输入帐号" placeholder-style="color:#000000;font-size:31rpx;" />
+		    <image class="bottom-line-img1" src="../../static/underscore-icon.png" mode="scaleToFill" />
+		    <input class="inner-input2" confirm-type="done" :type="'password'" v-model="password"  placeholder="请输入密码" placeholder-style="color:#000000;font-size:31rpx;" />
+		    <image class="bottom-line-img2" src="../../static/underscore-icon.png" mode="scaleToFill" />
+		    <button hover-class="hover-btn" class="inner-btn" open-type="getUserInfo" @tap="accountLogin">登录</button>
+		    <view class="inner-bottom-view">
+		      <view style="width:145rpx;"><checkbox v-model="remeberme" checked="true"></checkbox>记住我</view>
+		    </view>
+		  </view>
 		</view>
 	</view>
 </template>
@@ -49,6 +31,7 @@
 	import mInput from '../../components/m-input.vue'
 	import mCheckBox from '../../components/m-check-box.vue'
 	import permisson from '../../service/permisson.service.js'
+	import wxsystem from '../../libs/wxsystem.js'
 
 	export default {
 		components: {
@@ -57,6 +40,8 @@
 		},
 		data() {
 			return {
+				systemHeight: 0,
+				systemWidth: 0,
 				providerList: [],
 				hasProvider: false,
 				account: '',
@@ -73,6 +58,8 @@
 				this.account = uni.getStorageSync('mshuseraccountid')
 				this.password = uni.getStorageSync('mshuseraccountpwd')
 			}
+			this.systemHeight = wxsystem.getSysHeight()
+			this.systemWidth = wxsystem.getSysWidth()
 		},
 		methods: {
 			...mapMutations(['login']),
@@ -106,10 +93,6 @@
 				this.positionTop = uni.getSystemInfoSync().windowHeight - 100;
 			},
 			accountLogin() {
-				/**
-				 * 客户端对账号信息进行一些必要的校验。
-				 * 实际开发中，根据业务需要进行处理，这里仅做示例。
-				 */
 				if (this.account.length < 3) {
 					uni.showToast({
 						icon: 'none',
@@ -185,44 +168,121 @@
 		}
 	}
 </script>
-<style>
-	.cu-form-group .title {
-		min-width: calc(4em + 15px);
+<style lang="less">
+	page {
+		background-color: #f3f5f2;
 	}
 
-	.action-row {
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
+	.body {
+		height: 100%;
+		font-family: "\5FAE\8F6F\96C5\9ED1", arial;
+		overflow: hidden;
 	}
 
-	.action-row navigator {
-		color: #007aff;
-		padding: 0 20upx;
+	.background-img {
+		position: fixed;
+		top: 0px;
+		left: 0px;
+		z-index: 100;
 	}
 
-	.oauth-row {
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
+	.form-view {
+		position: fixed;
+		width: 616rpx;
+		z-index: 102;
+		top: 550rpx;
+		left: 68rpx;
+	}
+
+	.title-img {
+		position: fixed;
+		width: 290rpx;
+		height: 116rpx;
+		top: 264rpx;
+		left: 230rpx;
+		z-index: 102;
+	}
+
+	.inner-input1 {
+		width: 466rpx;
+		height: 80rpx;
+		line-height: 80rpx;
+		padding-left: 24rpx;
+		color: #000000;
+	}
+
+	.inner-input2 {
+		width: 466rpx;
+		height: 80rpx;
+		line-height: 80rpx;
+		margin-top: 48rpx;
+		padding-left: 24rpx;
+		color: #000000;
+	}
+
+	.bottom-line-img1 {
 		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
+		width: 616rpx;
+		height: 8rpx;
+		top: 71rpx;
+		left: 0px;
 	}
 
-	.oauth-image {
-		width: 100upx;
-		height: 100upx;
-		border: 1upx solid #dddddd;
-		border-radius: 100upx;
-		margin: 0 40upx;
-		background-color: #ffffff;
+	.bottom-line-img2 {
+		position: absolute;
+		width: 616rpx;
+		height: 8rpx;
+		top: 196rpx;
+		left: 0px;
 	}
 
-	.oauth-image image {
-		width: 60upx;
-		height: 60upx;
-		margin: 20upx;
+	.inner-btn {
+		margin-top: 50rpx;
+		width: 616rpx;
+		height: 88rpx;
+		line-height: 88rpx;
+		border-radius: 11rpx;
+		font-size: 31rpx;
+		background: transparent;
+		color: #fff;
+		background-color: rgba(205, 22, 22, 0.5);
+		border: 1rpx solid #C5343A;
+		text-align: center;
+	}
+
+	.inner-select {
+		height: 40rpx;
+		line-height: 40rpx;
+		font-size: 28rpx;
+		color: #ffffff;
+		display: flex;
+		margin-top: 36rpx;
+	}
+
+	.select-pic-view {
+		width: 40rpx;
+		height: 40rpx;
+	}
+
+	.eye-icon-view {
+		width: 48rpx;
+		height: 40rpx;
+		position: absolute;
+		right: 24rpx;
+		top: 148rpx;
+	}
+
+	.hover-btn {
+		background-color: RGBA(205, 22, 22, 0.7);
+		border: 1rpx solid #B1282D;
+	}
+
+	.inner-bottom-view {
+		display: flex;
+		justify-content: flex-end;
+		width: 616rpx;
+		margin-top: 30rpx;
+		font-size: 28rpx;
+		color: #DFDFDF;
 	}
 </style>

@@ -4,7 +4,7 @@
 			<block slot="backText">返回</block>
 			<block slot="content">新建采购单</block>
 		</cu-custom>
-
+		<!--采购单主界面-->
 		<view class="cu-list menu-avatar">
 			<view class="cu-form-group">
 				<view class="title">采购单号：</view>
@@ -55,12 +55,14 @@
 				</picker>
 			</view>
 		</view>
-		<view :class="showView?'bright789_view_show':'bright789_view_hide'">
+		<!--table 采购商品列表-->
+		<view :class="editPoItem.showView?'bright789_view_show':'bright789_view_hide'">
 			<view class="table">
 				<z-table :tableData="basePoItemList" :columns="basePoItemColumns"></z-table>
 			</view>
 		</view>
-		<view class="cu-list card-menu menu-avatar sm" :class="!showView?'bright789_view_show':'bright789_view_hide'">
+		<!--可编辑列表 table暂时不支持行单击事件-->
+		<view class="cu-list card-menu menu-avatar sm" :class="!editPoItem.showView?'bright789_view_show':'bright789_view_hide'">
 			<view v-for="(item, index) in basePoItemList" :key="index">
 				<view class="cu-bar bg-white solid-bottom margin-top">
 					<view class="action">
@@ -68,7 +70,7 @@
 						<view @tap="showCart(item)" data-target="DialogCartModal">{{ item.ProductSysNo }}-{{ item.ProductName }}</view>
 					</view>
 					<view class="padding-sm margin-xs radius">
-						<text class="lg text-gray" :class="'cuIcon-deletefill'" ></text>
+						<text class="lg text-gray" :class="'cuIcon-deletefill'" @tap="deletePoItem(item,index)"></text>
 					</view>
 				</view>
 				<view class="cu-card article no-card">
@@ -78,7 +80,7 @@
 								<view class="padding-xs">
 									<view class="cu-capsule radius">
 										<view class="cu-tag bg-brown xl radius">价格</view>
-										<view class="cu-tag line-brown basis-xs radius"><input type="text" :value="item.Quantity" /></view>
+										<view class="cu-tag line-brown basis-xs radius"><input type="text" :value="item.OrderQty" /></view>
 										<view class="basis-xs"></view>
 										<view class="cu-tag bg-brown xl radius">数量</view>
 										<view class="cu-tag line-brown basis-xs radius"><input type="text" :value="item.OrderPrice" /></view>
@@ -91,8 +93,9 @@
 			</view>
 		</view>
 		<view class="basis-xs"></view>
+		<!--底部操作条-->
 		<view class="cu-bar bg-white tabbar border shop fixedbottom">
-			<view class="action" @tap="">
+			<view class="action" @tap="showCartListRight">
 				<view class="cuIcon-cart">
 					<view class="cu-tag badge">{{ pobasketcount }}</view>
 				</view>
@@ -100,10 +103,11 @@
 			</view>
 			<view class="btn-group">
 				<button class="cu-btn bg-orange round shadow-blur" @tap="CreateToPoMaster">创建采购单</button>
-				<button class="cu-btn bg-red round shadow-blur" @tap="addProduct">添加商品</button>
-				<button class="cu-btn bg-red round shadow-blur" @tap="editProduct">编辑</button>
+				<button class="cu-btn bg-red round shadow-blur" @tap="addProduct" v-if='isShowAdd'>添加商品</button>
+				<button class="cu-btn bg-red round shadow-blur" @tap="editProduct">{{editPoItem.text}}</button>
 			</view>
 		</view>
+		<!--直接添加商品-->
 		<view class="cu-modal" :class="modalName == 'DialogCartModal' ? 'show' : ''">
 			<view class="cu-dialog pull-left">
 				<view class="cu-bar bg-white justify-end">
@@ -117,7 +121,7 @@
 					</view>
 					<view class="cu-form-group">
 						<view class="title">采购数量：</view>
-						<input class="action" type="text" v-model="PoBasketDto.ReqBodyModel.Quantity" />
+						<input class="action" type="text" v-model="PoBasketDto.ReqBodyModel.OrderQty" />
 					</view>
 					<view class="cu-form-group">
 						<view class="title">采购单价：</view>
@@ -127,6 +131,19 @@
 				<view class="cu-bar bg-white">
 					<view class="action margin-0 flex-sub text-green solid-left" @tap="hideModal">取消</view>
 					<view class="action margin-0 flex-sub  solid-left" @tap="addToPoBasket">加入购物篮</view>
+				</view>
+			</view>
+		</view>
+		<!--侧边抽屉 从采购篮添加-->
+		<view class="cu-modal drawer-modal justify-end" :class="modalName=='DrawerModalR'?'show':''" @tap="hideModal">
+			<view class="cu-dialog basis-lg" @tap.stop="" :style="[{top:CustomBar+'px',height:'calc(100vh - ' + CustomBar + 'px)'}]">
+				<view class="cu-list menu text-left">
+					<view class="cu-item " v-for="(item,index) in cartList" :key="index">
+						<view class="content">
+							<view>{{item.ProductSysNo}}{{item.V_ProductName}}-单价{{item.OrderPrice}},数量{{item.Quantity}}</view>
+						</view>
+						<text class="lg text-red" :class="'cuIcon-roundaddfill'" @tap="addToPoBasketInfo(item)"></text>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -144,6 +161,7 @@
 		},
 		data() {
 			return {
+				CustomBar: this.CustomBar,
 				pomaster: {
 					reqbody: {
 						VendorTextInfo: ''
@@ -174,12 +192,33 @@
 					name: '上海总仓',
 					value: '6'
 				}],
+				isShowAdd: true,
 				pickindex: 0,
 				basePoItemList: [],
 				basePoItemColumns: [],
 				baseHtml: '<z-table :tableData="baseTableData" :columns="baseColumns"></z-table>',
-				editPoItem: false,
-				showView: true
+				editPoItem: {
+					isedit: false,
+					text: '编辑商品',
+					showView: true
+				},
+				PoBasketDto: {
+					Token: uni.getStorageSync(this.MshSessionID),
+					TimeSpan: uni.getStorageSync(this.mshconfig.mshdata_expirationName),
+					ReqBody: {
+						StockSysNo: 6,
+						ProductSysNo: 0,
+						CreateUserSysNo: 0
+					},
+					ReqBodyModel: {
+						StockSysNo: 6,
+						ProductSysNo: 0,
+						CreateUserSysNo: 0,
+						Quantity: '',
+						OrderPrice: '',
+					},
+				},
+				cartList:[]	
 			};
 		},
 		mixins: [vueCommonData],
@@ -216,6 +255,7 @@
 					});
 					this.searchDataDto.reqbody.SysNo = sysnos.join(',');
 					this.searchDataDto.reqbody.ProductSysNo = productsysnos.join(',');
+					this.isShowAdd = false;
 					console.log(this.basketItemList);
 				}
 			},
@@ -229,19 +269,49 @@
 				});
 			},
 			initData() {
+				var self=this;
 				var reqdto = this.baseRequestDto;
 				reqdto.ReqBody.CreateUserSysNo = this.userSession.User.SysNo;
 				reqdto.ReqBody.StockSysNo = 6;
 				purchase.GetPobasketCount(reqdto).then(res => {
 					console.log(res);
-					this.pobasketcount = res.Data;
 				});
+				//初始化采购篮商品拉取
+				this.PoBasketDto.ReqBody.CreateUserSysNo = this.userSession.User.SysNo;
+				purchase.QueryPoBaksetList( this.PoBasketDto).then(res => {
+					console.log(res);
+					self.cartList = res.Data.ReqBody;
+					self.pobasketcount = self.cartList.length;
+				})
 			},
 			addProduct() {
 				this.modalName = 'DialogCartModal';
 			},
 			editProduct() {
-				this.showView = !this.showView;
+				this.editPoItem.showView = !this.editPoItem.showView;
+				if (this.editPoItem.showView) {
+					this.editPoItem.text = "编辑商品"
+				} else {
+					this.editPoItem.text = "完成编辑"
+				}
+			},
+			deletePoItem(item, index) {
+				var self = this;
+				uni.showModal({
+					title: '提示',
+					content: '确认删除已选商品吗？',
+					success: function(res) {
+						if (res.confirm) {
+							console.log('confirmed')
+							//如果是新建采购单 直接删除数组内容即可
+							self.basePoItemList.splice(index, 1);
+							//如果是已建采购单编辑 删除逻辑需要调用服务从采购单子表中删除
+
+						} else if (res.cancel) {
+							console.log('canceld')
+						}
+					}
+				})
 			},
 			addToPoBasket(e) {
 				var self = this;
@@ -273,11 +343,32 @@
 				this.loadPobasketData();
 			},
 			CreateToPoMaster() {
+				if (this.PoMasterInfo.VendorSysNo === 0) {
+					uni.showToast({
+						icon: 'none',
+						title: '供应商必须选择！',
+						duration: 1500
+					})
+					return;
+				}
 				this.baseRequestDto.ReqBodyDTO = this.PoMasterInfo;
 				console.log(this.baseRequestDto);
-				if (this.mshconfig.env === 'production') {
+
+				if (this.mshconfig.isWriteData) {
+					uni.showLoading({
+						title: '正在创建，请稍后...',
+						mask: true
+					})
 					purchase.CreateToPoMaster(this.baseRequestDto).then(res => {
-						console.log(res);
+						if (res.Data.RetrunMsg !== '') {
+							uni.showToast({
+								icon: 'none',
+								title: res.Data.RetrunMsg,
+								duration: 3000
+							})
+						}
+						console.log(res)
+						uni.hideLoading()
 					});
 				} else {
 					uni.showToast({
@@ -286,6 +377,9 @@
 						duration: 1500
 					})
 				}
+			},
+			showCartListRight(){
+				this.modalName='DrawerModalR'
 			},
 			PickerChange(e) {
 				this.pickindex = e.detail.value;

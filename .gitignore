@@ -361,3 +361,5 @@ appsetting.config
 /publishsite
 *.rar
 ConnectionStrings.config
+/msherp-app/static/msh-login-pic.jpg
+/msherp-app/static/login-title-icon.png

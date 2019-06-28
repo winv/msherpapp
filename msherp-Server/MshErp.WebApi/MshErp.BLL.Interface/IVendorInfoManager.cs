@@ -10,5 +10,7 @@ namespace MshErp.BLL.Interface
     public interface IVendorInfoManager:IDependency
     {
         List<VendorResponseBody> QueryVendorList(VendorRquestDTO request);
+
+        string VerifyVendor(int VendorSysNo);
     }
 }

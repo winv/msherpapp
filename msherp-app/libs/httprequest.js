@@ -24,6 +24,9 @@ httprequest.interceptor.request((config, cancel) => { /* 请求之前拦截器�
 		'Token': uni.getStorageSync(mshconfig.mshsessionid),
 		'MshUserID':uni.getStorageSync('MshUserID'),
 	}
+	uni.showLoading({
+		mask:true
+	})
 	/* 如果token不存在，调用cancel 会取消本次请求，但是该函数的catch() 仍会执行*/
 	if (uni.getStorageSync(mshconfig.mshsessionid)==='') { 
 		console.log('token不存在 自动登录中...') // 接收一个参数，会传给catch((err) => {}) err.errMsg === 'token 不存在'
@@ -34,6 +37,7 @@ httprequest.interceptor.request((config, cancel) => { /* 请求之前拦截器�
 
 /* 请求之后拦截器,对返回错误统一处理,必须return response*/
 httprequest.interceptor.response((res) => { 
+	uni.hideLoading()
 	let {
 		data
 	} = res;

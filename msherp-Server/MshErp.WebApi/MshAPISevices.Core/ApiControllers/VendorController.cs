@@ -21,5 +21,15 @@ namespace MshErp.APIServices.Core.ApiControllers
                 Data = new VendorResponseDTO() { ResBody = list }
             };
         }
+
+        public AjaxResponseInfo GetVendorVerifyMsg([FromUri] int VendorSysNo)
+        {
+            var msg = IVendorInfoManager.VerifyVendor(VendorSysNo);
+            return new AjaxResponseInfo
+            {
+                Status = true,
+                Data = msg
+            };
+        }
     }
 }

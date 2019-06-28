@@ -6,7 +6,9 @@
 		},
 		{
 			"path": "pages/login/login",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "妙生活Erp"
+			}
 		},
 		{
 			"path": "pages/ControlPanel/index/index",

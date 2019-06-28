@@ -10,6 +10,7 @@ const mshconfig = {
 	productionUrl: 'http://localhost:809/api/',
 	env: 'development',
 	isDebug: true,
+	isWriteData:true,
 	mshsessionid: "MSH_ERP_APP_TOKEN",
 	mshdata_expirationName: 'mshdata_expiration',
 	mshdata_expirationTime: Date.parse(new Date()) + 1800000,

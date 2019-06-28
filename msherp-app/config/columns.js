@@ -14,6 +14,14 @@ columns.PoItemCol = function(obj) {
 		key: 'ProductName',
 	})
 	arr.push({
+		title: '订购数量',
+		key: 'Quantity',
+	})
+	arr.push({
+		title: '订购价格',
+		key: 'OrderPrice',
+	})
+	arr.push({
 		title: '所有库存',
 		key: 'V_AccountQty',
 	})
@@ -28,14 +36,6 @@ columns.PoItemCol = function(obj) {
 	arr.push({
 		title: '当日门店需求',
 		key: 'V_DemandQty',
-	})
-	arr.push({
-		title: '订购数量',
-		key: 'Quantity',
-	})
-	arr.push({
-		title: '订购价格',
-		key: 'OrderPrice',
 	})
 	return arr;
 }

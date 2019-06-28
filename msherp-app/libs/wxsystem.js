@@ -71,7 +71,7 @@ function getSysHeight() {
  * @author lee
  */
 function getSysWidth() {
-	var width = wepy.getSystemInfoSync().windowWidth
+	var width = uni.getSystemInfoSync().windowWidth
 	if (width) {
 		return width
 	}
@@ -93,7 +93,7 @@ function getTokenId() {
 			duration: 1500
 		})
 		setTimeout(() => {
-			wepy.reLaunch({
+			uni.reLaunch({
 				url: '/pages/login'
 			})
 		}, 1500)

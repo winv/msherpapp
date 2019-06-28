@@ -165,10 +165,6 @@
 				</view>
 			</view>
 		</view>
-		<view class="cu-load load-modal" v-if="loadModal">
-			<image src="/static/logo.png" mode="aspectFit"></image>
-			<view class="gray-text">查询中...</view>
-		</view>
 		<view class="menu_box" v-if="showCartInfo.showIcon">
 			<navigator navigateTo :url="'/pages/ControlPanel/product/pobasket'">
 				<view class='cu-avatar sm radius' style="background-image:url(/static/img/tab-cart-current.png)">
@@ -301,7 +297,6 @@
 		mixins:[vueCommonData],
 		methods: {
 			handleSubmit() {
-				this.loadModal = true;
 				console.log('handleSubmit clicked');
 				console.log(this.searchDataDto);
 				this.searchDataDto.ReqBody.PageIndex = 1;
@@ -334,7 +329,6 @@
 					} else {
 						self.productList = res.Data.ReqBody;
 					}
-					self.loadModal = false;
 				});
 			},
 			showCart(obj) {

@@ -46,7 +46,7 @@ namespace MshErp.APIServices.Core.ApiControllers
         public AjaxResponseInfo QueryPoBaksetCount([FromBody] PurchaseBasketRequstDTO request)
         {
             var count = IPurchaseInfoManager.GetPoBasketCount(request);
-            
+
             return new AjaxResponseInfo
             {
                 Status = true,
@@ -83,19 +83,19 @@ namespace MshErp.APIServices.Core.ApiControllers
             return new AjaxResponseInfo
             {
                 Status = true,
-                Data =new PurchasePoMasterResponseDTO { ResBody= result }
+                Data = new PurchasePoMasterResponseDTO { ResBody = result }
             };
         }
 
         [HttpPut]
         public AjaxResponseInfo InsertPoMaster([FromBody] PurchasePoMasterRquestDTO request)
         {
-            IPurchaseInfoManager.InsertPoMaster(request);
-            
+            var result = IPurchaseInfoManager.InsertPoMaster(request);
+
             return new AjaxResponseInfo
             {
                 Status = true,
-                Data = null
+                Data = result
             };
         }
     }

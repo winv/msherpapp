@@ -15,6 +15,7 @@ namespace MshErp.Model.DTO
     public class PurchasePoMasterResponseDTO : BaseDTO
     {
         public List<PoItemBody> ResBody { get; set; }
+        public List<PoMasterBody> ResMasterBody { get; set; }
     }
 
     public class PoMasterRequestBody
