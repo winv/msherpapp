@@ -99,7 +99,7 @@
 				<view class="cuIcon-cart">
 					<view class="cu-tag badge">{{ pobasketcount }}</view>
 				</view>
-				采购篮
+				从采购篮添加
 			</view>
 			<view class="btn-group">
 				<button class="cu-btn bg-orange round shadow-blur" @tap="CreateToPoMaster">创建采购单</button>
@@ -142,7 +142,7 @@
 						<view class="content">
 							<view>{{item.ProductSysNo}}{{item.V_ProductName}}-单价{{item.OrderPrice}},数量{{item.Quantity}}</view>
 						</view>
-						<text class="lg text-red" :class="'cuIcon-roundaddfill'" @tap="addToPoBasketInfo(item)"></text>
+						<text class="lg text-red" :class="'cuIcon-roundaddfill'" @tap="addToPoFromBasketInfo(item)"></text>
 					</view>
 				</view>
 			</view>
@@ -218,7 +218,7 @@
 						OrderPrice: '',
 					},
 				},
-				cartList:[]	
+				cartList: []
 			};
 		},
 		mixins: [vueCommonData],
@@ -269,7 +269,7 @@
 				});
 			},
 			initData() {
-				var self=this;
+				var self = this;
 				var reqdto = this.baseRequestDto;
 				reqdto.ReqBody.CreateUserSysNo = this.userSession.User.SysNo;
 				reqdto.ReqBody.StockSysNo = 6;
@@ -278,7 +278,7 @@
 				});
 				//初始化采购篮商品拉取
 				this.PoBasketDto.ReqBody.CreateUserSysNo = this.userSession.User.SysNo;
-				purchase.QueryPoBaksetList( this.PoBasketDto).then(res => {
+				purchase.QueryPoBaksetList(this.PoBasketDto).then(res => {
 					console.log(res);
 					self.cartList = res.Data.ReqBody;
 					self.pobasketcount = self.cartList.length;
@@ -342,6 +342,15 @@
 				});
 				this.loadPobasketData();
 			},
+			addToPoFromBasketInfo(item) {
+				console.log(item)
+				var sysno = this.searchDataDto.reqbody.SysNo === '' ? item.SysNo : this.searchDataDto.reqbody.SysNo + ',' + item.SysNo
+				var productsysno = this.searchDataDto.reqbody.ProductSysNo === '' ? item.ProductSysNo : this.searchDataDto.reqbody.ProductSysNo +
+					',' + item.ProductSysNo
+				this.searchDataDto.reqbody.SysNo = sysno
+				this.searchDataDto.reqbody.ProductSysNo = productsysno
+				this.initBasketData()
+			},
 			CreateToPoMaster() {
 				if (this.PoMasterInfo.VendorSysNo === 0) {
 					uni.showToast({
@@ -378,8 +387,8 @@
 					})
 				}
 			},
-			showCartListRight(){
-				this.modalName='DrawerModalR'
+			showCartListRight() {
+				this.modalName = 'DrawerModalR'
 			},
 			PickerChange(e) {
 				this.pickindex = e.detail.value;

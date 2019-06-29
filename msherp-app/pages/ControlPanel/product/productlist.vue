@@ -7,7 +7,8 @@
 		<view class="cu-bar bg-white search fixed" :style="[{ top: CustomBar + 'px' }]">
 			<view class="search-form round">
 				<text class="cuIcon-search"></text>
-				<input type="text" v-model="searchDataDto.ReqBody.SearchKey" placeholder="支持商品号,编号,名称" confirm-type="search" />
+				<input type="text" @input="changeType" v-model="searchDataDto.ReqBody.serachValue" placeholder="支持商品号,编号,名称"
+				 confirm-type="search" />
 			</view>
 			<view class="action">
 				<button class="cu-btn bg-gradual-green shadow-blur round" @tap="handleSubmit">搜索</button>
@@ -179,7 +180,7 @@
 	import vueCommonData from '../../../config/VueCommonConstData.js';
 	import product from '../../../service/product.service.js'
 	import purchase from '../../../service/purchase.service.js'
-	
+
 	export default {
 		data() {
 			return {
@@ -287,24 +288,53 @@
 					}
 				},
 				userInfo: {},
-				showCartInfo:{showIcon:false,count:0},
+				showCartInfo: {
+					showIcon: false,
+					count: 0
+				},
 			};
 		},
 		onLoad() {
 			this.userInfo = uni.getStorageSync("MshUserSession");
 			console.log(this.userInfo);
 		},
-		mixins:[vueCommonData],
+		mixins: [vueCommonData],
 		methods: {
 			handleSubmit() {
 				console.log('handleSubmit clicked');
 				console.log(this.searchDataDto);
-				this.searchDataDto.ReqBody.PageIndex = 1;
+				this.searchDataDto.ReqBody.PageIndex = 0;
 				this.loadMore.isfetchData = true;
 				this.loadMore.isaddData = false;
 				this.loadMore.isShowMore = true;
 				this.fetchData();
 				this.loadPobasketData();
+			},
+			changeType(event) {
+				var inputvalue = event.target.value;
+				var hz = /^[\u4e00-\u9fa5]+$/; //汉字
+				var zf = /^[A-Za-z].*/; //字符
+				var sz = /^[0-9]*$/;
+				var tm = /^(69|M).*/
+				if (hz.test(inputvalue)) {
+					this.searchDataDto.ReqBody.serachType = 1;
+				}
+				if (zf.test(inputvalue)) {
+					this.searchDataDto.ReqBody.serachType = 4;
+				}
+				if (sz.test(inputvalue)) {
+					if (inputvalue.length <= 6) {
+						this.searchDataDto.ReqBody.serachType = 2;
+					}
+				}
+				if (tm.test(inputvalue)) {
+					if (inputvalue.length > 6) {
+						this.searchDataDto.ReqBody.serachType = 5;
+					}
+				}
+				if (inputvalue === "") {
+					this.searchDataDto.ReqBody.serachType = 2;
+				}
 			},
 			loadMoreData() {
 				console.log(this.searchResultData);
@@ -381,16 +411,16 @@
 				});
 				this.loadPobasketData();
 			},
-			loadPobasketData(){
-				var self=this;
+			loadPobasketData() {
+				var self = this;
 				this.PoBasketDto.ReqBody.CreateUserSysNo = this.userInfo.User.SysNo;
-				purchase.GetPobasketCount(this.PoBasketDto).then(res=>{
+				purchase.GetPobasketCount(this.PoBasketDto).then(res => {
 					console.log(res);
-					if (res.Status&&res.Data>0) {
-						self.showCartInfo.showIcon=true;
-						self.showCartInfo.count=res.Data;
+					if (res.Status && res.Data > 0) {
+						self.showCartInfo.showIcon = true;
+						self.showCartInfo.count = res.Data;
 					} else {
-						self.showCartInfo.showIcon=false;
+						self.showCartInfo.showIcon = false;
 					}
 				})
 			},

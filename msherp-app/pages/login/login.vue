@@ -1,23 +1,26 @@
 <template>
-
 	<view class="body">
-			<cu-custom bgColor="bg-gradual-pink" :isBack="true">
+		<cu-custom bgColor="bg-gradual-pink" :isBack="true">
 			<block slot="backText"></block>
 			<block slot="content">登录</block>
 		</cu-custom>
-		<image class="background-img" style="width:{{systemWidth}}px;height:{{systemHeight}}px;" src="../../static/msh-login-pic.png" mode="scaleToFill" />
+		<image class="background-img" :style="'width:'+systemWidth+'px;height:'+systemHeight+'px;'" src="../../static/msh-login-pic.png"
+		 mode="scaleToFill" />
 		<image class="title-img" src="../../static/login-title-icon.png" mode="scaleToFill" />
 		<view class="form-view">
-		  <view style="position: relative;">
-		    <input class="inner-input1"  confirm-type="next" type="text" v-model="account" placeholder="请输入帐号" placeholder-style="color:#000000;font-size:31rpx;" />
-		    <image class="bottom-line-img1" src="../../static/underscore-icon.png" mode="scaleToFill" />
-		    <input class="inner-input2" confirm-type="done" :type="'password'" v-model="password"  placeholder="请输入密码" placeholder-style="color:#000000;font-size:31rpx;" />
-		    <image class="bottom-line-img2" src="../../static/underscore-icon.png" mode="scaleToFill" />
-		    <button hover-class="hover-btn" class="inner-btn" open-type="getUserInfo" @tap="accountLogin">登录</button>
-		    <view class="inner-bottom-view">
-		      <view style="width:145rpx;"><checkbox v-model="remeberme" checked="true"></checkbox>记住我</view>
-		    </view>
-		  </view>
+			<view style="position: relative;">
+				<input class="inner-input1" confirm-type="next" type="text" v-model="account" placeholder="请输入帐号" placeholder-style="color:#000000;font-size:31rpx;" />
+				<image class="bottom-line-img1" src="../../static/underscore-icon.png" mode="scaleToFill" />
+				<input class="inner-input2" confirm-type="done" :type="'password'" v-model="password" placeholder="请输入密码"
+				 placeholder-style="color:#000000;font-size:31rpx;" />
+				<image class="bottom-line-img2" src="../../static/underscore-icon.png" mode="scaleToFill" />
+				<button hover-class="hover-btn" class="inner-btn" open-type="getUserInfo" @tap="accountLogin">登录</button>
+				<view class="inner-bottom-view">
+					<view style="width:145rpx;">
+						<checkbox v-model="remeberme" checked="true"></checkbox>记住我
+					</view>
+				</view>
+			</view>
 		</view>
 	</view>
 </template>

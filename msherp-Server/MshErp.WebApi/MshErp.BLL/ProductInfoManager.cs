@@ -21,7 +21,7 @@ namespace MshErp.BLL
         public List<ProductResponseBody> GetProductList(ProductRequstBody request)
         {
             request.StockSysno = "6";
-            request.ProductSysNo = request.SearchKey;
+            //request.ProductSysNo = request.SearchKey;
             var searchInfo = request.RobotMap<ProductRequstBody, BizProductQueryUISearchInfo>();
             var list = new StoreProductManageBo().GetProductQuery(searchInfo, true);
             var responseBody = list.RobotMap<BizProductQueryUIInfo, ProductResponseBody>();

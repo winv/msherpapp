@@ -5,7 +5,7 @@
 * // devUrl: 'http://localhost/MshErp.WebApi/api/',
 */ 
 const mshconfig = {
-	// devUrl:'http://testwxservice.mmsshh.com/api/',
+	//devUrl:'http://testwxservice.mmsshh.com/api/',
 	devUrl: 'http://localhost/MshErp.WebApi/api/',
 	productionUrl: 'http://localhost:809/api/',
 	env: 'development',

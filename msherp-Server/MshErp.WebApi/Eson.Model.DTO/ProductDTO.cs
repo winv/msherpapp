@@ -114,6 +114,8 @@ namespace MshErp.Model.DTO
         public string MasterProductSysNo { get; set; }
 
         public bool IsQueryMainProduct { get; set; }
+        public int PageIndex { get; set; }
+        public int PageSize { get; set; }
     }
 
     public class ProductResponseBody
