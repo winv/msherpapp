@@ -148,5 +148,12 @@ namespace MshErp.BLL
             };
             return result;
         }
+
+        public List<PoMasterBody> QueryPoList(PurchasePoMasterRquestDTO request)
+        {
+            var result = PurchaseManager.GetInstance().GetPODsApi(new Hashtable());
+            var list = ExtensiveHelper.Map<DataTable,PoMasterBody>(result.Tables[0]);
+            return list;
+        }
     }
 }

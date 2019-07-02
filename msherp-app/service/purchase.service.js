@@ -87,4 +87,15 @@ purchase.InsertPoBasket = function(param) {
 		})
 	})
 }
+
+/**
+ * 查询采购单列表接口
+  * */
+purchase.QueryPoList=function(param){
+	return new Promise(function(resolve, reject) {
+		http.post(urls.getFullERPUrl('Purchase/QueryPoList'), param).then(res => {
+			resolve(res.data)
+		})
+	})
+}
 export default purchase

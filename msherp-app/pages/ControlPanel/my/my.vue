@@ -28,10 +28,6 @@
 			</view>
 		</view>
 		<view class="padding flex flex-direction"><button class="cu-btn bg-grey lg" @tap="exitLogin">退出登录</button></view>
-		<view class="cu-load load-modal" v-if="binding">
-			<image src="/static/logo.png" mode="aspectFit"></image>
-			<view class="gray-text">绑定中，请稍后...</view>
-		</view>
 	</view>
 </template>
 
@@ -65,11 +61,9 @@
 			bindWeiXin() {
 				console.log('bind weixin clicked');
 				var self = this;
-				self.binding = true;
 				var userinfo = uni.getStorageSync("MshUserSession");
 				permisson.bindweixin(userinfo).then(res => {
 					console.log(res);
-					self.binding = false;
 					if (res.Status) {
 						uni.showToast({
 							icon: 'none',

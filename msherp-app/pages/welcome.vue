@@ -3,8 +3,11 @@
 		<cu-custom bgColor="bg-gradual-pink" :isBack="true">
 			<block slot="content">妙生活</block>
 		</cu-custom>
-		<image class="background-img" :style="'width:'+systemWidth+'px;height:'+systemHeight+'px;'" src="https://image.weilanwl.com/gif/loading-white.gif" mode="scaleToFill" />
-		<image src="https://image.weilanwl.com/gif/loading-white.gif" mode="aspectFit" class="gif-black response" ></image>
+		<view class="form-view">
+			<image src="https://image.weilanwl.com/gif/loading-white.gif"></image>
+		</view>
+		<!-- <image class="background-img" :style="'width:'+systemWidth+'px;height:'+systemHeight+'px;'" src="https://image.weilanwl.com/gif/loading-white.gif" mode="scaleToFill" /> -->
+		
 	</view>
 </template>
 
@@ -35,16 +38,14 @@
 		},
 		methods: {
 			oauth(value) {
-				permisson.autologin(true).then(res => {
-					console.log(res);
-				});
+				permisson.autologin(true)
 			},
 		}
 	}
 </script>
 <style lang="less">
 	page {
-		background-color: #f3f5f2;
+		background-color: #FFFFFF;
 	}
 
 	.body {
@@ -64,7 +65,7 @@
 		position: fixed;
 		width: 616rpx;
 		z-index: 102;
-		top: 550rpx;
+		top: 450rpx;
 		left: 68rpx;
 	}
 

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Eson.Objects;
+using Eson.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -329,7 +331,17 @@ namespace MshErp.Model.DTO
 
         #region 虚拟字段
         public List<PoItemBody> poItems { get; set; }
+        public string V_VendorName { get; set; }
+        public string V_StockName { get; set; }
+        public string V_CreateName { get; set; }
 
+        public string V_Status
+        {
+            get
+            {
+                return DataHelper.GetDescription(typeof(AppEnum.POStatus), this.Status);
+            }
+        }
         #endregion
     }
 

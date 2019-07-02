@@ -52,7 +52,7 @@
 					{
 						title: '采购篮',
 						name: 'PoBasket',
-						color: 'orange',
+						color: 'mauve',
 						cuIcon: 'goodsfill',
 						urls: '/pages/ControlPanel/product/pobasket'
 					},
@@ -81,7 +81,7 @@
 					{
 						title: '新建采购单',
 						name: 'Create',
-						color: 'brown',
+						color: 'purple',
 						cuIcon: 'roundaddfill',
 						urls: '/pages/ControlPanel/purchase/createpo'
 					},
@@ -95,7 +95,7 @@
 					{
 						title: '登陆',
 						name: 'Login',
-						color: 'orange',
+						color: 'olive',
 						cuIcon: 'icloading',
 						urls: '/pages/login/login'
 					}

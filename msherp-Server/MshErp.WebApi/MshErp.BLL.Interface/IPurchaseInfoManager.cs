@@ -22,5 +22,7 @@ namespace MshErp.BLL.Interface
         List<PoItemBody> QueryPoItemListWithBaskt(PurchaseBasketRequstDTO request);
 
         PurchasePoMasterResponseDTO InsertPoMaster(PurchasePoMasterRquestDTO request);
+
+        List<PoMasterBody> QueryPoList(PurchasePoMasterRquestDTO request);
     }
 }
