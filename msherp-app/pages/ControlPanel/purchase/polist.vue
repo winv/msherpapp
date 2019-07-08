@@ -7,8 +7,7 @@
 		<view class="cu-bar bg-white search fixed" :style="[{ top: CustomBar + 'px' }]">
 			<view class="search-form round">
 				<text class="cuIcon-search"></text>
-				<input type="text" @input="changeType" v-model="searchDataDto.ReqBody.serachValue" placeholder="支持采购单号搜索"
-				 confirm-type="search" />
+				<input type="text" v-model="searchDataDto.SysNo" placeholder="支持采购单号搜索" confirm-type="search" />
 			</view>
 			<view class="action">
 				<button class="cu-btn bg-gradual-green shadow-blur round" @tap="handleSubmit">搜索</button>
@@ -57,31 +56,14 @@
 				</view>
 				<view class="padding-xl">
 					<view class="cu-form-group margin-top">
-						<view class="title">商品状态</view>
-						<picker @change="PickerChange" :value="pickindex" :range="ProductStatusList" :range-key="'name'">
-							<view class="picker">{{ ProductStatusList[pickindex].name }}</view>
-						</picker>
-					</view>
-					<view class="cu-form-group margin-top">
 						<view class="title">采购状态</view>
-						<picker @change="PickerChangeDemand" :value="pickdemandindex" :range="ProductDemandList" :range-key="'name'">
-							<view class="picker">{{ ProductDemandList[pickdemandindex].name }}</view>
+						<picker @change="PickerChangeDemand" :value="pickdemandindex" :range="PoStatusList" :range-key="'name'">
+							<view class="picker">{{ PoStatusList[pickdemandindex].name }}</view>
 						</picker>
 					</view>
 					<view class="cu-form-group margin-top">
-						<view class="title">主子商品</view>
-						<picker @change="PickerChangeMaster" :value="pickmasterindex" :range="ProductMasterList" :range-key="'name'">
-							<view class="picker">{{ ProductMasterList[pickmasterindex].name }}</view>
-						</picker>
-					</view>
-					<view class="cu-form-group margin-top">
-						<view class="title">只看本人：</view>
-						<picker @change="PickerChange" :value="pickindex" :range="ProductStatusList" v-model="searchData.Status"
-						 :range-key="'name'">
-							<view class="picker">
-								{{ProductStatusList[pickindex].name}}
-							</view>
-						</picker>
+						<view class="title">只看本人创建：</view>
+						<checkbox class='round blue' v-model='isself'></checkbox>
 					</view>
 					<view class="cu-form-group margin-top">
 						<view class="title">供应商编号：</view>
@@ -129,25 +111,41 @@
 				skin: false,
 				listTouchStart: 0,
 				listTouchDirection: null,
-				ProductStatusList: [{
+				PoStatusList: [{
 						name: '全部',
 						value: ''
 					},
 					{
-						name: '在售',
+						name: '初始',
 						value: '1'
 					},
 					{
-						name: '未上架',
-						value: '0'
+						name: '已摊销',
+						value: '2'
 					},
 					{
-						name: '下架',
-						value: '-1'
+						name: '待入库',
+						value: '3'
 					},
 					{
-						name: '冻结',
-						value: '0'
+						name: '已入库',
+						value: '4'
+					},
+					{
+						name: '待收货',
+						value: '5'
+					},
+					{
+						name: '待上架',
+						value: '6'
+					},
+					{
+						name: '待PMD审核',
+						value: '7'
+					},
+					{
+						name: '待PML审核',
+						value: '8'
 					}
 				],
 				ProductMasterList: [{
@@ -197,20 +195,13 @@
 				},
 				ProductInfo: {},
 				searchDataDto: {
-					Token: uni.getStorageSync(this.MshSessionID),
-					TimeSpan: uni.getStorageSync(this.mshconfig.mshdata_expirationName),
-					ReqBody: {
-						IsPaging: true,
-						PageSize: 10,
-						PageIndex: 1,
-						SearchStatus: [0, 1]
-					}
+					IsPaging: true,
+					PageSize: 10,
+					PageIndex: 1,
+					Status: ''
 				},
 				userInfo: {},
-				showCartInfo: {
-					showIcon: false,
-					count: 0
-				},
+				isself:false,
 			};
 		},
 		onLoad() {
@@ -222,38 +213,12 @@
 			handleSubmit() {
 				console.log('handleSubmit clicked');
 				console.log(this.searchDataDto);
-				this.searchDataDto.ReqBody.PageIndex = 0;
+				this.searchDataDto.PageIndex = 0;
 				this.loadMore.isfetchData = true;
 				this.loadMore.isaddData = false;
 				this.loadMore.isShowMore = true;
 				this.fetchData();
 
-			},
-			changeType(event) {
-				var inputvalue = event.target.value;
-				var hz = /^[\u4e00-\u9fa5]+$/; //汉字
-				var zf = /^[A-Za-z].*/; //字符
-				var sz = /^[0-9]*$/;
-				var tm = /^(69|M).*/
-				if (hz.test(inputvalue)) {
-					this.searchDataDto.ReqBody.serachType = 1;
-				}
-				if (zf.test(inputvalue)) {
-					this.searchDataDto.ReqBody.serachType = 4;
-				}
-				if (sz.test(inputvalue)) {
-					if (inputvalue.length <= 6) {
-						this.searchDataDto.ReqBody.serachType = 2;
-					}
-				}
-				if (tm.test(inputvalue)) {
-					if (inputvalue.length > 6) {
-						this.searchDataDto.ReqBody.serachType = 5;
-					}
-				}
-				if (inputvalue === "") {
-					this.searchDataDto.ReqBody.serachType = 2;
-				}
 			},
 			loadMoreData() {
 				console.log(this.searchResultData);
@@ -266,7 +231,15 @@
 			},
 			fetchData() {
 				var self = this;
-				purchase.QueryPoList(this.searchDataDto).then(res => {
+				var searchDataDto=self.baseRequestDto
+				searchDataDto.ReqBody=this.searchDataDto;
+				if(self.isself){
+					searchDataDto.ReqBody.CreateUserSysNo=this.userInfo.SysNo
+				}else{
+					searchDataDto.ReqBody.CreateUserSysNo=''
+				}
+				
+				purchase.QueryPoList(searchDataDto).then(res => {
 					console.log(res);
 					self.loadMore.loadClass = self.loadMore.loadClassList[0];
 					if (res.Data.ResMasterBody.length == 0) {

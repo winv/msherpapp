@@ -98,4 +98,15 @@ purchase.QueryPoList=function(param){
 		})
 	})
 }
+
+/**
+ * 查询采购单详细
+  * */
+purchase.QueryPoMaster=function(param){
+	return new Promise(function(resolve, reject) {
+		http.post(urls.getFullERPUrl('Purchase/QueryPoMaster'), param).then(res => {
+			resolve(res.data)
+		})
+	})
+}
 export default purchase

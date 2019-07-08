@@ -18,7 +18,7 @@ namespace MshErp.BLL
 {
     public class PurchaseInfoManager : IPurchaseInfoManager
     {
-        
+
         public PurchaseBasketResponseBody GetPoBasketInfo(PurchaseBasketRequstDTO request)
         {
             var result = PurchaseManager.GetInstance().LoadBasket(int.Parse(request.ReqBody.ProductSysNo), int.Parse(request.ReqBody.CreateUserSysNo), int.Parse(request.ReqBody.StockSysNo));
@@ -89,7 +89,7 @@ namespace MshErp.BLL
             {
                 throw new Exception(ex.ToString(), ex);
             }
-            
+
         }
 
         public List<PoItemBody> QueryPoItemListWithBaskt(PurchaseBasketRequstDTO request)
@@ -152,8 +152,21 @@ namespace MshErp.BLL
         public List<PoMasterBody> QueryPoList(PurchasePoMasterRquestDTO request)
         {
             var result = PurchaseManager.GetInstance().GetPODsApi(new Hashtable());
-            var list = ExtensiveHelper.Map<DataTable,PoMasterBody>(result.Tables[0]);
+            var list = ExtensiveHelper.Map<DataTable, PoMasterBody>(result.Tables[0]);
             return list;
+        }
+
+        public PoMasterBody QueryPoMaster(PurchasePoMasterRquestDTO request)
+        {
+            var requestdto = request.ReqBody;
+            Hashtable ht = new Hashtable(10);
+            if (!string.IsNullOrEmpty(requestdto.CreateUserSysNo))
+                ht.Add("CreateUserSysNo", requestdto.CreateUserSysNo);
+            if (!string.IsNullOrEmpty(requestdto.VendorSysNo))
+                ht.Add("VendorSysNo", requestdto.VendorSysNo);
+            var result = PurchaseManager.GetInstance().LoadPO(int.Parse(request.ReqBody.SysNo));
+            var poinfo = Helper.NoPropertyToMap<PoMasterBody, POInfo>(result);
+            return poinfo;
         }
     }
 }

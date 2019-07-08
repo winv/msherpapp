@@ -102,11 +102,24 @@ namespace MshErp.APIServices.Core.ApiControllers
         [HttpPost]
         public AjaxResponseInfo QueryPoList([FromBody] PurchasePoMasterRquestDTO request)
         {
-
             var result = IPurchaseInfoManager.QueryPoList(request);
             var dto = new PurchasePoMasterResponseDTO
             {
                 ResMasterBody = result
+            };
+            return new AjaxResponseInfo
+            {
+                Status = true,
+                Data = dto
+            };
+        }
+
+        public AjaxResponseInfo QueryPoMaster([FromBody] PurchasePoMasterRquestDTO request)
+        {
+            var result = IPurchaseInfoManager.QueryPoMaster(request);
+            var dto = new PurchasePoMasterResponseDTO
+            {
+                ResMasterBody = new List<PoMasterBody> { result}
             };
             return new AjaxResponseInfo
             {

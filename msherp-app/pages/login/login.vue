@@ -6,7 +6,6 @@
 		</cu-custom>
 		<image class="background-img" :style="'width:'+systemWidth+'px;height:'+systemHeight+'px;'" src="../../static/msh-login-pic.png"
 		 mode="scaleToFill" />
-		<image class="title-img" src="../../static/login-title-icon.png" mode="scaleToFill" />
 		<view class="form-view">
 			<view style="position: relative;">
 				<input class="inner-input1" confirm-type="next" type="text" v-model="account" placeholder="请输入帐号" placeholder-style="color:#000000;font-size:31rpx;" />
@@ -131,6 +130,13 @@
 						uni.setStorageSync(this.MshSessionID, res.Data.Token);
 						uni.setStorageSync(this.mshconfig.mshdata_expirationName, this.mshconfig.mshdata_expirationTime)
 						this.toMain(this.account);
+					}
+					else{
+						uni.showToast({
+							icon:'none',
+							title:res.Data.msg,
+							duration:1500
+						})
 					}
 				})
 			},

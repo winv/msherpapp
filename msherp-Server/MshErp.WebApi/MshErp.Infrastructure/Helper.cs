@@ -61,5 +61,38 @@ namespace MshErp.Infrastructure
             
             return tItemList;
         }
+
+        public static T NoPropertyToMap<T, S>(S s)
+               where T : class, new()
+               where S : class, new()
+        {
+            var sProperties = new S().GetType().GetFields();
+            var tItem = new T();
+            var type = typeof(T).GetProperties();
+            foreach (var item in type)
+            {
+                var spinfo = sProperties.Where(x => x.Name == item.Name).FirstOrDefault();
+                if (spinfo != null)
+                {
+                    try
+                    {
+                        var value = spinfo.GetValue(s);
+                        if (value == null)
+                            continue;
+                        if (value.GetType() == typeof(DateTime))
+                        {
+                            if (DateTime.Parse(value.ToString()) == DateTime.MinValue)
+                            {
+                                continue;
+                            }
+                        }
+
+                        item.SetValue(tItem, value);
+                    }
+                    catch { }
+                }
+            }
+            return tItem;
+        }
     }
 }

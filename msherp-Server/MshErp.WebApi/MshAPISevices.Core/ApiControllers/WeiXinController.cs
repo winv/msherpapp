@@ -39,9 +39,12 @@ namespace MshErp.APIServices.Core.ApiControllers
             }
             catch(Exception ex)
             {
-                throw new LoginFaildException(ex);
+                return new AjaxResponseInfo
+                {
+                    Data = ex,
+                    Status = false,
+                };
             }
-
         }
     }
 }

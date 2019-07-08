@@ -24,5 +24,7 @@ namespace MshErp.BLL.Interface
         PurchasePoMasterResponseDTO InsertPoMaster(PurchasePoMasterRquestDTO request);
 
         List<PoMasterBody> QueryPoList(PurchasePoMasterRquestDTO request);
+
+        PoMasterBody QueryPoMaster(PurchasePoMasterRquestDTO request);
     }
 }

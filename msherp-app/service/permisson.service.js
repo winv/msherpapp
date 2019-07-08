@@ -21,12 +21,26 @@ permisson.login = function(tomain) {
 
 /**
  * ERP账户登录接口
+ * 统一拦截请求接口 会验证token 故登录接口走独立请求接口，不再验证token
  * */
 permisson.accountlogin = function(user) {
 	return new Promise(function(resolve, reject) {
-		http.post(urls.getFullERPUrl('login/check/'), user).then(res => {
-			resolve(res.data);
-		});
+		uni.request({
+			url: urls.getFullERPUrl('login/check/'),
+			method: 'POST',
+			data: user,
+			success(res) {
+				resolve(res.data)
+			},
+			fail(err) {
+				console.log(err)
+				var msg = err.errMsg || ''
+				uni.showToast({
+					icon: 'none',
+					title: '登录失败' + msg
+				});
+			}
+		})
 	})
 }
 
@@ -48,6 +62,7 @@ let getlogincode = function(istomain) {
 	uni.login({
 		provider: 'weixin',
 		success: (res) => {
+			console.log(res)
 			let wxCode = res.code
 			return GetOpenId(wxCode, istomain)
 		},
@@ -64,44 +79,69 @@ let GetOpenId = function(wxCode, istomain) {
 		data: {},
 		success(res) {
 			console.log(res);
-			var user = {
-				Token: "",
-				TimeSpan: 0,
-				WeiXinOpenID: res.data.Data.openid,
-			};
-			console.log(user);
-			uni.request({
-				url: urls.getFullERPUrl('Login/CheckWithWxOpenId/'),
-				method: 'POST',
-				data: user,
-				success(res) {
-					console.log(res)
-					if (res.data.Status) {
-						uni.setStorageSync("MshUserSession", res.data.Data.oSession)
-						uni.setStorageSync(mshconfig.mshsessionid, res.data.Data.Token);
-						uni.setStorageSync(mshconfig.mshdata_expirationName, mshconfig.mshdata_expirationTime)
-						if (istomain) {
-							uni.reLaunch({
-								url: '/pages/ControlPanel/main/main'
-							})
+			if (res.statusCode === 200 && res.data.Status) {
+				var user = {
+					Token: "",
+					TimeSpan: 0,
+					WeiXinOpenID: res.data.Data.openid,
+				};
+				console.log(user);
+				uni.request({
+					url: urls.getFullERPUrl('Login/CheckWithWxOpenId/'),
+					method: 'POST',
+					data: user,
+					success(res) {
+						console.log(res)
+						if (res.data.Status) {
+							uni.setStorageSync("MshUserSession", res.data.Data.oSession)
+							uni.setStorageSync(mshconfig.mshsessionid, res.data.Data.Token);
+							uni.setStorageSync(mshconfig.mshdata_expirationName, mshconfig.mshdata_expirationTime)
+							if (istomain) {
+								uni.reLaunch({
+									url: '/pages/ControlPanel/main/main'
+								})
+							}
+						} else {
+							uni.showToast({
+								icon: 'none',
+								title: '自动登录失败，系统自动跳转到登录页'
+							});
+							setTimeout(uni.reLaunch({
+								//如果自动登录失败，强制跳转到手动登录页面
+								url: '/pages/login/login'
+							}), 1500)
 						}
-					} else {
-						uni.showToast({
-							icon: 'none',
-							title: '自动登录失败，系统自动跳转到登录页'
-						});
-						setTimeout(uni.reLaunch({
-							//如果自动登录失败，强制跳转到手动登录页面
-							url: '/pages/login/login'
-						}), 500)
 					}
-				}
-			})
+				})
+
+			} else {
+				var msg = res.data.MessageDetail || ''
+				uni.showToast({
+					icon: 'none',
+					title: '自动登录失败' + msg
+				});
+				setTimeout(uni.reLaunch({
+					//如果自动登录失败，强制跳转到手动登录页面
+					url: '/pages/login/login'
+				}), 1500)
+			}
+		},
+		fail(err) {
+			console.log(err)
+			var msg = err.errMsg || ''
+			uni.showToast({
+				icon: 'none',
+				title: '自动登录失败' + msg
+			});
+			setTimeout(uni.reLaunch({
+				//如果自动登录失败，强制跳转到手动登录页面
+				url: '/pages/login/login'
+			}), 1500)
 		}
 	})
 }
 
-permisson.bindweixin=function(userinfo){
+permisson.bindweixin = function(userinfo) {
 	return new Promise(function(resolve, reject) {
 		uni.login({
 			provider: 'weixin',
@@ -114,7 +154,7 @@ permisson.bindweixin=function(userinfo){
 					var userDto = {
 						Token: "",
 						TimeSpan: 0,
-						WeiXinOpenID:res2.data.Data.openid,
+						WeiXinOpenID: res2.data.Data.openid,
 						ReqBody: {
 							"SysNo": userinfo.User.SysNo,
 						}

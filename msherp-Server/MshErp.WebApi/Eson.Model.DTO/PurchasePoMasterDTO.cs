@@ -46,6 +46,12 @@ namespace MshErp.Model.DTO
         /// 行修改时间（To）
         /// </summary>
         public string rowModifyDateTo { get; set; }
+
+        public string CreateUserSysNo { get; set; }
+
+        public string VendorSysNo { get; set; }
+
+        public string Status { get; set; }
     }
 
     public class PoMasterBody

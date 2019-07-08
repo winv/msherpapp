@@ -61,9 +61,6 @@ let VueCommonConstData = {
 		},
 	},
 	mounted: function() {
-		if (!this.hasLogin) {
-			console.log('未登录')
-		}
 	}
 }
 export default VueCommonConstData
