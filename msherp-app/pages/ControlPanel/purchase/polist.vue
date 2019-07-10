@@ -39,7 +39,8 @@
 									<view class="cu-tag radius bg-red">{{ item.V_Status }}</view>
 									<view class="cu-tag radius bg-grey">{{ item.V_CreateName }}</view>
 									<view class="cu-tag radius bg-blue">{{ item.V_StockName }}</view>
-									<view class="cu-tag radius bg-red">{{ item.TotalAmt }}</view>
+									<view class="cu-tag text-price radius bg-red">{{ item.TotalAmt }}</view>
+									<view class="cu-tag radius bg-red">{{ item.CreateTime|formatShortDate }}</view>
 								</view>
 							</view>
 						</view>
@@ -56,18 +57,34 @@
 				</view>
 				<view class="padding-xl">
 					<view class="cu-form-group margin-top">
+						<view class="title">商品号：</view>
+						<input type="text" v-model="searchDataDto.ProductSysNo" />
+					</view>
+					<view class="cu-form-group margin-top">
 						<view class="title">采购状态</view>
-						<picker @change="PickerChangeDemand" :value="pickdemandindex" :range="PoStatusList" :range-key="'name'">
+						<picker @change="PickerStatusChange" :value="pickdemandindex" :range="PoStatusList" :range-key="'name'">
 							<view class="picker">{{ PoStatusList[pickdemandindex].name }}</view>
 						</picker>
 					</view>
 					<view class="cu-form-group margin-top">
-						<view class="title">只看本人创建：</view>
-						<checkbox class='round blue' v-model='isself'></checkbox>
+						<view class="title">仅限本人创建：</view>
+						<switch @change="isselfcheck" :class="isself?'checked':''" :checked="isself"></switch>
 					</view>
 					<view class="cu-form-group margin-top">
 						<view class="title">供应商编号：</view>
-						<input type="text" v-model="searchDataDto.ReqBody.VendorSysNo" />
+						<input type="text" v-model="searchDataDto.VendorSysNo" />
+					</view>
+					<view class="cu-form-group margin-top">
+						<view class="title">创建开始时间：</view>
+						<picker mode="date" :value="searchDataDto.CreateTimeFrom" start="2019-01-01" end="2025-12-31" @change="DateChangeFrom">
+							<view class="picker">{{ searchDataDto.CreateTimeFrom }}</view>
+						</picker>
+					</view>
+					<view class="cu-form-group margin-top">
+						<view class="title">创建结束时间：</view>
+						<picker mode="date" :value="searchDataDto.CreateTimeTo" start="2019-01-01" end="2025-12-31" @change="DateChangeTo">
+							<view class="picker">{{ searchDataDto.CreateTimeTo }}</view>
+						</picker>
 					</view>
 				</view>
 				<view class="cu-bar bg-white">
@@ -81,6 +98,7 @@
 <script>
 	import vueCommonData from '../../../config/VueCommonConstData.js';
 	import purchase from '../../../service/purchase.service.js'
+	import dateFormat from '../../../libs/dateformat.js'
 
 	export default {
 		data() {
@@ -198,10 +216,12 @@
 					IsPaging: true,
 					PageSize: 10,
 					PageIndex: 1,
-					Status: ''
+					Status: '',
+					CreateTimeFrom: dateFormat.formatTimeToStr(dateFormat.AddDays(-15), 'yyyy-MM-dd'),
+					CreateTimeTo: dateFormat.formatTimeToStr(dateFormat.AddDays(0), 'yyyy-MM-dd')
 				},
 				userInfo: {},
-				isself:false,
+				isself: true,
 			};
 		},
 		onLoad() {
@@ -220,6 +240,10 @@
 				this.fetchData();
 
 			},
+			isselfcheck(e) {
+				console.log(e)
+				this.isself = e.detail.value
+			},
 			loadMoreData() {
 				console.log(this.searchResultData);
 				this.searchDataDto.ReqBody.PageIndex++;
@@ -231,14 +255,13 @@
 			},
 			fetchData() {
 				var self = this;
-				var searchDataDto=self.baseRequestDto
-				searchDataDto.ReqBody=this.searchDataDto;
-				if(self.isself){
-					searchDataDto.ReqBody.CreateUserSysNo=this.userInfo.SysNo
-				}else{
-					searchDataDto.ReqBody.CreateUserSysNo=''
+				var searchDataDto = self.baseRequestDto
+				searchDataDto.ReqBody = self.searchDataDto;
+				if (self.isself) {
+					searchDataDto.ReqBody.CreateUserSysNo = self.userInfo.User.SysNo || ''
+				} else {
+					searchDataDto.ReqBody.CreateUserSysNo = ''
 				}
-				
 				purchase.QueryPoList(searchDataDto).then(res => {
 					console.log(res);
 					self.loadMore.loadClass = self.loadMore.loadClassList[0];
@@ -299,17 +322,15 @@
 				console.log('handleSubmitAdv clicked');
 				this.showModal(e);
 			},
-			PickerChange(e) {
-				this.pickindex = e.detail.value;
-				this.searchDataDto.ReqBody.SearchStatus = [this.ProductStatusList[this.pickindex].value];
-			},
-			PickerChangeDemand(e) {
+			PickerStatusChange(e) {
 				this.pickdemandindex = e.detail.value;
-				this.searchDataDto.ReqBody.IsProductDemand = this.ProductDemandList[this.pickdemandindex].value;
+				this.searchDataDto.Status = this.ProductDemandList[this.pickdemandindex].value;
 			},
-			PickerChangeMaster(e) {
-				this.pickmasterindex = e.detail.value;
-				this.searchDataDto.ReqBody.IsMasterProductSysNo = this.ProductDemandList[this.pickmasterindex].value;
+			DateChangeFrom(e) {
+				this.searchDataDto.CreateTimeFrom = e.detail.value;
+			},
+			DateChangeTo(e) {
+				this.searchDataDto.CreateTimeTo = e.detail.value;
 			}
 		}
 	};

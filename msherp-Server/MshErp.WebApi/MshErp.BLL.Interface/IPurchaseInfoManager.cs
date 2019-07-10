@@ -23,8 +23,12 @@ namespace MshErp.BLL.Interface
 
         PurchasePoMasterResponseDTO InsertPoMaster(PurchasePoMasterRquestDTO request);
 
+        PurchasePoMasterResponseDTO InsertPoItem(PurchasePoMasterRquestDTO request);
+
         List<PoMasterBody> QueryPoList(PurchasePoMasterRquestDTO request);
 
         PoMasterBody QueryPoMaster(PurchasePoMasterRquestDTO request);
+
+        void DeletePoItem(PurchasePoMasterRquestDTO request);
     }
 }

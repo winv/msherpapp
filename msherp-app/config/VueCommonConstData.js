@@ -3,9 +3,12 @@
  * 混入后可以直接调用
  * @Author：lee
  * */
+
 import {
 	mapState
 } from 'vuex'
+import dateFormat from '../libs/dateformat.js'
+
 let VueCommonConstData = {
 	data() {
 		return {
@@ -60,7 +63,32 @@ let VueCommonConstData = {
 			this.modalName = null;
 		},
 	},
-	mounted: function() {
+	mounted: function() {},
+	filters: {
+		formatFullDate: function(time) {
+			if (time != null && time != "") {
+				var date = new Date(time);
+				return dateFormat.formatTimeToStr(date, "yyyy-MM-dd HH:mm:ss");
+			} else {
+				return "";
+			}
+		},
+		formatShortDate: function(time) {
+			if (time != null && time != "") {
+				var date = new Date(time);
+				return dateFormat.formatTimeToStr(date, "yy-MM-dd hh:mm");
+			} else {
+				return "";
+			}
+		},
+		formatDate: function(time) {
+			if (time != null && time != "") {
+				var date = new Date(time);
+				return dateFormat.formatTimeToStr(date, "yyyy-MM-dd");
+			} else {
+				return "";
+			}
+		}
 	}
 }
 export default VueCommonConstData

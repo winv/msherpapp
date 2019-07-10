@@ -55,6 +55,19 @@ purchase.CreateToPoMaster = function(param) {
 }
 
 /**
+ * 初始状态采购单 增加商品
+ * @param {*} param
+ * author lee
+ */
+purchase.InsertPoItem = function(param) {
+	return new Promise(function(resolve, reject) {
+		http.$put(urls.getFullERPUrl('Purchase/InsertPoItem'), param).then(res => {
+			resolve(res.data)
+		})
+	})
+}
+
+/**
  * 写入采购单主表及子表
  * @param {*} param
  * author lee
@@ -105,6 +118,17 @@ purchase.QueryPoList=function(param){
 purchase.QueryPoMaster=function(param){
 	return new Promise(function(resolve, reject) {
 		http.post(urls.getFullERPUrl('Purchase/QueryPoMaster'), param).then(res => {
+			resolve(res.data)
+		})
+	})
+}
+
+/**
+ * 删除采购单子表元素
+  * */
+purchase.DeletePoItem=function(param){
+	return new Promise(function(resolve, reject) {
+		http.$delete(urls.getFullERPUrl('Purchase/DeletePoItem'), param).then(res => {
 			resolve(res.data)
 		})
 	})

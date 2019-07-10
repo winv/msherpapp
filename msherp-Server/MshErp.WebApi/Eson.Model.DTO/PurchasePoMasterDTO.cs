@@ -52,6 +52,11 @@ namespace MshErp.Model.DTO
         public string VendorSysNo { get; set; }
 
         public string Status { get; set; }
+        public string ProductSysNo { get; set; }
+
+        public string CreateTimeFrom { get; set; }
+        public string CreateTimeTo { get; set; }
+
     }
 
     public class PoMasterBody
@@ -493,6 +498,7 @@ namespace MshErp.Model.DTO
         public decimal V_DemandQty { get; set; }
         public decimal V_DaySaleQty { get; set; }
         public string ProductName { get; set; }
+        public string V_VendorName { get; set; }
         #endregion
     }
 }

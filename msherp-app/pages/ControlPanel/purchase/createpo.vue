@@ -5,85 +5,87 @@
 			<block slot="content">新建采购单</block>
 		</cu-custom>
 		<!--采购单主界面-->
-		<view class="cu-list menu-avatar">
-			<view class="cu-form-group">
-				<view class="title">采购单号：</view>
-				<input type="text" v-model="PoMasterInfo.SysNo" placeholder="自动,无需填写" />
-			</view>
-			<view class="cu-form-group">
-				<view class="title">供应商：</view>
-				<input type="text" v-model="PoMasterInfo.VendorTextInfo" v-validate:PoMasterInfo.VendorTextInfo="['required']"
-				 placeholder="可以直接输入供应系统号" />
-				<text class="lg text-red" :class="'cuIcon-filter'" @tap="ShowVendorIndexList"></text>
-			</view>
-			<view class="cu-form-group">
-				<view class="title">收货仓库：</view>
-				<picker @change="PickerChange" :value="pickindex" :range="StockList" :range-key="'name'">
-					<view class="picker pull-left">{{ StockList[pickindex].name }}</view>
-				</picker>
-			</view>
-			<view class="cu-form-group">
-				<view class="title">支付时间：</view>
-				<picker mode="date" :value="PoMasterInfo.PayDate" start="2019-01-01" end="2025-12-31" @change="DateChange">
-					<view class="picker">{{ PoMasterInfo.PayDate }}</view>
-				</picker>
-			</view>
-			<view class="cu-form-group">
-				<view class="title">对外备注：</view>
-				<input type="text" v-model="PoMasterInfo.Note" />
-			</view>
-			<view class="cu-form-group">
-				<view class="title">对内备注：</view>
-				<input type="text" v-model="PoMasterInfo.Memo" />
-			</view>
-			<view class="cu-form-group">
-				<view class="title">带票类型：</view>
-				<picker @change="PickerInvoiceChange" :value="invoiceIndex" :range="POInvoiceTypeList" :range-key="'name'">
-					<view class="picker pull-left">{{ POInvoiceTypeList[invoiceIndex].name }}</view>
-				</picker>
-			</view>
-			<view class="cu-form-group">
-				<view class="title">支付类型：</view>
-				<picker @change="PickerPayTypeChange" :value="pickPayIndex" :range="PayDateTypeList" :range-key="'name'">
-					<view class="picker pull-left">{{ PayDateTypeList[pickPayIndex].name }}</view>
-				</picker>
-			</view>
-			<view class="cu-form-group">
-				<view class="title">截止到货：</view>
-				<picker mode="date" :value="PoMasterInfo.ExpectInTime" start="2018-01-01" end="2025-12-31" @change="arriveDateChange">
-					<view class="picker">{{ PoMasterInfo.ExpectInTime }}</view>
-				</picker>
-			</view>
-		</view>
-		<!--table 采购商品列表-->
-		<view :class="editPoItem.showView?'bright789_view_show':'bright789_view_hide'">
-			<view class="table">
-				<z-table :tableData="basePoItemList" :columns="basePoItemColumns"></z-table>
-			</view>
-		</view>
-		<!--可编辑列表 table暂时不支持行单击事件-->
-		<view class="cu-list card-menu menu-avatar sm" :class="!editPoItem.showView?'bright789_view_show':'bright789_view_hide'">
-			<view v-for="(item, index) in basePoItemList" :key="index">
-				<view class="cu-bar bg-white solid-bottom margin-top">
-					<view class="action">
-						<text class="cuIcon-titles text-orange" v-if="false"></text>
-						<view @tap="showCart(item)" data-target="DialogCartModal">{{ item.ProductSysNo }}-{{ item.ProductName }}</view>
-					</view>
-					<view class="padding-sm margin-xs radius">
-						<text class="lg text-gray" :class="'cuIcon-deletefill'" @tap="deletePoItem(item,index)"></text>
-					</view>
+		<scroll-view :scroll-y="modalName == null" class="page" :class="modalName != null ? 'show' : ''" :style="[{ top: CustomBar + 'px' }]">
+			<view class="cu-list menu-avatar">
+				<view class="cu-form-group">
+					<view class="title">采购单号：</view>
+					<input type="text" v-model="PoMasterInfo.SysNo" placeholder="自动,无需填写" />
 				</view>
-				<view class="cu-card article no-card">
-					<view class="cu-item shadow">
-						<view class="content">
-							<view class="padding-sm flex flex-wrap">
-								<view class="padding-xs">
-									<view class="cu-capsule radius">
-										<view class="cu-tag bg-brown xl radius">价格</view>
-										<view class="cu-tag line-brown basis-xs radius"><input type="text" :value="item.OrderQty" /></view>
-										<view class="basis-xs"></view>
-										<view class="cu-tag bg-brown xl radius">数量</view>
-										<view class="cu-tag line-brown basis-xs radius"><input type="text" :value="item.OrderPrice" /></view>
+				<view class="cu-form-group">
+					<view class="title">供应商：</view>
+					<input type="text" v-model="PoMasterInfo.VendorTextInfo" v-validate:PoMasterInfo.VendorTextInfo="['required']"
+					 placeholder="可以直接输入供应系统号" />
+					<text class="lg text-red" :class="'cuIcon-filter'" @tap="ShowVendorIndexList"></text>
+				</view>
+				<view class="cu-form-group">
+					<view class="title">收货仓库：</view>
+					<picker @change="PickerChange" :value="pickindex" :range="StockList" :range-key="'name'">
+						<view class="picker pull-left">{{ StockList[pickindex].name }}</view>
+					</picker>
+				</view>
+				<view class="cu-form-group">
+					<view class="title">支付时间：</view>
+					<picker mode="date" :value="PoMasterInfo.PayDate" start="2019-01-01" end="2025-12-31" @change="DateChange">
+						<view class="picker">{{ PoMasterInfo.PayDate }}</view>
+					</picker>
+				</view>
+				<view class="cu-form-group">
+					<view class="title">对外备注：</view>
+					<input type="text" v-model="PoMasterInfo.Note" />
+				</view>
+				<view class="cu-form-group">
+					<view class="title">对内备注：</view>
+					<input type="text" v-model="PoMasterInfo.Memo" />
+				</view>
+				<view class="cu-form-group">
+					<view class="title">带票类型：</view>
+					<picker @change="PickerInvoiceChange" :value="invoiceIndex" :range="POInvoiceTypeList" :range-key="'name'">
+						<view class="picker pull-left">{{ POInvoiceTypeList[invoiceIndex].name }}</view>
+					</picker>
+				</view>
+				<view class="cu-form-group">
+					<view class="title">支付类型：</view>
+					<picker @change="PickerPayTypeChange" :value="pickPayIndex" :range="PayDateTypeList" :range-key="'name'">
+						<view class="picker pull-left">{{ PayDateTypeList[pickPayIndex].name }}</view>
+					</picker>
+				</view>
+				<view class="cu-form-group">
+					<view class="title">截止到货：</view>
+					<picker mode="date" :value="PoMasterInfo.ExpectInTime" start="2018-01-01" end="2025-12-31" @change="arriveDateChange">
+						<view class="picker">{{ PoMasterInfo.ExpectInTime }}</view>
+					</picker>
+				</view>
+			</view>
+			<!--table 采购商品列表-->
+			<view :class="editPoItem.showView?'bright789_view_show':'bright789_view_hide'">
+				<view class="table">
+					<z-table :tableData="basePoItemList" :columns="basePoItemColumns" :showLoading='false'></z-table>
+				</view>
+			</view>
+			<!--可编辑列表 table暂时不支持行单击事件-->
+			<view class="cu-list card-menu menu-avatar sm" :class="!editPoItem.showView?'bright789_view_show':'bright789_view_hide'">
+				<view v-for="(item, index) in basePoItemList" :key="index">
+					<view class="cu-bar bg-white solid-bottom margin-top">
+						<view class="action">
+							<text class="cuIcon-titles text-orange" v-if="false"></text>
+							<view @tap="showCart(item)" data-target="DialogCartModal">{{ item.ProductSysNo }}-{{ item.ProductName }}</view>
+						</view>
+						<view class="padding-sm margin-xs radius">
+							<text class="lg text-gray" :class="'cuIcon-deletefill'" @tap="deletePoItem(item,index)"></text>
+						</view>
+					</view>
+					<view class="cu-card article no-card">
+						<view class="cu-item shadow">
+							<view class="content">
+								<view class="padding-sm flex flex-wrap">
+									<view class="padding-xs">
+										<view class="cu-capsule radius">
+											<view class="cu-tag bg-brown xl radius">价格</view>
+											<view class="cu-tag line-brown basis-xs radius"><input type="text" :value="item.OrderQty" /></view>
+											<view class="basis-xs"></view>
+											<view class="cu-tag bg-brown xl radius">数量</view>
+											<view class="cu-tag line-brown basis-xs radius"><input type="text" :value="item.OrderPrice" /></view>
+										</view>
 									</view>
 								</view>
 							</view>
@@ -91,8 +93,7 @@
 					</view>
 				</view>
 			</view>
-		</view>
-		<view class="basis-xs"></view>
+		</scroll-view>
 		<!--底部操作条-->
 		<view class="cu-bar bg-white tabbar border shop fixedbottom">
 			<view class="action" @tap="showCartListRight">
@@ -161,6 +162,7 @@
 		},
 		data() {
 			return {
+				StatusBar: this.StatusBar,
 				CustomBar: this.CustomBar,
 				pomaster: {
 					reqbody: {

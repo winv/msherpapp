@@ -1,9 +1,13 @@
+.fixed_wrap {
+    height: 30px;
+}
 .fixedbottom {
 		position: fixed;
 		bottom: 0rpx;
 		width: 100%;
 		/* background-color: red; */
 		text-align: center;
+		z-index:99999
 	}
 .floatleft{
 	

@@ -1,4 +1,5 @@
-﻿using Eson.BLL.Purchase;
+﻿using Eson.BLL.Basic;
+using Eson.BLL.Purchase;
 using Eson.Objects;
 using Eson.Objects.Purchase;
 using Eson.Utils;
@@ -151,7 +152,42 @@ namespace MshErp.BLL
 
         public List<PoMasterBody> QueryPoList(PurchasePoMasterRquestDTO request)
         {
-            var result = PurchaseManager.GetInstance().GetPODsApi(new Hashtable());
+            var dto = request.ReqBody;
+            Hashtable ht = new Hashtable(10);
+            if (!string.IsNullOrEmpty(dto.SysNo))
+                ht.Add("SysNo", dto.SysNo);
+            if (!string.IsNullOrEmpty(dto.ProductSysNo))
+                ht.Add("ProductSysNo", dto.ProductSysNo);
+            if (!string.IsNullOrEmpty(dto.CreateUserSysNo))
+                ht.Add("CreateUserSysNo", dto.CreateUserSysNo);
+            if (!string.IsNullOrEmpty(dto.CreateTimeFrom))
+                ht.Add("DateFromCreate", dto.CreateTimeFrom);
+            if (!string.IsNullOrEmpty(dto.CreateTimeTo))
+                ht.Add("DateToCreate", dto.CreateTimeTo);
+            if (!string.IsNullOrEmpty(dto.VendorSysNo))
+                ht.Add("VendorSysNo", dto.VendorSysNo);
+            if (!string.IsNullOrEmpty(dto.Status))
+                ht.Add("Status", dto.Status);
+            ht.Add("ShowNum", 100);
+            #region 未实现查询逻辑
+            //if (txtExpectInTime.Text.Trim() != "")
+            //    ht.Add("ExpectInTime", txtExpectInTime.Text.Trim());
+            //if (ucVendorStatus.StatusSysNo != AppConst.IntNull)
+            //    ht.Add("VendorStatus", ucVendorStatus.StatusSysNo);
+            //if (ucStock.StockSysNo != AppConst.IntNull)
+            //    ht.Add("StockSysNo", ucStock.StockSysNo);
+            //if (txtDateFromInStock.Text.Trim() != "")
+            //    ht.Add("DateFromInStock", txtDateFromInStock.Text.Trim());
+            //if (txtDateToInStock.Text.Trim() != "")
+            //    ht.Add("DateToInStock", txtDateToInStock.Text.Trim());
+
+            //if (ucCurrency.CurrencySysNo != AppConst.IntNull)
+            //    ht.Add("CurrencySysNo", ucCurrency.CurrencySysNo);
+            //if (ucYNStatus.YNSysNo != AppConst.IntNull)
+            //    ht.Add("IsApportion", ucYNStatus.YNSysNo);
+            #endregion
+
+            var result = PurchaseManager.GetInstance().GetPODsApi(ht);
             var list = ExtensiveHelper.Map<DataTable, PoMasterBody>(result.Tables[0]);
             return list;
         }
@@ -166,7 +202,49 @@ namespace MshErp.BLL
                 ht.Add("VendorSysNo", requestdto.VendorSysNo);
             var result = PurchaseManager.GetInstance().LoadPO(int.Parse(request.ReqBody.SysNo));
             var poinfo = Helper.NoPropertyToMap<PoMasterBody, POInfo>(result);
+            var vinfo = VendorManager.GetInstance().Load(poinfo.VendorSysNo);
+            poinfo.V_VendorName = vinfo.VendorName;
+            var dsitem = PurchaseManager.GetInstance().GetPoItemWithPoSysNo(request.ReqBody.SysNo);
+            var itemlist=ExtensiveHelper.Map<DataTable, PoItemBody>(dsitem.Tables[0]);
+            
+            poinfo.poItems = itemlist;
             return poinfo;
+        }
+
+        public PurchasePoMasterResponseDTO InsertPoItem(PurchasePoMasterRquestDTO request)
+        {
+            var poinfo = Helper.MapNoProperty<POInfo, PoMasterBody>(request.ReqBodyDTO);
+            var itemlist = Helper.MapNoProperty<POItemInfo, PoItemBody>(request.ReqBodyDTO.poItems);
+            Hashtable ht = new Hashtable(10);
+            foreach (var item in itemlist)
+            {
+                item.POSysNo = poinfo.SysNo;
+                ht.Add(item.ProductSysNo, item);
+            }
+            string msg = PurchaseManager.GetInstance().VerifyPoAndItem(poinfo,ht);
+            if (string.IsNullOrEmpty(msg))
+            {
+                //删除采购篮
+                foreach (POItemInfo item in itemlist)
+                {
+                    PurchaseManager.GetInstance().InsertPOItem(poinfo, item);
+                    PurchaseManager.GetInstance().DeletePOBasketAfterPO(item.ProductSysNo, poinfo.StockSysNo);
+                }
+            }
+            request.ReqBodyDTO.SysNo = poinfo.SysNo;
+
+            var result = new PurchasePoMasterResponseDTO
+            {
+                RetrunMsg = msg,
+                ResMasterBody = new List<PoMasterBody> { request.ReqBodyDTO }
+            };
+            return result;
+        }
+
+        public void DeletePoItem(PurchasePoMasterRquestDTO request)
+        {
+            var poinfo = Helper.MapNoProperty<POInfo, PoMasterBody>(request.ReqBodyDTO);
+            PurchaseManager.GetInstance().DeletePOItem(poinfo, int.Parse(request.ReqBody.ProductSysNo));
         }
     }
 }

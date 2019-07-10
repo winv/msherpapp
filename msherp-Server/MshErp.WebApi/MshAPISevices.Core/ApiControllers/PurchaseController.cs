@@ -99,6 +99,16 @@ namespace MshErp.APIServices.Core.ApiControllers
             };
         }
 
+        [HttpPut]
+        public AjaxResponseInfo InsertPoItem([FromBody] PurchasePoMasterRquestDTO request)
+        {
+            var result = IPurchaseInfoManager.InsertPoItem(request);
+            return new AjaxResponseInfo
+            {
+                Status = true,
+                Data = result
+            };
+        }
         [HttpPost]
         public AjaxResponseInfo QueryPoList([FromBody] PurchasePoMasterRquestDTO request)
         {
@@ -125,6 +135,17 @@ namespace MshErp.APIServices.Core.ApiControllers
             {
                 Status = true,
                 Data = dto
+            };
+        }
+
+        [HttpDelete]
+        public AjaxResponseInfo DeletePoItem([FromBody] PurchasePoMasterRquestDTO request)
+        {
+            IPurchaseInfoManager.DeletePoItem(request);
+            return new AjaxResponseInfo
+            {
+                Status = true,
+                Data = null
             };
         }
     }

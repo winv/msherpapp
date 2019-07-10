@@ -120,15 +120,10 @@
 							<view class="picker">{{ ProductMasterList[pickmasterindex].name }}</view>
 						</picker>
 					</view>
-					<!-- <view class="cu-form-group margin-top">
-						<view class="title">商品管理人：</view>
-						<picker @change="PickerChange" :value="pickindex" :range="ProductStatusList" v-model="searchData.Status"
-						 :range-key="'name'">
-							<view class="picker">
-								{{ProductStatusList[pickindex].name}}
-							</view>
-						</picker>
-					</view> -->
+					<view class="cu-form-group margin-top">
+						<view class="title">仅限本人商品：</view>
+						<switch @change="isselfcheck" :class="isself?'checked':''" :checked="isself"></switch>
+					</view>
 					<view class="cu-form-group margin-top">
 						<view class="title">供应商编号：</view>
 						<input type="text" v-model="searchDataDto.ReqBody.VendorSysNo" />
@@ -156,12 +151,17 @@
 						<input class="action" type="text" v-model="PoBasketDto.ReqBodyModel.Quantity" />
 					</view>
 					<view class="cu-form-group">
+						<view class="title">采购总价：</view>
+						<input type="text" v-model="PoBasketDto.ReqBodyModel.TotalAmt" />
+					</view>
+					<view class="cu-form-group">
 						<view class="title">采购单价：</view>
 						<input type="text" v-model="PoBasketDto.ReqBodyModel.OrderPrice" />
 					</view>
 				</view>
 				<view class="cu-bar bg-white">
 					<view class="action margin-0 flex-sub text-green solid-left" @tap="hideModal">取消</view>
+					<view class="action margin-0 flex-sub  solid-left" @tap="computeUnitCost">计算单价</view>
 					<view class="action margin-0 flex-sub  solid-left" @tap="addToPoBasket">加入购物篮</view>
 				</view>
 			</view>
@@ -292,6 +292,7 @@
 					showIcon: false,
 					count: 0
 				},
+				isself:true
 			};
 		},
 		onLoad() {
@@ -307,8 +308,18 @@
 				this.loadMore.isfetchData = true;
 				this.loadMore.isaddData = false;
 				this.loadMore.isShowMore = true;
+				console.log(this.isself)
+				if(this.isself){
+					this.searchDataDto.ReqBody.GroupSysNo = this.userInfo.User.SysNo||'';
+				}else{
+					this.searchDataDto.ReqBody.GroupSysNo = '';
+				}
 				this.fetchData();
 				this.loadPobasketData();
+			},
+			isselfcheck(e){
+				console.log(e)
+				this.isself=e.detail.value
 			},
 			changeType(event) {
 				var inputvalue = event.target.value;
@@ -381,6 +392,12 @@
 						this.PoBasketDto.ReqBodyModel.OrderPrice = '';
 					}
 				});
+			},
+			computeUnitCost(e) {
+				var self = this;
+				var totalamt= this.PoBasketDto.ReqBodyModel.TotalAmt;
+				var currCost = totalamt/this.PoBasketDto.ReqBodyModel.Quantity
+				this.PoBasketDto.ReqBodyModel.OrderPrice=currCost;
 			},
 			addToPoBasket(e) {
 				var self = this;
