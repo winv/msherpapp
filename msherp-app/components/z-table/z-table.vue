@@ -191,7 +191,8 @@ export default {
 				tempHTML = tempFormat;
 			} else {
 				let error = new Error('数据的key或format值至少一个不为空');
-				throw error;
+				console.log(error)
+				//throw error;
 			}
 			// console.log(tempHTML)
 			return tempHTML + '';

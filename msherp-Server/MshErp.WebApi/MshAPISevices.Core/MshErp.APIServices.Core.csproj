@@ -50,6 +50,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Erp.Dll\Eson.BizModel.dll</HintPath>
     </Reference>
+    <Reference Include="Eson.BLL, Version=1.0.7131.25717, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Erp.Dll\Eson.BLL.dll</HintPath>
+    </Reference>
     <Reference Include="Eson.Objects, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Erp.Dll\Eson.Objects.dll</HintPath>
@@ -162,6 +166,7 @@
     <Compile Include="Filters\DeflateCompressionAttribute.cs" />
     <Compile Include="Filters\HandleCustomExceptionAttribute.cs" />
     <Compile Include="Filters\JwtAuthAttribute.cs" />
+    <Compile Include="Filters\PermissionAttribute.cs" />
     <Compile Include="Helper\CompressionHelper.cs" />
     <Compile Include="MshAPIServiceManage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

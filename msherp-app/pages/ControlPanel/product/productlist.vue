@@ -18,7 +18,7 @@
 		<view class="cu-bar bg-white solid-bottom margin-top">
 			<view class="action"></view>
 		</view>
-		<scroll-view :scroll-y="modalName == null" class="page" :class="modalName != null ? 'show' : ''" :style="[{ top: CustomBar + 'px' }]">
+		<scroll-view scroll-y class="page" :style="[{ top: CustomBar + 'px' }]">
 			<view class="cu-bar bg-white solid-bottom margin-top" v-if="!loadMore.isfetchData">
 				<view class="action">请输入条件查询数据！</view>
 			</view>

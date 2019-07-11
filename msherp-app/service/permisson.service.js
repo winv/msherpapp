@@ -94,6 +94,7 @@ let GetOpenId = function(wxCode, istomain) {
 						console.log(res)
 						if (res.data.Status) {
 							uni.setStorageSync("MshUserSession", res.data.Data.oSession)
+							uni.setStorageSync("MshUserPrivilegeAL", res.data.Data.oSession.PrivilegeAL)
 							uni.setStorageSync(mshconfig.mshsessionid, res.data.Data.Token);
 							uni.setStorageSync(mshconfig.mshdata_expirationName, mshconfig.mshdata_expirationTime)
 							if (istomain) {
@@ -175,6 +176,7 @@ permisson.bindweixin = function(userinfo) {
  * */
 permisson.logout = function() {
 	return new Promise(function(resolve, reject) {
+		uni.removeStorageSync("MshUserPrivilegeAL")
 		uni.removeStorageSync("MshUserSession")
 		uni.removeStorageSync(mshconfig.mshsessionid);
 		uni.removeStorageSync(mshconfig.mshdata_expirationName)

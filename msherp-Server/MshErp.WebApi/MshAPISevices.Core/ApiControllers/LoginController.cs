@@ -11,6 +11,7 @@ using Eson.Objects.Basic;
 using System.Web;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Eson.BLL.Basic;
 
 namespace MshErp.APIServices.Core.ApiControllers
 {
@@ -51,12 +52,8 @@ namespace MshErp.APIServices.Core.ApiControllers
                            && oUser.DepartmentSysNo != (int)AppEnum.DepartmentID.Mall
                            && oUser.DepartmentSysNo != (int)AppEnum.DepartmentID.Vendor)
                         {
-                            
-                            oSession.User = MapUserInfo(oUser);
-                            //oSession.IpAddress = Request.UserHostAddress;
-                            //oSession.PrivilegeAL = SysManager.GetInstance().GetPrivilegeALByUser(oUser.SysNo);
-                            //oSession.CopyUserAL = SysManager.GetInstance().GetUserFigureCopyList(oUser.SysNo, true);
-                            //oSession.CopyPrivilegeAL = SysManager.GetInstance().GetPrivilegeALByUserCopy(oUser.SysNo);
+
+                            GetSessionInfo(oUser, oSession);
                         }
                     }
                 }
@@ -93,7 +90,7 @@ namespace MshErp.APIServices.Core.ApiControllers
                 if (oUser==null)
                 {
                     issuccess = false;
-                    sb.AppendFormat("您尚未绑定微信登录,请先登录erp，绑定微信后再登录");
+                    sb.AppendFormat("您尚未绑定微信登录,请先登录erp,绑定微信后再使用自动登录");
                 }
                 else
                 {
@@ -106,11 +103,7 @@ namespace MshErp.APIServices.Core.ApiControllers
                            && oUser.DepartmentSysNo != (int)AppEnum.DepartmentID.Vendor)
                     {
 
-                        oSession.User = MapUserInfo(oUser);
-                        //oSession.IpAddress = Request.UserHostAddress;
-                        //oSession.PrivilegeAL = SysManager.GetInstance().GetPrivilegeALByUser(oUser.SysNo);
-                        //oSession.CopyUserAL = SysManager.GetInstance().GetUserFigureCopyList(oUser.SysNo, true);
-                        //oSession.CopyPrivilegeAL = SysManager.GetInstance().GetPrivilegeALByUserCopy(oUser.SysNo);
+                        GetSessionInfo(oUser, oSession);
                     }
                 }
             }
@@ -167,6 +160,29 @@ namespace MshErp.APIServices.Core.ApiControllers
                 ExtPhone = oUser.ExtPhone
             };
             return oParam;
+        }
+
+        private UserSessionDTO GetSessionInfo(UserResponseBody oUser, UserSessionDTO oSession)
+        {
+            oSession.User = MapUserInfo(oUser);
+            string resultIP = HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+            if (string.IsNullOrEmpty(resultIP))
+            {
+                resultIP = HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"];
+            }
+            if (string.IsNullOrEmpty(resultIP))
+            {
+                resultIP = HttpContext.Current.Request.UserHostAddress;
+            }
+            if (string.IsNullOrEmpty(resultIP))
+            {
+                resultIP = "0.0.0.0";
+            }
+            oSession.IpAddress = resultIP;
+            oSession.PrivilegeAL = SysManager.GetInstance().GetPrivilegeALByUser(oUser.SysNo);
+            oSession.CopyUserAL = SysManager.GetInstance().GetUserFigureCopyList(oUser.SysNo, true);
+            oSession.CopyPrivilegeAL = SysManager.GetInstance().GetPrivilegeALByUserCopy(oUser.SysNo);
+            return oSession;
         }
     }
 }

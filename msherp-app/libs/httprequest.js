@@ -9,6 +9,7 @@ httprequest.setConfig((config) => { /* 设置全局配置 config 为默认全局
 		'Access-Control-Allow-Credentials': true,
 		'Access-Control-Allow-Headers': 'x-requested-with,content-type',
 		'Token': uni.getStorageSync(mshconfig.mshsessionid),
+		'PrivilegeAL':uni.getStorageSync('MshUserPrivilegeAL'),
 		'MshUserID':uni.getStorageSync('MshUserID'),
 	}
 	return config
@@ -22,6 +23,7 @@ httprequest.interceptor.request((config, cancel) => { /* 请求之前拦截器�
 		'Access-Control-Allow-Credentials': true,
 		'Access-Control-Allow-Headers': 'x-requested-with,content-type',
 		'Token': uni.getStorageSync(mshconfig.mshsessionid),
+		'PrivilegeAL':JSON.stringify(uni.getStorageSync('MshUserPrivilegeAL')),
 		'MshUserID':uni.getStorageSync('MshUserID'),
 	}
 	uni.showLoading({

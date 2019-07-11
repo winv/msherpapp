@@ -30,5 +30,7 @@ namespace MshErp.BLL.Interface
         PoMasterBody QueryPoMaster(PurchasePoMasterRquestDTO request);
 
         void DeletePoItem(PurchasePoMasterRquestDTO request);
+
+        PurchasePoMasterResponseDTO UpdatePoitem(PurchasePoMasterRquestDTO request);
     }
 }

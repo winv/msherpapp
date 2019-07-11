@@ -67,7 +67,7 @@
 					</view>
 					<view class="cu-form-group">
 						<view class="title">截止到货：</view>
-						<picker :disabled="!isinitStatus" mode="date" :value="PoMasterInfo.ExpectInTime|formatDate" start="2018-01-01"
+						<picker :disabled="!isinitStatus" mode="date" :value="PoMasterInfo.ExpectInTime" start="2018-01-01"
 						 end="2025-12-31" @change="arriveDateChange">
 							<view class="picker">{{ PoMasterInfo.ExpectInTime }}</view>
 						</picker>
@@ -98,10 +98,12 @@
 										<view class="padding-xs">
 											<view class="cu-capsule radius">
 												<view class="cu-tag bg-brown xl radius">数量</view>
-												<view class="cu-tag line-brown basis-xs radius"><input type="text" :value="item.OrderQty" /></view>
+												<view class="cu-tag line-brown basis-xs radius"><input type="text" v-model='basePoItemList[index].OrderQty' /></view>
 												<view class="basis-xs"></view>
 												<view class="cu-tag bg-brown xl radius">价格</view>
-												<view class="cu-tag line-brown basis-xs radius"><input type="text" :value="item.OrderPrice" /></view>
+												<view class="cu-tag line-brown basis-xs radius">
+													<input type="text" v-model='basePoItemList[index].OrderPrice' />
+												</view>
 											</view>
 										</view>
 									</view>
@@ -111,15 +113,14 @@
 					</view>
 				</view>
 			</scroll-view>
+			<!--底部空白占位附，为了解决fixed 遮挡内容问题，实际应该由其他解决办法-->
+			<view class="bg-white padding"></view>
 			<!--非初始状态其他操作按钮-->
 			<view v-if="!isinitStatus&&PoMasterInfo.Status!==0" class="cu-bar bg-white tabbar border shop fixedbottom">
 				<view class="btn-group">
-					<button class="cu-btn bg-red round shadow-blur" @tap="addProduct" v-if='isShowAdd'>摊销</button>
-					<button class="cu-btn bg-red round shadow-blur" @tap="editProduct">审核</button>
 					<button class="cu-btn bg-red round shadow-blur" @tap="editProduct">收货</button>
 				</view>
 			</view>
-
 			<!--底部操作条-->
 			<view v-if="isinitStatus" class="cu-bar bg-white tabbar border shop fixedbottom">
 				<view class="action" @tap="showCartListRight">
@@ -130,8 +131,10 @@
 				</view>
 				<view class="btn-group">
 					<button class="cu-btn bg-orange round shadow-blur" @tap="UpdateToPoMaster" v-if='false'>更新采购单</button>
-					<button class="cu-btn bg-red round shadow-blur" @tap="addProduct" v-if='false'>添加商品</button>
 					<button class="cu-btn bg-red round shadow-blur" @tap="editProduct">{{editPoItem.text}}</button>
+					<button class="cu-btn bg-yellow round shadow-blur" @tap="submitEditListData" v-if='!editPoItem.showView'>提交更改</button>
+					<button class="cu-btn bg-red round shadow-blur" @tap="shareCost">摊销</button>
+					<button class="cu-btn bg-gradual-purple round shadow-blur" @tap="verifyPo">审核</button>
 				</view>
 			</view>
 			<!--直接添加商品-->
@@ -232,7 +235,7 @@
 				baseHtml: '<z-table :tableData="baseTableData" :columns="baseColumns"></z-table>',
 				editPoItem: {
 					isedit: false,
-					text: '编辑商品',
+					text: '编辑模式',
 					showView: true
 				},
 				PoBasketDto: {
@@ -328,6 +331,8 @@
 					if (this.PoMasterInfo.Status !== 1) {
 						this.isinitStatus = false;
 					}
+					this.PoMasterInfo.PayDate=dateFormat.formatTimeToStr(this.PoMasterInfo.PayDate,'yyyy-MM-dd')
+					this.PoMasterInfo.ExpectInTime=dateFormat.formatTimeToStr(this.PoMasterInfo.ExpectInTime,'yyyy-MM-dd hh:mm')
 					this.PoMasterInfo.VendorTextInfo = this.PoMasterInfo.VendorSysNo + '-' + this.PoMasterInfo.V_VendorName;
 					this.basePoItemList = this.PoMasterInfo.poItems
 					console.log(this.PoMasterInfo)
@@ -352,10 +357,32 @@
 			editProduct() {
 				this.editPoItem.showView = !this.editPoItem.showView;
 				if (this.editPoItem.showView) {
-					this.editPoItem.text = "编辑商品"
+					this.editPoItem.text = "编辑模式"
+					console.log('应该是这里提交数据')
+
 				} else {
-					this.editPoItem.text = "完成编辑"
+					this.editPoItem.text = "列表模式"
 				}
+			},
+			submitEditListData() {
+				var self = this
+				//删除物理数据
+				var searchDto = {
+					reqbody: {},
+					ReqBodyDTO: {}
+				}
+				searchDto.ReqBodyDTO = self.PoMasterInfo
+				console.log(searchDto)
+				purchase.UpdatePoitem(searchDto).then(res => {
+					console.log(res)
+					if (res.Data.RetrunMsg !== '') {
+						uni.showToast({
+							icon: 'none',
+							title: res.Data.RetrunMsg,
+							duration: 3000
+						})
+					}
+				})
 			},
 			deletePoItem(item, index) {
 				var self = this;
@@ -456,11 +483,12 @@
 				searchDto.reqbody.SysNo = sysno
 				searchDto.reqbody.ProductSysNo = productsysno
 				var self = this
-				var iscontinue=true
+				var oldlist = self.PoMasterInfo.poItems;
+				var iscontinue = true
 				purchase.getPoBasketItem(searchDto).then(res => {
 					console.log(res);
-					self.basePoItemList = res.Data.ResBody;
-					self.PoMasterInfo.poItems = self.basePoItemList;
+					//self.basePoItemList = res.Data.ResBody;
+					self.PoMasterInfo.poItems = res.Data.ResBody;
 					console.log(self.basePoItemList);
 				}).then(res2 => {
 					//直接操作采购单子表
@@ -474,13 +502,17 @@
 									title: res.Data.RetrunMsg,
 									duration: 3000
 								})
-								iscontinue=false
+								iscontinue = false
 							}
 							console.log(res)
 						}).then(res => {
-							console.log(iscontinue)
-							if(iscontinue)
+							// console.log(iscontinue)
+							if (iscontinue) {
 								this.initData()
+							} else {
+								self.basePoItemList = oldlist
+								self.PoMasterInfo.poItems = oldlist
+							}
 						});
 					} else {
 						uni.showToast({
@@ -490,7 +522,6 @@
 						})
 					}
 				});
-
 			},
 			UpdateToPoMaster() {
 				if (this.PoMasterInfo.VendorSysNo === 0) {
@@ -522,6 +553,9 @@
 						duration: 1500
 					})
 				}
+			},
+			shareCost(){
+				this.editProduct() 
 			},
 			showCartListRight() {
 				this.modalName = 'DrawerModalR'

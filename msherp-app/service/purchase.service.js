@@ -80,8 +80,8 @@ purchase.GetPobasketCount = function(param) {
 	})
 }
 /**
- * 获取购物篮详情接口
- * */
+* 获取购物篮详情接口
+* */
 purchase.QueryPoBaksetDetail = function(param) {
 	return new Promise(function(resolve, reject) {
 		http.post(urls.getFullERPUrl('Purchase/QueryPoBaksetDetail'), param).then(res => {
@@ -91,8 +91,8 @@ purchase.QueryPoBaksetDetail = function(param) {
 }
 
 /**
- * 写入购物篮
- * */
+* 写入购物篮
+* */
 purchase.InsertPoBasket = function(param) {
 	return new Promise(function(resolve, reject) {
 		http.post(urls.getFullERPUrl('Purchase/InsertPoBasket'), param).then(res => {
@@ -102,8 +102,8 @@ purchase.InsertPoBasket = function(param) {
 }
 
 /**
- * 查询采购单列表接口
-  * */
+* 查询采购单列表接口
+* */
 purchase.QueryPoList=function(param){
 	return new Promise(function(resolve, reject) {
 		http.post(urls.getFullERPUrl('Purchase/QueryPoList'), param).then(res => {
@@ -113,8 +113,8 @@ purchase.QueryPoList=function(param){
 }
 
 /**
- * 查询采购单详细
-  * */
+* 查询采购单详细
+* */
 purchase.QueryPoMaster=function(param){
 	return new Promise(function(resolve, reject) {
 		http.post(urls.getFullERPUrl('Purchase/QueryPoMaster'), param).then(res => {
@@ -124,8 +124,8 @@ purchase.QueryPoMaster=function(param){
 }
 
 /**
- * 删除采购单子表元素
-  * */
+* 删除采购单子表元素
+* */
 purchase.DeletePoItem=function(param){
 	return new Promise(function(resolve, reject) {
 		http.$delete(urls.getFullERPUrl('Purchase/DeletePoItem'), param).then(res => {
@@ -133,4 +133,15 @@ purchase.DeletePoItem=function(param){
 		})
 	})
 }
+/**
+* 更新采购单子表信息接口
+*/
+purchase.UpdatePoitem=function(param){
+	return new Promise(function(resolve, reject) {
+		http.post(urls.getFullERPUrl('Purchase/UpdatePoitem'), param).then(res => {
+			resolve(res.data)
+		})
+	})
+}
+
 export default purchase

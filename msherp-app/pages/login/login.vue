@@ -127,6 +127,7 @@
 					if (res.Status) {
 						// console.log(res.header["Set-Cookie"])
 						uni.setStorageSync("MshUserSession", res.Data.oSession)
+						uni.setStorageSync("MshUserPrivilegeAL", res.Data.oSession.PrivilegeAL)
 						uni.setStorageSync(this.MshSessionID, res.Data.Token);
 						uni.setStorageSync(this.mshconfig.mshdata_expirationName, this.mshconfig.mshdata_expirationTime)
 						this.toMain(this.account);

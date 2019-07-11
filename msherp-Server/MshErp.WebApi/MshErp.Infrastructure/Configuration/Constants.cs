@@ -10,6 +10,7 @@ namespace MshErp.Infrastructure.Configuration
     {
         public const string DefaultBusiness = nameof(DefaultBusiness);
         public const string TokenName = "token";
+        public const string PrivilegeAL = "privilegeal";
         public const string ValidateFrom = nameof(ValidateFrom);
         public const string ValidateTo = nameof(ValidateTo);
         public const string UserName = nameof(UserName);

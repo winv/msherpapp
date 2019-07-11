@@ -5,7 +5,7 @@
 			<block slot="content">新建采购单</block>
 		</cu-custom>
 		<!--采购单主界面-->
-		<scroll-view :scroll-y="modalName == null" class="page" :class="modalName != null ? 'show' : ''" :style="[{ top: CustomBar + 'px' }]">
+		<scroll-view scroll-y class="page" :style="[{ top: CustomBar + 'px' }]">
 			<view class="cu-list menu-avatar">
 				<view class="cu-form-group">
 					<view class="title">采购单号：</view>
@@ -80,11 +80,11 @@
 								<view class="padding-sm flex flex-wrap">
 									<view class="padding-xs">
 										<view class="cu-capsule radius">
-											<view class="cu-tag bg-brown xl radius">价格</view>
-											<view class="cu-tag line-brown basis-xs radius"><input type="text" :value="item.OrderQty" /></view>
-											<view class="basis-xs"></view>
 											<view class="cu-tag bg-brown xl radius">数量</view>
-											<view class="cu-tag line-brown basis-xs radius"><input type="text" :value="item.OrderPrice" /></view>
+											<view class="cu-tag line-brown basis-xs radius"><input type="text" v-model="basePoItemList[index].OrderQty" /></view>
+											<view class="basis-xs"></view>
+											<view class="cu-tag bg-brown xl radius">价格</view>
+											<view class="cu-tag line-brown basis-xs radius"><input type="text" v-model="basePoItemList[index].OrderPrice" /></view>
 										</view>
 									</view>
 								</view>
@@ -94,6 +94,7 @@
 				</view>
 			</view>
 		</scroll-view>
+		<view class="bg-white padding-xl"></view>
 		<!--底部操作条-->
 		<view class="cu-bar bg-white tabbar border shop fixedbottom">
 			<view class="action" @tap="showCartListRight">
@@ -194,7 +195,7 @@
 					name: '上海总仓',
 					value: '6'
 				}],
-				isShowAdd: true,
+				isShowAdd: false,
 				pickindex: 0,
 				basePoItemList: [],
 				basePoItemColumns: [],
@@ -366,20 +367,20 @@
 				console.log(this.baseRequestDto);
 
 				if (this.mshconfig.isWriteData) {
-					uni.showLoading({
-						title: '正在创建，请稍后...',
-						mask: true
-					})
 					purchase.CreateToPoMaster(this.baseRequestDto).then(res => {
+						console.log(res)
 						if (res.Data.RetrunMsg !== '') {
 							uni.showToast({
 								icon: 'none',
 								title: res.Data.RetrunMsg,
 								duration: 3000
 							})
+						} else {
+							var sysno=res.Data.ResMasterBody[0].SysNo
+							uni.redirectTo({
+								url: '/pages/ControlPanel/purchase/editpo?sysno=' + sysno
+							})
 						}
-						console.log(res)
-						uni.hideLoading()
 					});
 				} else {
 					uni.showToast({

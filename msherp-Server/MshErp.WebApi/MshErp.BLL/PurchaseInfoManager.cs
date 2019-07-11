@@ -108,6 +108,7 @@ namespace MshErp.BLL
             Hashtable ht = new Hashtable(10);
             foreach (var item in itemlist)
             {
+                item.Quantity = item.OrderQty;
                 ht.Add(item.ProductSysNo, item);
             }
             poinfo.itemHash = ht;
@@ -245,6 +246,29 @@ namespace MshErp.BLL
         {
             var poinfo = Helper.MapNoProperty<POInfo, PoMasterBody>(request.ReqBodyDTO);
             PurchaseManager.GetInstance().DeletePOItem(poinfo, int.Parse(request.ReqBody.ProductSysNo));
+        }
+
+        public PurchasePoMasterResponseDTO UpdatePoitem(PurchasePoMasterRquestDTO request)
+        {
+            var poinfo = Helper.MapNoProperty<POInfo, PoMasterBody>(request.ReqBodyDTO);
+            var itemlist = Helper.MapNoProperty<POItemInfo, PoItemBody>(request.ReqBodyDTO.poItems);
+            Hashtable ht = new Hashtable(10);
+            foreach (var item in itemlist)
+            {
+                item.POSysNo = poinfo.SysNo;
+                ht.Add(item.ProductSysNo, item);
+            }
+            poinfo.itemHash = ht;
+            string msg = PurchaseManager.GetInstance().VerifyUpdatePoItem(poinfo, itemlist);
+            
+            request.ReqBodyDTO.SysNo = poinfo.SysNo;
+
+            var result = new PurchasePoMasterResponseDTO
+            {
+                RetrunMsg = msg,
+                ResMasterBody = new List<PoMasterBody> { request.ReqBodyDTO }
+            };
+            return result;
         }
     }
 }

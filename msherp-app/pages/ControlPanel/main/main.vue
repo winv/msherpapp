@@ -92,13 +92,13 @@
 					// 	cuIcon: 'myfill',
 					// 	urls: '/pages/ControlPanel/product/productlist'
 					// },
-					{
-						title: '登陆',
-						name: 'Login',
-						color: 'olive',
-						cuIcon: 'icloading',
-						urls: '/pages/login/login'
-					}
+					// {
+					// 	title: '登陆',
+					// 	name: 'Login',
+					// 	color: 'olive',
+					// 	cuIcon: 'icloading',
+					// 	urls: '/pages/login/login'
+					// }
 					// {
 					// 	title: '边框阴影',
 					// 	name: 'shadow',
