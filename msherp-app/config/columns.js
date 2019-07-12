@@ -8,25 +8,26 @@ columns.PoItemCol = function(obj) {
 	arr.push({
 		title: '商品号',
 		key: 'ProductSysNo',
+		width:100
 	})
 	arr.push({
 		title: '名称',
 		key: 'ProductName',
 	})
 	arr.push({
-		title: '订购数量',
+		title: '数量',
 		key: 'Quantity',
 	})
 	arr.push({
-		title: '订购价格',
+		title: '价格',
 		key: 'OrderPrice',
 	})
 	arr.push({
-		title: '所有库存',
+		title: '库存',
 		key: 'V_AccountQty',
 	})
 	arr.push({
-		title: '所有可用',
+		title: '可用',
 		key: 'V_AvailableQty',
 	})
 	arr.push({
@@ -34,7 +35,7 @@ columns.PoItemCol = function(obj) {
 		key: 'V_DaySaleQty',
 	})
 	arr.push({
-		title: '当日门店需求',
+		title: '门店需求',
 		key: 'V_DemandQty',
 	})
 	return arr;
@@ -44,25 +45,26 @@ columns.PoItemMainCol = function(obj) {
 	arr.push({
 		title: '商品号',
 		key: 'ProductSysNo',
+		width:100
 	})
 	arr.push({
 		title: '名称',
 		key: 'ProductName',
 	})
 	arr.push({
-		title: '订购数量',
+		title: '数量',
 		key: 'Quantity',
 	})
 	arr.push({
-		title: '订购价格',
+		title: '价格',
 		key: 'OrderPrice',
 	})
 	arr.push({
-		title: '所有库存',
+		title: '库存',
 		key: 'V_AccountQty',
 	})
 	arr.push({
-		title: '所有可用',
+		title: '可用',
 		key: 'V_AvailableQty',
 	})
 	arr.push({
@@ -70,7 +72,7 @@ columns.PoItemMainCol = function(obj) {
 		key: 'V_DaySaleQty',
 	})
 	arr.push({
-		title: '当日门店需求',
+		title: '门店需求',
 		key: 'V_DemandQty',
 	})
 	return arr;

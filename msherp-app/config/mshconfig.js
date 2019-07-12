@@ -5,12 +5,12 @@
 * // devUrl: 'http://localhost/MshErp.WebApi/api/',
 */ 
 const mshconfig = {
-	//devUrl:'http://testwxservice.mmsshh.com/api/',
+	//devUrl:'https://testwxservice.mmsshh.com/api/',
 	devUrl: 'http://localhost/MshErp.WebApi/api/',
 	productionUrl: 'http://localhost:809/api/',
 	env: 'development',
 	isDebug: true,
-	isWriteData:true,
+	isWriteData:false,
 	mshsessionid: "MSH_ERP_APP_TOKEN",
 	mshdata_expirationName: 'mshdata_expiration',
 	mshdata_expirationTime: Date.parse(new Date()) + 1800000,

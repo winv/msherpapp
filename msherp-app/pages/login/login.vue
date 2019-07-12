@@ -120,10 +120,13 @@
 				if (this.remeberme) {
 					this.rememberMe();
 				}
-				this.logining = true;
+				uni.showLoading({
+					mask:true,
+					title:'登录中...'
+				})
 				permisson.accountlogin(user).then(res => {
 					console.log(res);
-					this.logining = false;
+					uni.hideLoading()
 					if (res.Status) {
 						// console.log(res.header["Set-Cookie"])
 						uni.setStorageSync("MshUserSession", res.Data.oSession)

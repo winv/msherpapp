@@ -126,7 +126,7 @@ namespace MshErp.BLL
             poinfo.ShipTypeSysNo = 1;//送货上门
             poinfo.PayTypeSysNo = 1;//货到付款
             poinfo.ExchangeRate = 1m;//汇率 默认为1 人民币
-            poinfo.POInvoiceType = 1;//默认不带票
+            //poinfo.POInvoiceType = 1;//默认不带票
             poinfo.ReferencePOSysNo = AppConst.IntNull;
             poinfo.MinusPOType = AppConst.IntNull;
             poinfo.Note = string.Format("[小程序生成]{0}", poinfo.Note);
@@ -169,7 +169,7 @@ namespace MshErp.BLL
                 ht.Add("VendorSysNo", dto.VendorSysNo);
             if (!string.IsNullOrEmpty(dto.Status))
                 ht.Add("Status", dto.Status);
-            ht.Add("ShowNum", 100);
+            ht.Add("ShowNum", 2);
             #region 未实现查询逻辑
             //if (txtExpectInTime.Text.Trim() != "")
             //    ht.Add("ExpectInTime", txtExpectInTime.Text.Trim());

@@ -44,6 +44,11 @@
 					</picker>
 				</view>
 				<view class="cu-form-group">
+					<view class="title">税点：</view>
+					<input type="text" v-model="PoMasterInfo.POInvoiceTen" />
+					<text>%</text>
+				</view>
+				<view class="cu-form-group">
 					<view class="title">支付类型：</view>
 					<picker @change="PickerPayTypeChange" :value="pickPayIndex" :range="PayDateTypeList" :range-key="'name'">
 						<view class="picker pull-left">{{ PayDateTypeList[pickPayIndex].name }}</view>
@@ -59,7 +64,7 @@
 			<!--table 采购商品列表-->
 			<view :class="editPoItem.showView?'bright789_view_show':'bright789_view_hide'">
 				<view class="table">
-					<z-table :tableData="basePoItemList" :columns="basePoItemColumns" :showLoading='false'></z-table>
+					<z-table :tableData="basePoItemList" :columns="basePoItemColumns" :showLoading='false' :showBottomSum='true'></z-table>
 				</view>
 			</view>
 			<!--可编辑列表 table暂时不支持行单击事件-->
@@ -181,6 +186,7 @@
 					PayDate: dateFormat.formatTimeToStr(dateFormat.AddDays(1), 'yyyy-MM-dd'),
 					ExpectInTime: dateFormat.formatTimeToStr(dateFormat.AddDays(3), 'yyyy-MM-dd'),
 					POInvoiceType: 0,
+					POInvoiceTen: 0,
 					PayDateType: 0,
 					StockSysNo: 6,
 					VendorTextInfo: '',
@@ -376,7 +382,7 @@
 								duration: 3000
 							})
 						} else {
-							var sysno=res.Data.ResMasterBody[0].SysNo
+							var sysno = res.Data.ResMasterBody[0].SysNo
 							uni.redirectTo({
 								url: '/pages/ControlPanel/purchase/editpo?sysno=' + sysno
 							})
@@ -411,6 +417,11 @@
 			PickerInvoiceChange(e) {
 				this.invoiceIndex = e.detail.value;
 				this.PoMasterInfo.POInvoiceType = this.POInvoiceTypeList[this.invoiceIndex].value;
+				if (e.detail.value === "2") {
+					this.PoMasterInfo.POInvoiceTen = 17
+				} else {
+					this.PoMasterInfo.POInvoiceTen = 0
+				}
 			},
 			PickerPayTypeChange(e) {
 				this.pickPayIndex = e.detail.value;

@@ -76,7 +76,7 @@
 				<!--table 采购商品列表-->
 				<view class="cu-list sm margin-bottom-xl" :class="editPoItem.showView?'bright789_view_show':'bright789_view_hide'">
 					<view class="table">
-						<z-table :tableData="basePoItemList" :columns="basePoItemColumns" :showLoading='false'></z-table>
+						<z-table :tableData="basePoItemList" :columns="basePoItemColumns" :showLoading='false' :showBottomSum='true'></z-table>
 					</view>
 				</view>
 				<!--可编辑列表 table暂时不支持行单击事件-->

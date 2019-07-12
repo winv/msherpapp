@@ -217,9 +217,10 @@ export default {
 		numTransform(n) {
 			if (Math.abs(n) >= 100000000) {
 				n = Number((n / 100000000).toFixed(1)) + '亿';
-			} else if (Math.abs(n) >= 10000) {
-				n = Number((n / 10000).toFixed(1)) + '万';
-			}
+			} 
+			// else if (Math.abs(n) >= 10000) {
+			// 	n = Number((n / 10000).toFixed(1)) + '万';
+			// }
 			return n.toString();
 		},
 		resetSort() {
