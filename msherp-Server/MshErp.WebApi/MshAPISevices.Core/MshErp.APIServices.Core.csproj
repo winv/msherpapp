@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AipSdk, Version=3.6.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Baidu.AI.3.6.13\lib\net45\AipSdk.dll</HintPath>
+    </Reference>
     <Reference Include="Aop.Autofac, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Aop.Autofac.1.0.2\lib\Aop.Autofac.dll</HintPath>
     </Reference>
@@ -149,6 +152,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiControllers\BaiAIController.cs" />
     <Compile Include="ApiControllers\BaseApiControlle.cs" />
     <Compile Include="ApiControllers\LoginController.cs" />
     <Compile Include="ApiControllers\ProductController.cs" />
@@ -174,7 +178,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Eson.Model.DTO\MshErp.Model.DTO.csproj">

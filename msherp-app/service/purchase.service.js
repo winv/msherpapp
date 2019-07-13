@@ -144,4 +144,15 @@ purchase.UpdatePoitem=function(param){
 	})
 }
 
+/**
+* 更新采购单子表信息接口
+*/
+purchase.GetImageInfo=function(param){
+	return new Promise(function(resolve, reject) {
+		http.post(urls.getFullERPUrl('BaiAI/GetImageInfo'), param).then(res => {
+			resolve(res.data)
+		})
+	})
+}
+
 export default purchase
