@@ -349,7 +349,8 @@ export default {
 						success: res => {
 							//成功的回调
 							console.log('data:image/png;base64,' + res.data);
-							purchase.GetImageInfo(res.data).then(res=>{
+							var imgbase64={RetrunMsg:res.data}
+							purchase.GetImageInfo(imgbase64).then(res=>{
 								console.log(res)
 							})
 						}

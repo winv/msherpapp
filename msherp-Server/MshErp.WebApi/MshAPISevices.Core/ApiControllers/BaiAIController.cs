@@ -44,7 +44,7 @@ namespace MshErp.APIServices.Core.ApiControllers
         //RQpS0GcrkY14WYmqyrCFH7ZIhila7gbg
         [AllowAnonymous]
         [HttpPost]
-        public AjaxResponseInfo GetImageInfo([FromBody]string imgbase64)
+        public AjaxResponseInfo GetImageInfo([FromBody]BaseDTO imgbase64)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace MshErp.APIServices.Core.ApiControllers
 
                 var client = new Baidu.Aip.ImageClassify.ImageClassify(API_KEY, SECRET_KEY);
                 client.Timeout = 60000;  // 修改超时时间
-                byte[] image = Convert.FromBase64String(imgbase64);
+                byte[] image = Convert.FromBase64String(imgbase64.RetrunMsg);
 
                
                 // 调用通用物体识别，可能会抛出网络等异常，请使用try/catch捕获
