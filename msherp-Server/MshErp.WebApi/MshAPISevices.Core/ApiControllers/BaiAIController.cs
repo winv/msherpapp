@@ -38,39 +38,33 @@ namespace MshErp.APIServices.Core.ApiControllers
             Console.WriteLine(result);
             return result;
         }
-        ////url：
-        //16795489
-        //B1nuSVlhXgP9A5GyeRtV6Yo6
-        //RQpS0GcrkY14WYmqyrCFH7ZIhila7gbg
         [AllowAnonymous]
         [HttpPost]
-        public AjaxResponseInfo GetImageInfo([FromBody]BaseDTO imgbase64)
+        public AjaxResponseInfo GetImageInfo([FromBody]BaiduAIRquestDTO request)
         {
             try
             {
-                // 设置APPID/AK/SK
-                var APP_ID = "你的 App ID";
-                var API_KEY = "B1nuSVlhXgP9A5GyeRtV6Yo6";
-                var SECRET_KEY = "RQpS0GcrkY14WYmqyrCFH7ZIhila7gbg";
+                var client = new Baidu.Aip.ImageClassify.ImageClassify(ConfigHelper.BaiduApiKey, ConfigHelper.BaiduSecretKey)
+                {
+                    Timeout = 60000  // 修改超时时间
+                };
+                byte[] image = Convert.FromBase64String(request.ReqBody.Imgbase64);
 
-                var client = new Baidu.Aip.ImageClassify.ImageClassify(API_KEY, SECRET_KEY);
-                client.Timeout = 60000;  // 修改超时时间
-                byte[] image = Convert.FromBase64String(imgbase64.RetrunMsg);
-
-               
-                // 调用通用物体识别，可能会抛出网络等异常，请使用try/catch捕获
+                //// 调用通用物体识别，可能会抛出网络等异常，请使用try/catch捕获
+                //var result = client.AdvancedGeneral(image);
+                //Console.WriteLine(result);
+                //// 如果有可选参数
+                //var options = new Dictionary<string, object>{
+                //        {"baike_num", 5}
+                //    };
+                //// 带参数调用通用物体识别
                 var result = client.AdvancedGeneral(image);
-                Console.WriteLine(result);
-                // 如果有可选参数
-                var options = new Dictionary<string, object>{
-                        {"baike_num", 5}
-                    };
-                // 带参数调用通用物体识别
-                result = client.AdvancedGeneral(image, options);
+                var result2 = client.Ingredient(image);
+                var res = new { result, result2 };
                 return new AjaxResponseInfo
                 {
                     Status = true,
-                    Data = result
+                    Data = res,
                 };
             }
             catch (Exception ex)

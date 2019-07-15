@@ -2,19 +2,18 @@
 	<view>
 		<cu-custom bgColor="bg-gradual-pink" :isBack="true">
 			<block slot="backText">返回</block>
-			<block slot="content">商品列表</block>
+			<block slot="content">拍照自动识别</block>
 		</cu-custom>
 		<view class="cu-bar bg-white search fixed" :style="[{ top: CustomBar + 'px' }]">
-			<view class="search-form round">
-				<text class="cuIcon-search"></text>
-				<input type="text" @input="changeType" v-model="searchDataDto.ReqBody.serachValue" placeholder="支持商品号,编号,名称"
-				 confirm-type="search" />
+			<view class="cu-form-group margin-top">
+				<picker @change="PickerChange" :value="pickindex" :range="BaiduApiList" :range-key="'name'">
+					<view class="picker">{{ BaiduApiList[pickindex].name }}</view>
+				</picker>
 			</view>
 			<view class="action">
-				<button class="cu-btn bg-gradual-green shadow-blur round" @tap="handleSubmit">搜索</button>
-				<button class="cu-btn bg-gradual-red shadow-blur round" @tap="handleSubmitAdv" data-target="DialogModal2">选项</button>
-				<button class="cu-btn bg-gradual-red shadow-blur round" @tap="chooseImage" data-target="chooseImageResult">拍照</button>
-
+				<button class="cu-btn bg-gradual-red shadow-blur round" @tap="chooseImage" data-target="chooseImageResult">拍照识别</button>
+				<button class="cu-btn bg-gradual-red shadow-blur round" @tap="chooseImageAgain" data-target="chooseImageResult">重新识别</button>
+				<button class="cu-btn bg-blue shadow-blur round" @tap="handleSubmitAdv" data-target="DialogModal2">匹配选项</button>
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom margin-top">
@@ -22,80 +21,33 @@
 		</view>
 		<scroll-view scroll-y class="page" :style="[{ top: CustomBar + 'px' }]">
 			<view class="cu-bar bg-white solid-bottom margin-top" v-if="!loadMore.isfetchData">
-				<view class="action">请输入条件查询数据！</view>
+				<view class="action">请选择照片或者拍照！</view>
 			</view>
-			<view v-for="(item, index) in productList" :key="index">
-				<view class="cu-bar bg-white solid-bottom margin-top">
-					<view class="action">
-						<text class="cuIcon-titles text-orange"></text>
-						<navigator navigateTo :url="'/pages/ControlPanel/product/productdetail?productsysno=' + item.ProductSysNo">
-							<view>{{ item.ProductSysNo }}-{{ item.ProductName }}-{{ item.ProductID }}</view>
-						</navigator>
-					</view>
-					<view class="padding-sm margin-xs radius">
-						<text v-if="true" class="lg text-red" :class="'cuIcon-cartfill'" @tap="showCart(item)" data-target="DialogCartModal"></text>
-					</view>
+			<view>
+				<image :src="imageinfo.url" :width="imageinfo.width" :height="imageinfo.height" mode="widthFix"></image>
+			</view>
+			<view class=" margin-top" v-for="(masteritem, masterindex) in productList" :key="masterindex">
+				<view class="cu-form-group">
+					<view class="title">{{masteritem.name}}</view>
+					<view class="title">可信度{{masteritem.score|percent}}</view>
 				</view>
-				<view class="cu-card article no-card">
-					<view class="cu-item shadow">
-						<view class="content">
-							<view class="padding-sm flex flex-wrap">
-								<view class="padding-xs">
-									<view class="cu-tag radius bg-grey sm">{{ item.d0 }}</view>
-									<view class="cu-tag radius bg-grey sm">{{ item.d1 }}</view>
-									<view class="cu-tag radius bg-grey sm">{{ item.d2 }}</view>
-									<view class="cu-tag radius bg-grey sm">{{ item.d3 }}</view>
-									<view class="cu-tag radius bg-grey sm">{{ item.d4 }}</view>
-									<view class="cu-tag radius bg-grey sm">{{ item.d5 }}</view>
-									<view class="cu-tag radius bg-grey sm">{{ item.d6 }}</view>
-									<view class="cu-tag radius bg-grey sm">{{ item.d7 }}</view>
-								</view>
-								<view class="padding-xs">
-									<view class="cu-capsule radius">
-										<view class="cu-tag bg-brown sm">app价</view>
-										<view class="cu-tag line-brown sm">{{ item.AppBasicPrice }}</view>
-									</view>
-									<view class="cu-capsule radius">
-										<view class="cu-tag bg-brown sm">门店价</view>
-										<view class="cu-tag line-brown sm">{{ item.StockCurrentPrice }}</view>
-									</view>
-									<view class="cu-capsule radius">
-										<view class="cu-tag bg-brown sm">门店会员价</view>
-										<view class="cu-tag line-brown sm">{{ item.StockBasicPrice }}</view>
-									</view>
-									<view class="cu-capsule radius">
-										<view class="cu-tag bg-brown sm">成本</view>
-										<view class="cu-tag line-brown sm">{{ item.Unicost }}</view>
-									</view>
-								</view>
-								<view class="padding-xs">
-									<view class="cu-capsule radius">
-										<view class="cu-tag bg-brown sm">公司</view>
-										<view class="cu-tag line-brown sm">{{ item.CompanyStock }}</view>
-									</view>
-									<view class="cu-capsule radius">
-										<view class="cu-tag bg-brown sm">总仓</view>
-										<view class="cu-tag line-brown sm">{{ item.WareHouseStock }}</view>
-									</view>
-									<view class="cu-capsule radius">
-										<view class="cu-tag bg-brown sm">门店</view>
-										<view class="cu-tag line-brown sm">{{ item.AllStoreNum }}</view>
-									</view>
-									<view class="cu-capsule radius">
-										<view class="cu-tag bg-brown sm">财务</view>
-										<view class="cu-tag line-brown sm">{{ item.Accountry }}</view>
-									</view>
-								</view>
-								<view class="padding-xs">
-									<view class="cu-tag bg-red light sm radius">{{ item.V_ProductStatusName }}</view>
-									<view class="cu-tag bg-green light sm radius" v-if="item.ProductLeader !== ''">{{ item.ProductLeader }}</view>
-								</view>
-							</view>
+				<view v-if="masteritem.ProductList.length===0">
+					<view class="cu-form-group text-center">ERP无商品匹配结果,您可以更改匹配选项重新识别</view>
+				</view>
+				<view v-for="(item, index) in masteritem.ProductList" :key="index">
+					<view class="cu-bar bg-white solid-bottom">
+						<view class="action">
+							<text class="cuIcon-titles text-orange"></text>
+							<navigator navigateTo :url="'/pages/ControlPanel/product/productdetail?productsysno=' + item.ProductSysNo">
+								<view>{{ item.ProductSysNo }}-{{ item.ProductName }}-{{ item.ProductID }}</view>
+							</navigator>
+						</view>
+						<view class="padding-sm margin-xs radius">
+							<text v-if="true" class="lg text-red" :class="'cuIcon-cartfill'" @tap="showCart(item)" data-target="DialogCartModal"></text>
 						</view>
 					</view>
 				</view>
 			</view>
-			<view class="cu-load bg-blue" @tap="loadMoreData" v-if="loadMore.isShowMore" :class="loadMore.loadClass">{{ loadMore.loadText }}</view>
 		</scroll-view>
 		<view class="cu-modal" :class="modalName == 'DialogModal2' ? 'show' : ''">
 			<view class="cu-dialog">
@@ -175,34 +127,6 @@
 				</view>
 			</navigator>
 		</view>
-		<view class="cu-modal" :class="modalName == 'chooseImageResult' ? 'show' : ''">
-			<view class="cu-dialog pull-left">
-				<view class="cu-bar bg-white justify-end">
-					<view class="content">识别结果</view>
-					<view class="action" @tap="hideModal"><text class="cuIcon-close text-red"></text></view>
-				</view>
-				<view class="cu-list menu-avatar padding-sm no-card">
-					<view class="cu-form-group margin-top-sm">
-						<image :src="imageinfo.url" :width="imageinfo.width" :height="imageinfo.width"></image>
-					</view>
-					<view v-for="(item, index) in imageinfo.list" :key="index">
-						<view class="cu-form-group">
-							<view class="title">{{item.name}}</view>
-							<view class="title">{{item.name}}</view>
-							<view class="title">{{item.score}}</view>
-							<view class="title">{{item.score}}</view>
-						</view>
-					</view>
-				</view>
-				<view class="cu-bar bg-white">
-					<view class="action margin-0 flex-sub text-green solid-left" @tap="hideModal">取消</view>
-					<view class="action margin-0 flex-sub  solid-left" @tap="computeUnitCost">计算单价</view>
-					<view class="action margin-0 flex-sub  solid-left" @tap="addToPoBasket">加入购物篮</view>
-				</view>
-			</view>
-		</view>
-
-
 	</view>
 </template>
 
@@ -210,7 +134,7 @@
 	import vueCommonData from '../../../config/VueCommonConstData.js';
 	import product from '../../../service/product.service.js'
 	import purchase from '../../../service/purchase.service.js'
-
+	var Enumerable = require('linq');
 	export default {
 		data() {
 			return {
@@ -240,6 +164,15 @@
 				skin: false,
 				listTouchStart: 0,
 				listTouchDirection: null,
+				BaiduApiList: [{
+						name: '果蔬识别',
+						value: '1'
+					},
+					{
+						name: '通用识别',
+						value: '2'
+					}
+				],
 				ProductStatusList: [{
 						name: '全部',
 						value: ''
@@ -314,7 +247,9 @@
 						IsPaging: true,
 						PageSize: 10,
 						PageIndex: 1,
-						SearchStatus: [0, 1]
+						SaleStatus: "0, 1",
+						IsMasterProductSysNo: true,
+						IsDemandProduct: 1
 					}
 				},
 				userInfo: {},
@@ -322,9 +257,13 @@
 					showIcon: false,
 					count: 0
 				},
-				imageinfo:{url:'',width:50,height:50,list:[]},
-				
-				imgresult: [],
+				imageinfo: {
+					url: '',
+					width: 50,
+					height: 50,
+					list: [],
+					imgbytes: ''
+				},
 				isself: true
 			};
 		},
@@ -354,12 +293,12 @@
 				console.log(e)
 				this.isself = e.detail.value
 			},
-			changeType(event) {
-				var inputvalue = event.target.value;
+			changeType(inputvalue) {
 				var hz = /^[\u4e00-\u9fa5]+$/; //汉字
 				var zf = /^[A-Za-z].*/; //字符
 				var sz = /^[0-9]*$/;
 				var tm = /^(69|M).*/
+				this.searchDataDto.ReqBody.serachValue = inputvalue
 				if (hz.test(inputvalue)) {
 					this.searchDataDto.ReqBody.serachType = 1;
 				}
@@ -481,23 +420,23 @@
 					sizeType: ['original', 'compressed'],
 					sourceType: ['album', 'camera'],
 					success: function(res) {
+						self.productList = []
 						console.log(res);
 						var tempfilepaths = res.tempFilePaths
 						console.log(res.tempFiles[0])
 						self.imageinfo.url = res.tempFilePaths[0]
 						uni.getImageInfo({
-							src:self.imageinfo.url,
-							success:res=>{
-								if(res.height>res.width){
-									self.imageinfo.width=(res.width/res.height)*50
+							src: self.imageinfo.url,
+							success: res => {
+								if (res.height > res.width) {
+									self.imageinfo.width = (res.width / res.height) * 50
+								} else {
+									self.imageinfo.height = (res.height / res.width) * 50
 								}
-								else{
-									self.imageinfo.height=(res.height/res.width)*50
-								}
+								console.log(res)
 								console.log(self.imageinfo)
 							}
 						})
-						
 						wx.getFileSystemManager().readFile({
 							filePath: res.tempFilePaths[0], //选择图片返回的相对路径
 							encoding: 'base64', //编码格式
@@ -505,18 +444,51 @@
 								//成功的回调
 								//console.log('data:image/png;base64,' + res.data);
 								var img = 'data:image/png;base64,' + res.data;
-								var imgbase64 = {
-									RetrunMsg: res.data
-								}
-								purchase.GetImageInfo(imgbase64).then(res => {
-									console.log(res)
-									self.modalName = 'chooseImageResult';
-									self.imageinfo.list = res.Data.result2.result
-								})
+								self.imageinfo.imgbytes = res.data
+								self.knowImages()
 							}
 						});
 					}
 				});
+			},
+			chooseImageAgain() {
+				this.knowImages()
+			},
+			knowImages() {
+				var self = this
+				self.productList = []
+				var ReqBody = {
+					Imgbase64: self.imageinfo.imgbytes
+				}
+				var dto = self.baseRequestDto
+				dto.ReqBody = ReqBody
+				console.log(dto)
+				purchase.GetImageInfo(dto).then(res => {
+					console.log(res)
+					self.imageinfo.list = res.Data.result2.result
+					self.getProductListFromAI()
+				})
+			},
+			getProductListFromAI() {
+				var self = this
+				self.searchDataDto.ReqBody.PageIndex = 0;
+				if (self.isself) {
+					self.searchDataDto.ReqBody.GroupSysNo = self.userInfo.User.SysNo || '';
+				} else {
+					self.searchDataDto.ReqBody.GroupSysNo = '';
+				}
+				self.imageinfo.list.forEach(function(item, index) {
+					var obj = {};
+					obj = item;
+					obj.ProductList = []
+					console.log(item)
+					self.changeType(item.name)
+					product.QueryProductList(self.searchDataDto).then(res => {
+						item.ProductList = []
+						obj.ProductList = res.Data.ReqBody
+						self.productList.push(obj)
+					})
+				})
 			},
 			showModal(e) {
 				this.modalName = e.currentTarget.dataset.target;
@@ -566,11 +538,11 @@
 			},
 			PickerChange(e) {
 				this.pickindex = e.detail.value;
-				this.searchDataDto.ReqBody.SearchStatus = [this.ProductStatusList[this.pickindex].value];
+				this.searchDataDto.ReqBody.SaleStatus = this.ProductStatusList[this.pickindex].value;
 			},
 			PickerChangeDemand(e) {
 				this.pickdemandindex = e.detail.value;
-				this.searchDataDto.ReqBody.IsProductDemand = this.ProductDemandList[this.pickdemandindex].value;
+				this.searchDataDto.ReqBody.IsDemandProduct = this.ProductDemandList[this.pickdemandindex].value;
 			},
 			PickerChangeMaster(e) {
 				this.pickmasterindex = e.detail.value;

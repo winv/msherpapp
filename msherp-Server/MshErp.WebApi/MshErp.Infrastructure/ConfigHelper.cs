@@ -56,5 +56,38 @@ namespace MshErp.Infrastructure
                 return value;
             }
         }
+
+        public static string BaiduAppID
+        {
+            get
+            {
+                var value = ConfigurationManager.AppSettings[$"{nameof(BaiduAppID)}"];
+                if (string.IsNullOrEmpty(value))
+                    throw new Exception($"请在配置文件中配置{nameof(BaiduAppID)}");
+                return value;
+            }
+        }
+
+        public static string BaiduApiKey
+        {
+            get
+            {
+                var value = ConfigurationManager.AppSettings[$"{nameof(BaiduApiKey)}"];
+                if (string.IsNullOrEmpty(value))
+                    throw new Exception($"请在配置文件中配置{nameof(BaiduApiKey)}");
+                return value;
+            }
+        }
+
+        public static string BaiduSecretKey
+        {
+            get
+            {
+                var value = ConfigurationManager.AppSettings[$"{nameof(BaiduSecretKey)}"];
+                if (string.IsNullOrEmpty(value))
+                    throw new Exception($"请在配置文件中配置{nameof(BaiduSecretKey)}");
+                return value;
+            }
+        }
     }
 }

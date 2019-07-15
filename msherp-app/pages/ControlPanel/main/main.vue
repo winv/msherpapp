@@ -57,7 +57,7 @@
 						urls: '/pages/ControlPanel/product/pobasket'
 					},
 					// {
-					// 	title: '报表',
+					// 	title: '拍照识别',
 					// 	name: 'Report',
 					// 	color: 'purple',
 					// 	cuIcon: 'font',
@@ -85,13 +85,13 @@
 						cuIcon: 'roundaddfill',
 						urls: '/pages/ControlPanel/purchase/createpo'
 					},
-					// {
-					// 	title: '财务',
-					// 	name: 'Finance',
-					// 	color: 'red',
-					// 	cuIcon: 'myfill',
-					// 	urls: '/pages/ControlPanel/product/productlist'
-					// },
+					{
+						title: '拍照识别',
+						name: 'Finance',
+						color: 'green',
+						cuIcon: 'ImageInput',
+						urls: '/pages/ControlPanel/product/productAilist'
+					},
 					// {
 					// 	title: '登陆',
 					// 	name: 'Login',

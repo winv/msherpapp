@@ -88,6 +88,15 @@ let VueCommonConstData = {
 			} else {
 				return "";
 			}
+		},
+		percent: function(value) {
+			if (value != null && value != "") {
+				let str = Number(value * 100).toFixed(2);
+				str += "%";
+				return str
+			} else {
+				return "";
+			}
 		}
 	}
 }

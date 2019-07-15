@@ -1,9 +1,9 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		// {
-		// 	"path": "pages/welcome",
-		// 	"style": {}
-		// },
+		{
+			"path": "pages/welcome",
+			"style": {}
+		},
 		{
 			"path": "pages/ControlPanel/main/main",
 			"style": {}
@@ -21,17 +21,20 @@
 		{
 			"path": "pages/ControlPanel/product/productlist",
 			"style": {}
-		},{
+		},
+		{
+			"path": "pages/ControlPanel/product/productAilist",
+			"style": {}
+		},
+		{
             "path" : "pages/ControlPanel/product/productdetail",
             "style" : {}
-        },{
+        },
+		{
             "path" : "pages/ControlPanel/product/pobasket",
             "style" : {}
         },
 		{
-		    "path" : "pages/ControlPanel/my/my",
-		    "style" : {}
-		},{
 		    "path" : "pages/ControlPanel/purchase/createpo",
 		    "style" : {}
 		},
@@ -40,11 +43,15 @@
 		    "style" : {}
 		},
 		{
+		    "path" : "pages/ControlPanel/purchase/editpo",
+		    "style" : {}
+		},
+		{
 		    "path" : "pages/ControlPanel/vendor/vendorindexlist",
 		    "style" : {}
 		},
 		{
-		    "path" : "pages/ControlPanel/purchase/editpo",
+		    "path" : "pages/ControlPanel/my/my",
 		    "style" : {}
 		}
     ],

@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaiduAIDTO.cs" />
     <Compile Include="BaseDTO.cs" />
     <Compile Include="ProductDTO.cs" />
     <Compile Include="AjaxResponseInfo.cs" />
