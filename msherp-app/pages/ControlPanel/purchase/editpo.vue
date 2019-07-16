@@ -121,6 +121,9 @@
 					<button class="cu-btn bg-blue round shadow-blur" @tap="CancelverifyPo">取消摊销</button>
 				</view>
 				<view class="btn-group" v-if="PoMasterInfo.Status===2">
+					<button class="cu-btn bg-blue round shadow-blur" @tap="CancelverifyPo">取消摊销</button>
+				</view>
+				<view class="btn-group" v-if="PoMasterInfo.Status===2">
 					<button class="cu-btn bg-red round shadow-blur" @tap="verifyPo">审核</button>
 				</view>
 				<view class="btn-group" v-if="PoMasterInfo.Status===0">
@@ -726,13 +729,29 @@
 				var self=this
 				var dto=this.baseRequestDto;
 				dto.ReqBodyDTO=this.PoMasterInfo
+				dto.ReqBody.PrivilegeList=JSON.stringify(uni.getStorageSync('MshUserPrivilegeAL'))
 				var result=true
 				purchase.GetVerifyContent(dto).then(res => {
 					console.log(res);
 					result=res
 				}).then(res=>{
+					console.log(result)
 					if(result.Status&&result.Message===''){
+						if(result.Data.PMLAuditContent.indexOf('没有设置安全库存下限')>0){
+							uni.showToast({
+								title:'审核失败：存在新品没有设置安全库存下限，请先设置安全库存下限',
+								icon:'none',
+								duration:1500
+							})
+							return;
+						}
 						
+						purchase.VerifyPo(dto).then(res => {
+							console.log(res);
+							if(res.Status){
+								self.initData()
+							}
+						})
 					}
 				});
 			},

@@ -98,6 +98,7 @@ namespace MshErp.APIServices.Core.ApiControllers
             return new AjaxResponseInfo
             {
                 Status = true,
+                Message="",
                 Data = result
             };
         }

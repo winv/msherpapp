@@ -57,6 +57,10 @@ namespace MshErp.Model.DTO
         public string CreateTimeFrom { get; set; }
         public string CreateTimeTo { get; set; }
 
+        /// <summary>
+        /// 权限集合
+        /// </summary>
+        public string PrivilegeList { get; set; }
     }
 
     public class PoMasterBody

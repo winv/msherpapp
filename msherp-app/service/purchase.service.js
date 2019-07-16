@@ -165,7 +165,16 @@ purchase.POApportionCost = function(param) {
 		})
 	})
 }
-
+/**
+ * 采购单取消审核接口
+ */
+purchase.VerifyPo = function(param) {
+	return new Promise(function(resolve, reject) {
+		http.post(urls.getFullERPUrl('Purchase/VerifyPo'), param).then(res => {
+			resolve(res.data)
+		})
+	})
+}
 /**
  * 采购单取消审核接口
  */
@@ -209,4 +218,6 @@ purchase.GetVerifyContent = function(param) {
 		})
 	})
 }
+
+
 export default purchase

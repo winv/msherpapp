@@ -8,6 +8,7 @@ using Eson.Utils;
 using MshErp.BLL.Interface;
 using MshErp.Infrastructure;
 using MshErp.Model.DTO;
+using Newtonsoft.Json;
 using RobotMapper;
 using System;
 using System.Collections;
@@ -300,7 +301,17 @@ namespace MshErp.BLL
 
         public void VerifyPo(PurchasePoMasterRquestDTO request)
         {
-            throw new NotImplementedException();
+            var poinfo = Helper.MapNoProperty<POInfo, PoMasterBody>(request.ReqBodyDTO);
+            var itemlist = Helper.MapNoProperty<POItemInfo, PoItemBody>(request.ReqBodyDTO.poItems);
+            Hashtable ht = new Hashtable(10);
+            foreach (var item in itemlist)
+            {
+                item.POSysNo = poinfo.SysNo;
+                ht.Add(item.ProductSysNo, item);
+            }
+            poinfo.itemHash = ht;
+            List<int> al= JsonConvert.DeserializeObject<List<int>>(request.ReqBody.PrivilegeList);
+            PurchaseManager.GetInstance().VerifyPo(poinfo, al, int.Parse(request.UserSysNo));
         }
 
         public void CancelVerifyPo(PurchasePoMasterRquestDTO request)
@@ -314,7 +325,7 @@ namespace MshErp.BLL
             PurchaseManager.GetInstance().CancelAbandon(request.ReqBodyDTO.SysNo, int.Parse(request.UserSysNo));
             LogManager.GetInstance().Write(new LogInfo(request.ReqBodyDTO.SysNo, (int)AppEnum.LogType.Purchase_CancelAbandon, new SessionInfo { User = new UserInfo { SysNo = int.Parse(request.UserSysNo) }, IpAddress = "小程序发起" }));
         }
-
+        
         public dynamic GetVerifyContent(PurchasePoMasterRquestDTO request)
         {
             var poinfo = Helper.MapNoProperty<POInfo, PoMasterBody>(request.ReqBodyDTO);
