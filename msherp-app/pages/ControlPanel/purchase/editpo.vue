@@ -67,8 +67,8 @@
 					</view>
 					<view class="cu-form-group">
 						<view class="title">截止到货：</view>
-						<picker :disabled="!isinitStatus" mode="date" :value="PoMasterInfo.ExpectInTime" start="2018-01-01"
-						 end="2025-12-31" @change="arriveDateChange">
+						<picker :disabled="!isinitStatus" mode="date" :value="PoMasterInfo.ExpectInTime" start="2018-01-01" end="2025-12-31"
+						 @change="arriveDateChange">
 							<view class="picker">{{ PoMasterInfo.ExpectInTime }}</view>
 						</picker>
 					</view>
@@ -116,9 +116,15 @@
 			<!--底部空白占位附，为了解决fixed 遮挡内容问题，实际应该由其他解决办法-->
 			<view class="bg-white padding"></view>
 			<!--非初始状态其他操作按钮-->
-			<view v-if="!isinitStatus&&PoMasterInfo.Status!==0" class="cu-bar bg-white tabbar border shop fixedbottom">
-				<view class="btn-group">
-					<button class="cu-btn bg-red round shadow-blur" @tap="editProduct">收货</button>
+			<view v-if="!isinitStatus" class="cu-bar bg-white tabbar border shop fixedbottom">
+				<view class="btn-group" v-if="PoMasterInfo.Status===2">
+					<button class="cu-btn bg-blue round shadow-blur" @tap="CancelverifyPo">取消摊销</button>
+				</view>
+				<view class="btn-group" v-if="PoMasterInfo.Status===2">
+					<button class="cu-btn bg-red round shadow-blur" @tap="verifyPo">审核</button>
+				</view>
+				<view class="btn-group" v-if="PoMasterInfo.Status===0">
+					<button class="cu-btn bg-red round shadow-blur" @tap="cancelabandonPo">取消作废</button>
 				</view>
 			</view>
 			<!--底部操作条-->
@@ -135,6 +141,7 @@
 					<button class="cu-btn bg-yellow round shadow-blur" @tap="submitEditListData" v-if='!editPoItem.showView'>提交更改</button>
 					<button class="cu-btn bg-red round shadow-blur" @tap="shareCost">摊销</button>
 					<button class="cu-btn bg-gradual-purple round shadow-blur" @tap="verifyPo">审核</button>
+					<button class="cu-btn bg-gradual-purple round shadow-blur" @tap="abandonPo">作废</button>
 				</view>
 			</view>
 			<!--直接添加商品-->
@@ -174,6 +181,57 @@
 							</view>
 							<text class="lg text-red" :class="'cuIcon-roundaddfill'" @tap="addToPoFromBasketInfo(item)"></text>
 						</view>
+					</view>
+				</view>
+			</view>
+			<!--摊销模态框-->
+			<view class="cu-modal" :class="modalName == 'DialogshareCostModal' ? 'show' : ''">
+				<view class="cu-dialog pull-left">
+					<view class="cu-bar bg-white justify-end">
+						<view class="content">摊销</view>
+						<view class="action" @tap="hideModal"><text class="cuIcon-close text-red"></text></view>
+					</view>
+					<view class="cu-list menu-avatar no-card">
+						<view class="cu-form-group solid-bottom sm">
+							<view class="title">摊销科目：</view>
+							<picker @change="PickerSubjectChange" :value="shareCostData.subjectindex" :range="shareCostData.subject"
+							 :range-key="'name'">
+								<view class="picker">{{ shareCostData.subject[shareCostData.subjectindex].name }}</view>
+							</picker>
+						</view>
+						<view class="cu-form-group solid-bottom sm">
+							<view class="title">摊销类型：</view>
+							<picker @change="PickerTypeChange" :value="shareCostData.typeindex" :range="shareCostData.type" :range-key="'name'">
+								<view class="picker">{{ shareCostData.type[shareCostData.typeindex].name }}</view>
+							</picker>
+						</view>
+						<view class="cu-form-group solid-bottom sm">
+							<view class="title text-sm">摊销费用：</view>
+							<input type="text" v-model="shareCostData.shareItem.ExpenseAmt" />
+						</view>
+						<view class="cu-form-group ">
+							<view class="title text-sm">摊销费用明细，如果不摊销，请取消勾选</view>
+						</view>
+						<view v-for="(item,index) in basePoItemList" :key="index">
+							<view class="bg-white solid-bottom">
+								<view class="text-left text-sm padding-xs">
+									<checkbox :checked="true" class="checkbox-sm"></checkbox>{{item.ProductSysNo}}-{{item.ProductName}}
+								</view>
+							</view>
+						</view>
+						<view v-for="(item,index) in sharelist" :key="index">
+							<view class="bg-white solid-bottom">
+								<view class="text-left text-sm padding-xs" @tap="deleteCostItem(index)">
+									<text class="lg text-red" :class="'cuIcon-deletefill'"></text>
+									<text>{{item.sname}}  {{item.tname}}  摊销  {{item.ExpenseAmt}} </text>
+								</view>
+							</view>
+						</view>
+					</view>
+					<view class="cu-bar bg-white">
+						<view class="action margin-0 flex-sub solid-left" @tap="hideModal">取消</view>
+						<view class="action margin-0 flex-sub text-blue solid-left" @tap="toShare">摊销</view>
+						<view class="action margin-0 flex-sub text-bold text-red  solid-left" @tap="toShareSave">提交保存</view>
 					</view>
 				</view>
 			</view>
@@ -289,9 +347,42 @@
 						value: 4
 					},
 				],
-
 				cartList: [],
 				isinitStatus: true,
+				shareCostData: {
+					type: [{
+						name: '按金额',
+						value: 0
+					}, {
+						name: '按数量',
+						value: 1
+					}],
+					subject: [{
+						name: '运费',
+						value: 1
+					}, {
+						name: '装车费',
+						value: 2
+					}, {
+						name: '耗材费	',
+						value: 3
+					}, {
+						name: '人工费',
+						value: 4
+					}],
+					shareItem: {
+						ApportionType: 0,
+						ApportionSubjectSysNo: 1,
+						POSysNo:0,
+						ExpenseAmt: 0,
+						sname: '运费',
+						tname: '按金额',
+					},
+					subjectindex: 0,
+					typeindex: 0
+				},
+				sharelist: [],
+				verifyContent:{}
 			};
 		},
 		mixins: [vueCommonData],
@@ -329,10 +420,13 @@
 					this.num = this.poMaster.Data.ResMasterBody[0].Status - 1
 					this.PoMasterInfo = this.poMaster.Data.ResMasterBody[0]
 					if (this.PoMasterInfo.Status !== 1) {
-						this.isinitStatus = false;
+						this.isinitStatus = false
 					}
-					this.PoMasterInfo.PayDate=dateFormat.formatTimeToStr(this.PoMasterInfo.PayDate,'yyyy-MM-dd')
-					this.PoMasterInfo.ExpectInTime=dateFormat.formatTimeToStr(this.PoMasterInfo.ExpectInTime,'yyyy-MM-dd hh:mm')
+					else{
+						this.isinitStatus=true
+					}
+					this.PoMasterInfo.PayDate = dateFormat.formatTimeToStr(this.PoMasterInfo.PayDate, 'yyyy-MM-dd')
+					this.PoMasterInfo.ExpectInTime = dateFormat.formatTimeToStr(this.PoMasterInfo.ExpectInTime, 'yyyy-MM-dd hh:mm')
 					this.PoMasterInfo.VendorTextInfo = this.PoMasterInfo.VendorSysNo + '-' + this.PoMasterInfo.V_VendorName;
 					this.basePoItemList = this.PoMasterInfo.poItems
 					console.log(this.PoMasterInfo)
@@ -554,8 +648,148 @@
 					})
 				}
 			},
-			shareCost(){
-				this.editProduct() 
+			shareCost() {
+				this.modalName = 'DialogshareCostModal'
+			},
+			toShare() {
+				var self = this
+				if(self.shareCostData.shareItem.ExpenseAmt<=0){
+					uni.showToast({
+						title: '摊销费用必须>0',
+						icon: 'none',
+						duration: 1000
+					})
+					return;
+				}
+				
+				if (self.sharelist.length !== 0) {
+					var checkresult = Enumerable.from(self.sharelist).where(function(item) {
+						return item.subject === self.shareCostData.shareItem.subject
+					}).toArray()
+					if (checkresult.length !== 0) {
+						uni.showToast({
+							title: '改摊销科目已存在，请先删除',
+							icon: 'none',
+							duration: 1000
+						})
+						return;
+					}
+				}
+				self.shareCostData.shareItem.POSysNo = this.SysNo
+				var itemlist = []
+				self.basePoItemList.forEach(function(item){
+					var itemobj = {productsysno:item.ProductSysNo,ApportionSysNo:0,POSysNo:self.SysNo}
+					itemlist.push(itemobj)
+				})
+				var obj = Object.assign({},self.shareCostData.shareItem)
+				obj.itemlist = itemlist
+				self.sharelist.push(obj)
+				uni.showToast({
+					title:'注意:最后须提交保存，摊销方可生效',
+					icon:'none',
+				})
+			},
+			toShareSave(){
+				var self=this
+				this.PoMasterInfo.appList = this.sharelist
+				var dto=this.baseRequestDto;
+				dto.ReqBodyDTO=this.PoMasterInfo
+				purchase.POApportionCost(dto).then(res => {
+					console.log(res);
+					if(res.Status&&res.Message===''){
+						uni.showToast({
+							title:'摊销成功',
+							icon:'none',
+							duration:1000
+						})
+						self.modalName=''
+						self.initData()
+					}
+				});
+				console.log(this.sharelist)
+			},
+			deleteCostItem(index){
+				var self=this
+				uni.showModal({
+					title: '提示',
+					content: '确认删除该摊销费用吗？',
+					success: function(res) {
+						if (res.confirm) {
+							self.sharelist.splice(index)
+						} else if (res.cancel) {
+							console.log('canceld');
+						}
+					}
+				});
+			},
+			verifyPo(){
+				var self=this
+				var dto=this.baseRequestDto;
+				dto.ReqBodyDTO=this.PoMasterInfo
+				var result=true
+				purchase.GetVerifyContent(dto).then(res => {
+					console.log(res);
+					result=res
+				}).then(res=>{
+					if(result.Status&&result.Message===''){
+						
+					}
+				});
+			},
+			CancelverifyPo(){
+				var self=this
+				this.PoMasterInfo.appList = this.sharelist
+				var dto=this.baseRequestDto;
+				dto.ReqBodyDTO=this.PoMasterInfo
+				purchase.CancelVerifyPo(dto).then(res => {
+					console.log(res);
+					if(res.Status&&res.Message===''){
+						uni.showToast({
+							title:'取消审核成功',
+							icon:'none',
+							duration:1000
+						})
+						self.modalName=''
+						self.initData()
+					}
+				});
+				
+			},
+			abandonPo(){
+				var self=this
+				this.PoMasterInfo.appList = this.sharelist
+				var dto=this.baseRequestDto;
+				dto.ReqBodyDTO=this.PoMasterInfo
+				purchase.AbandonPo(dto).then(res => {
+					console.log(res);
+					if(res.Status&&res.Message===''){
+						uni.showToast({
+							title:'作废成功',
+							icon:'none',
+							duration:1000
+						})
+						self.modalName=''
+						self.initData()
+					}
+				});
+			},
+			cancelabandonPo(){
+				var self=this
+				this.PoMasterInfo.appList = this.sharelist
+				var dto=this.baseRequestDto;
+				dto.ReqBodyDTO=this.PoMasterInfo
+				purchase.CancelAbandonPo(dto).then(res => {
+					console.log(res);
+					if(res.Status&&res.Message===''){
+						uni.showToast({
+							title:'取消作废成功',
+							icon:'none',
+							duration:1000
+						})
+						self.modalName=''
+						self.initData()
+					}
+				});
 			},
 			showCartListRight() {
 				this.modalName = 'DrawerModalR'
@@ -582,6 +816,17 @@
 			PickerPayTypeChange(e) {
 				this.pickPayIndex = e.detail.value;
 				this.PoMasterInfo.PayDateType = this.PayDateTypeList[this.pickPayIndex].value;
+			},
+			PickerSubjectChange(e) {
+				this.shareCostData.subjectindex = e.detail.value;
+				this.shareCostData.shareItem.ApportionSubjectSysNo = this.shareCostData.subject[e.detail.value].value
+				this.shareCostData.shareItem.sname = this.shareCostData.subject[e.detail.value].name
+
+			},
+			PickerTypeChange(e) {
+				this.shareCostData.typeindex = e.detail.value;
+				this.shareCostData.shareItem.ApportionType = this.shareCostData.type[e.detail.value].value
+				this.shareCostData.shareItem.tname = this.shareCostData.type[e.detail.value].name
 			}
 		}
 	};

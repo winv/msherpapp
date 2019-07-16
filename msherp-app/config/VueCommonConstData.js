@@ -43,6 +43,7 @@ let VueCommonConstData = {
 			baseRequestDto: {
 				Token: uni.getStorageSync(this.MshSessionID),
 				TimeSpan: uni.getStorageSync(this.mshconfig.mshdata_expirationName),
+				UserSysNo: 0,
 				ReqBody: {},
 				ReqBodyDTO: {}
 			},
@@ -54,6 +55,7 @@ let VueCommonConstData = {
 	computed: mapState(['forcedLogin', 'hasLogin', 'userName']),
 	created: function() {
 		this.userSession = uni.getStorageSync("MshUserSession")
+		this.baseRequestDto.UserSysNo = this.userSession.User.SysNo
 	},
 	methods: {
 		showAbout: function() {

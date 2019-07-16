@@ -32,5 +32,13 @@ namespace MshErp.BLL.Interface
         void DeletePoItem(PurchasePoMasterRquestDTO request);
 
         PurchasePoMasterResponseDTO UpdatePoitem(PurchasePoMasterRquestDTO request);
+
+        string POApportionCost(PurchasePoMasterRquestDTO request);
+
+        void AbandonPo(PurchasePoMasterRquestDTO request);
+        void CancelAbandonPo(PurchasePoMasterRquestDTO request);
+        void VerifyPo(PurchasePoMasterRquestDTO request);
+        void CancelVerifyPo(PurchasePoMasterRquestDTO request);
+        dynamic GetVerifyContent(PurchasePoMasterRquestDTO request);
     }
 }

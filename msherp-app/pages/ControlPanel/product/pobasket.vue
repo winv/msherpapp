@@ -57,7 +57,6 @@
 		<view class="cu-bar bg-white tabbar border shop menu_box">
 			<view class="btn-group">
 				<button class="cu-btn bg-orange round shadow-blur" @tap="selectAll">{{ isnotext }}</button>
-				<button class="cu-btn bg-red round shadow-blur" @tap="chooseImage">拍照识别</button>
 				<button class="cu-btn bg-red round shadow-blur" @tap="CreatePoMaster">生成采购单</button>
 				<button class="cu-btn bg-gray round shadow-blur" @tap="deletePoBasketList">批量删除</button>
 			</view>
@@ -335,31 +334,6 @@
 					});
 				}
 				console.log(selectList);
-			},
-			chooseImage() {
-				uni.chooseImage({
-					count: 1,
-					sizeType: ['original', 'compressed'],
-					sourceType: ['album', 'camera'],
-					success: function(res) {
-						console.log(res);
-						var tempfilepaths = res.tempFilePaths;
-						console.log(res.tempFiles[0]);
-						wx.getFileSystemManager().readFile({
-							filePath: res.tempFilePaths[0], //选择图片返回的相对路径
-							encoding: 'base64', //编码格式
-							success: res => {
-								//成功的回调
-								//console.log('data:image/png;base64,' + res.data);
-								var img='data:image/png;base64,' + res.data;
-								var imgbase64={RetrunMsg:res.data}
-								purchase.GetImageInfo(imgbase64).then(res => {
-									console.log(res)
-								})
-							}
-						});
-					}
-				});
 			},
 			showModal(e) {
 				this.modalName = e.currentTarget.dataset.target;

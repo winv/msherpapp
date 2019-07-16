@@ -14,7 +14,6 @@
 				<button class="cu-btn bg-gradual-green shadow-blur round" @tap="handleSubmit">搜索</button>
 				<button class="cu-btn bg-gradual-red shadow-blur round" @tap="handleSubmitAdv" data-target="DialogModal2">选项</button>
 				<button class="cu-btn bg-gradual-red shadow-blur round" @tap="chooseImage" data-target="chooseImageResult">拍照</button>
-
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom margin-top">
@@ -175,6 +174,7 @@
 				</view>
 			</navigator>
 		</view>
+		<!--模态框弃用 改单页展示型-->
 		<view class="cu-modal" :class="modalName == 'chooseImageResult' ? 'show' : ''">
 			<view class="cu-dialog pull-left">
 				<view class="cu-bar bg-white justify-end">
@@ -475,48 +475,9 @@
 				})
 			},
 			chooseImage() {
-				var self = this;
-				uni.chooseImage({
-					count: 1,
-					sizeType: ['original', 'compressed'],
-					sourceType: ['album', 'camera'],
-					success: function(res) {
-						console.log(res);
-						var tempfilepaths = res.tempFilePaths
-						console.log(res.tempFiles[0])
-						self.imageinfo.url = res.tempFilePaths[0]
-						uni.getImageInfo({
-							src:self.imageinfo.url,
-							success:res=>{
-								if(res.height>res.width){
-									self.imageinfo.width=(res.width/res.height)*50
-								}
-								else{
-									self.imageinfo.height=(res.height/res.width)*50
-								}
-								console.log(self.imageinfo)
-							}
-						})
-						
-						wx.getFileSystemManager().readFile({
-							filePath: res.tempFilePaths[0], //选择图片返回的相对路径
-							encoding: 'base64', //编码格式
-							success: res => {
-								//成功的回调
-								//console.log('data:image/png;base64,' + res.data);
-								var img = 'data:image/png;base64,' + res.data;
-								var imgbase64 = {
-									RetrunMsg: res.data
-								}
-								purchase.GetImageInfo(imgbase64).then(res => {
-									console.log(res)
-									self.modalName = 'chooseImageResult';
-									self.imageinfo.list = res.Data.result2.result
-								})
-							}
-						});
-					}
-				});
+				uni.navigateTo({
+					url:'pages/ControlPanel/product/productAilist'
+				})
 			},
 			showModal(e) {
 				this.modalName = e.currentTarget.dataset.target;

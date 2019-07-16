@@ -26,9 +26,15 @@
 			<view>
 				<image :src="imageinfo.url" :width="imageinfo.width" :height="imageinfo.height" mode="widthFix"></image>
 			</view>
+			<view v-if="loadMore.isfetchData">
+				<view class="cu-form-group">
+					<text>识别结果</text>
+					<button class="cu-btn bg-blue shadow-blur round" @tap="showAllResult">{{loadMore.buttontext}}<text class="lg text-white" :class="'cuIcon-'+loadMore.buttonIcon"></text></button>
+				</view>
+			</view>
 			<view class=" margin-top" v-for="(masteritem, masterindex) in productList" :key="masterindex">
 				<view class="cu-form-group">
-					<view class="title">{{masteritem.name}}</view>
+					<view class="title">{{masteritem.name}}-ERP结果匹配</view>
 					<view class="title">可信度{{masteritem.score|percent}}</view>
 				</view>
 				<view v-if="masteritem.ProductList.length===0">
@@ -147,9 +153,13 @@
 					loadClass: '',
 					loadText: '加载更多',
 					isfetchData: false,
-					isaddData: false
+					isaddData: false,
+					isexpend:false,
+					buttontext:'展开全部',
+					buttonIcon:'refresharrow'
 				},
 				productList: [],
+				productSourceList: [],
 				searchResultData: {
 					currentIndex: 1,
 					totalCount: 100,
@@ -455,8 +465,10 @@
 				this.knowImages()
 			},
 			knowImages() {
+				this.loadMore.isfetchData = true
 				var self = this
 				self.productList = []
+				self.productSourceList=[]
 				var ReqBody = {
 					Imgbase64: self.imageinfo.imgbytes
 				}
@@ -486,9 +498,26 @@
 					product.QueryProductList(self.searchDataDto).then(res => {
 						item.ProductList = []
 						obj.ProductList = res.Data.ReqBody
-						self.productList.push(obj)
+						self.productSourceList.push(obj)
+						if(item.score>0.2){
+							self.productList.push(obj)
+						}
 					})
 				})
+			},
+			showAllResult() {
+				this.loadMore.isexpend=!this.loadMore.isexpend
+				if(this.loadMore.isexpend){
+					this.productList = this.productSourceList
+					this.loadMore.buttontext='收起结果'
+				}
+				else{
+					this.loadMore.buttontext='展开结果'
+					this.productList=[]
+					this.productList=Enumerable.from(this.productSourceList).where(function(item){
+						return item.score>0.2
+					}).toArray()
+				}
 			},
 			showModal(e) {
 				this.modalName = e.currentTarget.dataset.target;

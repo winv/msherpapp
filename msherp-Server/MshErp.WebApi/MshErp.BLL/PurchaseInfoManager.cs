@@ -1,6 +1,8 @@
-﻿using Eson.BLL.Basic;
+﻿using Eson.BLL;
+using Eson.BLL.Basic;
 using Eson.BLL.Purchase;
 using Eson.Objects;
+using Eson.Objects.Basic;
 using Eson.Objects.Purchase;
 using Eson.Utils;
 using MshErp.BLL.Interface;
@@ -269,6 +271,68 @@ namespace MshErp.BLL
                 ResMasterBody = new List<PoMasterBody> { request.ReqBodyDTO }
             };
             return result;
+        }
+
+        public string POApportionCost(PurchasePoMasterRquestDTO request)
+        {
+            //采购单摊销 只支持单个采购单摊销 批量摊销需要另写逻辑
+            List<POApportionInfo> dellist = new List<POApportionInfo>();
+            List<POInfo> delPoInfoList = new List<POInfo>();
+            List<POApportionInfo> applist = new List<POApportionInfo>();
+            List<POInfo> allPoList = new List<POInfo> { PurchaseManager.GetInstance().LoadPO(request.ReqBodyDTO.SysNo) };
+            foreach (var item in request.ReqBodyDTO.appList)
+            {
+                var appitemlist = Helper.MapNoProperty<POApportionItemInfo, POApportionItemInfoBody>(item.itemList);
+                var appinfo = Helper.MapNoProperty<POApportionInfo, POApportionInfoBody>(item);
+                appinfo.POApportionItemInfoList = appitemlist;
+                appinfo.POInfoList = allPoList;
+                applist.Add(appinfo);
+            }
+            PurchaseManagerNew.GetInstance().ExportPOApportionNewApi(dellist,delPoInfoList,allPoList, applist, int.Parse(request.ReqBody.CreateUserSysNo));
+            return "";
+        }
+
+        public void AbandonPo(PurchasePoMasterRquestDTO request)
+        {
+            PurchaseManager.GetInstance().Abandon(request.ReqBodyDTO.SysNo, int.Parse(request.UserSysNo));
+            LogManager.GetInstance().Write(new LogInfo(request.ReqBodyDTO.SysNo, (int)AppEnum.LogType.Purchase_Abandon, new SessionInfo { User = new UserInfo { SysNo = int.Parse(request.UserSysNo) }, IpAddress = "小程序发起" }));
+        }
+
+        public void VerifyPo(PurchasePoMasterRquestDTO request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CancelVerifyPo(PurchasePoMasterRquestDTO request)
+        {
+            PurchaseManagerNew.GetInstance().CancelVerifyNew(request.ReqBodyDTO.SysNo, int.Parse(request.UserSysNo), null);
+            LogManager.GetInstance().Write(new LogInfo(request.ReqBodyDTO.SysNo, (int)AppEnum.LogType.Purchase_CancelVerify, new SessionInfo { User = new UserInfo { SysNo = int.Parse(request.UserSysNo) }, IpAddress = "小程序发起" }));
+        }
+
+        public void CancelAbandonPo(PurchasePoMasterRquestDTO request)
+        {
+            PurchaseManager.GetInstance().CancelAbandon(request.ReqBodyDTO.SysNo, int.Parse(request.UserSysNo));
+            LogManager.GetInstance().Write(new LogInfo(request.ReqBodyDTO.SysNo, (int)AppEnum.LogType.Purchase_CancelAbandon, new SessionInfo { User = new UserInfo { SysNo = int.Parse(request.UserSysNo) }, IpAddress = "小程序发起" }));
+        }
+
+        public dynamic GetVerifyContent(PurchasePoMasterRquestDTO request)
+        {
+            var poinfo = Helper.MapNoProperty<POInfo, PoMasterBody>(request.ReqBodyDTO);
+            var itemlist = Helper.MapNoProperty<POItemInfo, PoItemBody>(request.ReqBodyDTO.poItems);
+            Hashtable ht = new Hashtable(10);
+            foreach (var item in itemlist)
+            {
+                item.POSysNo = poinfo.SysNo;
+                ht.Add(item.ProductSysNo, item);
+            }
+            poinfo.itemHash = ht;
+            var PMLAuditContent = PurchaseManager.GetInstance().GetPMLAuditNote(poinfo);
+            var PMDAuditContent = PurchaseManager.GetInstance().GetPMDAuditNoteWithNew(poinfo);
+            return new
+            {
+                PMLAuditContent,
+                PMDAuditContent
+            };
         }
     }
 }

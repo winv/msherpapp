@@ -353,6 +353,8 @@ namespace MshErp.Model.DTO
                 return DataHelper.GetDescription(typeof(AppEnum.POStatus), this.Status);
             }
         }
+
+        public List<POApportionInfoBody> appList { get; set; }
         #endregion
     }
 
@@ -499,6 +501,131 @@ namespace MshErp.Model.DTO
         public decimal V_DaySaleQty { get; set; }
         public string ProductName { get; set; }
         public string V_VendorName { get; set; }
+        #endregion
+    }
+
+    public class POApportionInfoBody
+    {
+        #region 属性
+        /// <summary>
+        /// SysNo
+        /// </summary>		
+        public int SysNo { get; set; }
+
+        /// <summary>
+        /// POSysNo
+        /// </summary>		
+        public int POSysNo { get; set; }
+
+        /// <summary>
+        /// ApportionSubjectSysNo
+        /// </summary>		
+        public int ApportionSubjectSysNo { get; set; }
+
+        /// <summary>
+        /// ApportionType
+        /// </summary>		
+        public int ApportionType { get; set; }
+
+        /// <summary>
+        /// ExpenseAmt
+        /// </summary>		
+        public decimal ExpenseAmt { get; set; }
+
+        /// <summary>
+        /// rowCreateDate
+        /// </summary>		
+        public DateTime rowCreateDate { get; set; }
+
+        /// <summary>
+        /// rowModifyDate
+        /// </summary>		
+        public DateTime rowModifyDate { get; set; }
+
+        /// <summary>
+        /// Status
+        /// </summary>		
+        public int Status { get; set; }
+
+        /// <summary>
+        /// CreateUserSysNo
+        /// </summary>		
+        public int CreateUserSysNo { get; set; }
+
+        /// <summary>
+        /// UpdateUserSysNo
+        /// </summary>		
+        public int UpdateUserSysNo { get; set; }
+
+        public List<POApportionItemInfoBody> itemList { get; set; }
+        public List<PoMasterBody> POInfoList { get; set; }
+        #endregion
+
+        #region 虚拟字段
+
+
+        #endregion
+    }
+
+    public class POApportionItemInfoBody
+    {
+        #region 属性
+        /// <summary>
+        /// SysNo
+        /// </summary>		
+        public int SysNo { get; set; }
+
+        /// <summary>
+        /// ApportionSysNo
+        /// </summary>		
+        public int ApportionSysNo { get; set; }
+
+        /// <summary>
+        /// ProductSysNo
+        /// </summary>		
+        public int ProductSysNo { get; set; }
+
+        /// <summary>
+        /// rowCreateDate
+        /// </summary>		
+        public DateTime rowCreateDate { get; set; }
+
+        /// <summary>
+        /// rowModifyDate
+        /// </summary>		
+        public DateTime rowModifyDate { get; set; }
+
+        /// <summary>
+        /// POSysNo
+        /// </summary>		
+        public int POSysNo { get; set; }
+
+        /// <summary>
+        /// ApportionAddOn
+        /// </summary>		
+        public decimal ApportionAddOn { get; set; }
+
+        /// <summary>
+        /// Quantity
+        /// </summary>		
+        public decimal Quantity { get; set; }
+
+        /// <summary>
+        /// ApportionAmt
+        /// </summary>		
+        public decimal ApportionAmt { get; set; }
+
+        /// <summary>
+        /// Status
+        /// </summary>		
+        public int Status { get; set; }
+
+
+        #endregion
+
+        #region 虚拟字段
+
+
         #endregion
     }
 }

@@ -91,6 +91,16 @@ namespace MshErp.APIServices.Core.ApiControllers
                 Data = dto
             };
         }
+        [HttpPost]
+        public AjaxResponseInfo GetVerifyContent([FromBody] PurchasePoMasterRquestDTO request)
+        {
+            var result = IPurchaseInfoManager.GetVerifyContent(request);
+            return new AjaxResponseInfo
+            {
+                Status = true,
+                Data = result
+            };
+        }
         #endregion
 
         #region 基础增删改操作 验证权限 Privilege.POFillIn 201
@@ -171,7 +181,59 @@ namespace MshErp.APIServices.Core.ApiControllers
         }
         #endregion
 
-        #region 审核 收货操作 验证权限
+        #region 分摊 审核 收货操作 验证权限
+        [Permission(Privilege.POFillIn)]
+        public AjaxResponseInfo POApportionCost([FromBody] PurchasePoMasterRquestDTO request)
+        {
+            var respbody = IPurchaseInfoManager.POApportionCost(request);
+            return new AjaxResponseInfo
+            {
+                Status = true,
+                Message= respbody,
+            };
+        }
+        [Permission(Privilege.POAudit)]
+        public AjaxResponseInfo VerifyPo([FromBody] PurchasePoMasterRquestDTO request)
+        {
+            IPurchaseInfoManager.VerifyPo(request);
+            return new AjaxResponseInfo
+            {
+                Status = true,
+                Message = "",
+            };
+        }
+        [Permission(Privilege.POAudit)]
+        public AjaxResponseInfo CancelVerifyPo([FromBody] PurchasePoMasterRquestDTO request)
+        {
+            IPurchaseInfoManager.CancelVerifyPo(request);
+            return new AjaxResponseInfo
+            {
+                Status = true,
+                Message = "",
+            };
+        }
+
+        [Permission(Privilege.POFillIn)]
+        public AjaxResponseInfo AbandonPo([FromBody] PurchasePoMasterRquestDTO request)
+        {
+            IPurchaseInfoManager.AbandonPo(request);
+            return new AjaxResponseInfo
+            {
+                Status = true,
+                Message = "",
+            };
+        }
+
+        [Permission(Privilege.POFillIn)]
+        public AjaxResponseInfo CancelAbandonPo([FromBody] PurchasePoMasterRquestDTO request)
+        {
+            IPurchaseInfoManager.CancelAbandonPo(request);
+            return new AjaxResponseInfo
+            {
+                Status = true,
+                Message = "",
+            };
+        }
         #endregion
     }
 }

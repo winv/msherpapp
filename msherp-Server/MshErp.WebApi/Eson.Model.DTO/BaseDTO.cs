@@ -22,5 +22,6 @@ namespace MshErp.Model.DTO
         /// </summary>
         public string WeiXinOpenID { get; set; }
         public string RetrunMsg { get; set; }
+        public string UserSysNo { get; set; }
     }
 }

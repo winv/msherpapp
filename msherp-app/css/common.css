@@ -9,6 +9,9 @@
 		text-align: center;
 		z-index:99999
 	}
+.checkbox-sm{
+	transform:scale(0.7)
+}
 .floatleft{
 	
 }
