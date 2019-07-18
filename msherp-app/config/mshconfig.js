@@ -7,9 +7,9 @@
 const mshconfig = {
 	//devUrl:'https://testwxservice.mmsshh.com/api/',
 	devUrl: 'http://localhost/MshErp.WebApi/api/',
-	productionUrl: 'http://localhost:809/api/',
+	productionUrl: 'https://testwxservice.mmsshh.com/api/',
 	env: 'development',
-	isDebug: true,
+	isDebug: false,
 	isWriteData:false,
 	mshsessionid: "MSH_ERP_APP_TOKEN",
 	mshdata_expirationName: 'mshdata_expiration',

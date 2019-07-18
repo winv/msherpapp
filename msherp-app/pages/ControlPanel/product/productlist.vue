@@ -476,7 +476,7 @@
 			},
 			chooseImage() {
 				uni.navigateTo({
-					url:'pages/ControlPanel/product/productAilist'
+					url:'/pages/ControlPanel/product/productAilist'
 				})
 			},
 			showModal(e) {
